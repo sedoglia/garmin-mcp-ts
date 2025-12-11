@@ -1,0 +1,40 @@
+# Ignore environment variables and credentials
+.env
+.env.local
+.env.*.local
+config.json
+
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.iml
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.jest_cache/
+
+# Misc
+.cache/
+*.tmp

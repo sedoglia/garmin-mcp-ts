@@ -1,0 +1,28 @@
+{
+  "name": "garmin-mcp-ts",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Garmin Connect MCP Server in TypeScript",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "login": "node dist/garmin/simple-login.js",
+    "dev": "tsx watch src/index.ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "axios": "^1.7.0",
+    "dotenv": "^16.3.0",
+    "garmin-connect": "^1.6.2",
+    "pino": "^9.0.0",
+    "pino-pretty": "^10.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.9.0",
+    "typescript": "^5.3.0"
+  }
+}
