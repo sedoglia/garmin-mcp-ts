@@ -1,197 +1,207 @@
 # Garmin Connect MCP Server
 
+<div align="center">
+
+**[English](README_EN.md)** | **Italiano**
+
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
+[![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
-## Features
+</div>
 
-This MCP server provides **18 powerful tools** to interact with your Garmin Connect data:
+---
 
-### Activity Tools
-| Tool | Description |
-|------|-------------|
-| `list_recent_activities` | Get a list of recent activities with optional filters |
-| `get_activity_details` | Get detailed information about a specific activity |
-| `get_activity_splits` | Get split/lap data for a specific activity |
-| `get_workouts` | Get list of scheduled/planned workouts |
+Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
 
-### Health & Wellness Tools
-| Tool | Description |
-|------|-------------|
-| `get_health_metrics` | Get daily health metrics (steps, heart rate, VO2 max) |
-| `get_sleep_data` | Get detailed sleep information (duration, quality, stages) |
-| `get_body_composition` | Get body composition data (weight, BMI, body fat) |
-| `get_steps` | Get step count for a specific date |
-| `get_heart_rate` | Get detailed heart rate data for a specific date |
-| `get_hydration` | Get daily hydration/water intake data |
+## Funzionalità
 
-### Wellness Metrics (NEW in v1.2)
-| Tool | Description |
-|------|-------------|
-| `get_stress_data` | **Get stress levels throughout the day (0-100 scale)** |
-| `get_body_battery` | **Get Body Battery energy levels (0-100)** |
-| `get_hrv_data` | Get Heart Rate Variability (HRV) data |
-| `get_respiration_data` | Get respiration/breathing rate data |
-| `get_spo2_data` | Get SpO2 (blood oxygen saturation) data |
+Questo server MCP fornisce **18 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
 
-### User & Device Tools
-| Tool | Description |
-|------|-------------|
-| `get_devices` | Get list of connected Garmin devices |
-| `get_user_profile` | Get user profile information |
-| `get_training_status` | Get training status and activity statistics |
+### Strumenti Attività
+| Strumento | Descrizione |
+|-----------|-------------|
+| `list_recent_activities` | Ottiene la lista delle attività recenti con filtri opzionali |
+| `get_activity_details` | Ottiene informazioni dettagliate su un'attività specifica |
+| `get_activity_splits` | Ottiene dati di split/lap per un'attività specifica |
+| `get_workouts` | Ottiene la lista dei workout pianificati |
 
-## Prerequisites
+### Strumenti Salute & Benessere
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_health_metrics` | Ottiene metriche di salute giornaliere (passi, frequenza cardiaca, VO2 max) |
+| `get_sleep_data` | Ottiene informazioni dettagliate sul sonno (durata, qualità, fasi) |
+| `get_body_composition` | Ottiene dati sulla composizione corporea (peso, BMI, grasso corporeo) |
+| `get_steps` | Ottiene il conteggio passi per una data specifica |
+| `get_heart_rate` | Ottiene dati dettagliati sulla frequenza cardiaca |
+| `get_hydration` | Ottiene dati giornalieri sull'idratazione |
 
-- **Node.js** 18.0 or higher
-- **npm** 8.0 or higher
-- **Claude Desktop** application installed
-- **Garmin Connect** account with valid credentials
+### Metriche Wellness (NUOVO in v1.2)
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_stress_data` | **Ottiene i livelli di stress durante il giorno (scala 0-100)** |
+| `get_body_battery` | **Ottiene i livelli di energia Body Battery (0-100)** |
+| `get_hrv_data` | Ottiene dati di variabilità cardiaca (HRV) |
+| `get_respiration_data` | Ottiene dati sulla frequenza respiratoria |
+| `get_spo2_data` | Ottiene dati SpO2 (saturazione di ossigeno nel sangue) |
 
-## Installation
+### Strumenti Utente & Dispositivi
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_devices` | Ottiene la lista dei dispositivi Garmin connessi |
+| `get_user_profile` | Ottiene informazioni sul profilo utente |
+| `get_training_status` | Ottiene lo stato di allenamento e statistiche delle attività |
 
-### 1. Clone the Repository
+## Prerequisiti
+
+- **Node.js** 18.0 o superiore
+- **npm** 8.0 o superiore
+- **Claude Desktop** installato
+- Account **Garmin Connect** con credenziali valide
+
+## Installazione
+
+### 1. Clona il Repository
 
 ```bash
 git clone https://github.com/sedoglia/garmin-mcp-ts.git
 cd garmin-mcp-ts
 ```
 
-### 2. Install Dependencies
+### 2. Installa le Dipendenze
 
 ```bash
 npm install
 ```
 
-### 3. Build the Project
+### 3. Compila il Progetto
 
 ```bash
 npm run build
 ```
 
-### 4. Configure Garmin Credentials
+### 4. Configura le Credenziali Garmin
 
-Create a `.env` file in the project root:
+Crea un file `.env` nella root del progetto:
 
 ```env
-GARMIN_EMAIL=your.email@example.com
-GARMIN_PASSWORD=your_garmin_password
+GARMIN_EMAIL=tua.email@esempio.com
+GARMIN_PASSWORD=la_tua_password_garmin
 ```
 
-> **Security Note:** Never commit your `.env` file to version control. It's already included in `.gitignore`.
+> **Nota sulla Sicurezza:** Non commitare mai il file `.env` nel controllo versione. È già incluso in `.gitignore`.
 
-## Claude Desktop Configuration
+## Configurazione di Claude Desktop
 
-### Locating the Configuration File
+### Posizione del File di Configurazione
 
-The Claude Desktop configuration file is located at:
+Il file di configurazione di Claude Desktop si trova in:
 
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Linux:** `~/.config/Claude/claude_desktop_config.json`
 
-### Configuration Example
+### Esempio di Configurazione
 
-Add the Garmin MCP server to your `claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "garmin": {
-      "command": "node",
-      "args": ["C:\\path\\to\\garmin-mcp-ts\\dist\\index.js"],
-      "env": {
-        "GARMIN_EMAIL": "your.email@example.com",
-        "GARMIN_PASSWORD": "your_garmin_password"
-      }
-    }
-  }
-}
-```
-
-**For macOS/Linux:**
+Aggiungi il server MCP Garmin al tuo `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "garmin": {
       "command": "node",
-      "args": ["/path/to/garmin-mcp-ts/dist/index.js"],
+      "args": ["C:\\percorso\\a\\garmin-mcp-ts\\dist\\index.js"],
       "env": {
-        "GARMIN_EMAIL": "your.email@example.com",
-        "GARMIN_PASSWORD": "your_garmin_password"
+        "GARMIN_EMAIL": "tua.email@esempio.com",
+        "GARMIN_PASSWORD": "la_tua_password_garmin"
       }
     }
   }
 }
 ```
 
-### Verifying the Setup
+**Per macOS/Linux:**
 
-1. Restart Claude Desktop after saving the configuration
-2. Look for the Garmin tools in Claude's available tools (hammer icon)
-3. Try asking: "What were my recent activities on Garmin?"
+```json
+{
+  "mcpServers": {
+    "garmin": {
+      "command": "node",
+      "args": ["/percorso/a/garmin-mcp-ts/dist/index.js"],
+      "env": {
+        "GARMIN_EMAIL": "tua.email@esempio.com",
+        "GARMIN_PASSWORD": "la_tua_password_garmin"
+      }
+    }
+  }
+}
+```
 
-<!-- Screenshot placeholder: Show Claude Desktop with Garmin tools available -->
+### Verifica della Configurazione
 
-## Usage Examples
+1. Riavvia Claude Desktop dopo aver salvato la configurazione
+2. Cerca gli strumenti Garmin tra quelli disponibili (icona martello)
+3. Prova a chiedere: "Quali sono le mie attività recenti su Garmin?"
 
-### Querying Recent Activities
+<!-- Placeholder screenshot: Mostra Claude Desktop con gli strumenti Garmin disponibili -->
 
-> "Show me my last 5 Garmin activities"
+## Esempi di Utilizzo
 
-> "What activities did I do this week?"
+### Interrogare le Attività Recenti
 
-### Getting Health Metrics
+> "Mostrami le mie ultime 5 attività Garmin"
 
-> "What are my health metrics for today?"
+> "Quali attività ho fatto questa settimana?"
 
-> "How many steps did I take yesterday?"
+### Ottenere Metriche di Salute
 
-### Sleep Analysis
+> "Quali sono le mie metriche di salute per oggi?"
 
-> "How did I sleep last night?"
+> "Quanti passi ho fatto ieri?"
 
-> "Show me my sleep data for December 10th"
+### Analisi del Sonno
 
-### Activity Details
+> "Come ho dormito la scorsa notte?"
 
-> "Tell me more about my last running activity"
+> "Mostrami i dati del sonno del 10 dicembre"
 
-> "What was my average heart rate in my most recent workout?"
+### Dettagli Attività
 
-### Device Information
+> "Dimmi di più sulla mia ultima corsa"
 
-> "What Garmin devices do I have connected?"
+> "Qual era la mia frequenza cardiaca media nell'ultimo allenamento?"
 
-### Training Status
+### Informazioni sui Dispositivi
 
-> "What's my current training status?"
+> "Quali dispositivi Garmin ho connessi?"
 
-> "How many activities have I recorded in total?"
+### Stato di Allenamento
 
-## Tool Reference
+> "Qual è il mio stato di allenamento attuale?"
+
+> "Quante attività ho registrato in totale?"
+
+## Riferimento degli Strumenti
 
 ### list_recent_activities
 
-Retrieves a list of recent activities from Garmin Connect.
+Recupera una lista di attività recenti da Garmin Connect.
 
-**Parameters:**
-- `limit` (optional, number): Maximum number of activities to return. Default: 10, Max: 100
-- `start` (optional, number): Starting index for pagination. Default: 0
+**Parametri:**
+- `limit` (opzionale, numero): Numero massimo di attività da restituire. Default: 10, Max: 100
+- `start` (opzionale, numero): Indice iniziale per la paginazione. Default: 0
 
-**Example Response:**
+**Esempio di Risposta:**
 ```json
 {
   "success": true,
   "data": [
     {
       "activityId": 12345678,
-      "activityName": "Morning Run",
+      "activityName": "Corsa Mattutina",
       "startTimeLocal": "2024-12-11 07:30:00",
       "distance": 5000,
       "duration": 1800,
@@ -203,194 +213,194 @@ Retrieves a list of recent activities from Garmin Connect.
 
 ### get_activity_details
 
-Gets detailed information about a specific activity.
+Ottiene informazioni dettagliate su un'attività specifica.
 
-**Parameters:**
-- `activityId` (required, number): The unique activity identifier
+**Parametri:**
+- `activityId` (obbligatorio, numero): L'identificatore univoco dell'attività
 
 ### get_health_metrics
 
-Retrieves daily health metrics for a specific date.
+Recupera le metriche di salute giornaliere per una data specifica.
 
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
 
-**Returns:** Heart rate data, step count, and other daily metrics.
+**Restituisce:** Dati sulla frequenza cardiaca, conteggio passi e altre metriche giornaliere.
 
 ### get_sleep_data
 
-Gets detailed sleep information for a specific date.
+Ottiene informazioni dettagliate sul sonno per una data specifica.
 
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
 
-**Returns:** Sleep duration, sleep stages, sleep quality score.
+**Restituisce:** Durata del sonno, fasi del sonno, punteggio qualità del sonno.
 
 ### get_body_composition
 
-Retrieves body composition data.
+Recupera i dati sulla composizione corporea.
 
-**Parameters:**
-- `days` (optional, number): Number of days of data. Default: 30
+**Parametri:**
+- `days` (opzionale, numero): Numero di giorni di dati. Default: 30
 
-**Returns:** Weight, BMI, body fat percentage (if available).
+**Restituisce:** Peso, BMI, percentuale di grasso corporeo (se disponibile).
 
 ### get_devices
 
-Lists all connected Garmin devices.
+Elenca tutti i dispositivi Garmin connessi.
 
-**Parameters:** None
+**Parametri:** Nessuno
 
-**Returns:** Device information including name, model, and settings.
+**Restituisce:** Informazioni sui dispositivi inclusi nome, modello e impostazioni.
 
 ### get_user_profile
 
-Gets user profile information.
+Ottiene le informazioni del profilo utente.
 
-**Parameters:** None
+**Parametri:** Nessuno
 
-**Returns:** User ID, display name, and profile settings.
+**Restituisce:** ID utente, nome visualizzato e impostazioni del profilo.
 
 ### get_training_status
 
-Retrieves training status and statistics.
+Recupera lo stato di allenamento e le statistiche.
 
-**Parameters:**
-- `days` (optional, number): Number of days for statistics. Default: 7
+**Parametri:**
+- `days` (opzionale, numero): Numero di giorni per le statistiche. Default: 7
 
-**Returns:** Activity count, training statistics, user settings.
+**Restituisce:** Conteggio attività, statistiche di allenamento, impostazioni utente.
 
 ### get_steps
 
-Gets step count for a specific date.
+Ottiene il conteggio passi per una data specifica.
 
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
 
-**Returns:** Total steps recorded for the specified date.
+**Restituisce:** Numero totale di passi registrati per la data specificata.
 
 ### get_heart_rate
 
-Gets detailed heart rate data for a specific date.
+Ottiene dati dettagliati sulla frequenza cardiaca per una data specifica.
 
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
 
-**Returns:** Resting heart rate, max heart rate, and heart rate zones.
+**Restituisce:** Frequenza cardiaca a riposo, max e zone di frequenza cardiaca.
 
 ### get_hydration
 
-Gets daily hydration/water intake data.
+Ottiene dati giornalieri sull'idratazione.
 
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
 
-**Returns:** Hydration data in oz and ml (or message if no data recorded).
+**Restituisce:** Dati idratazione in oz e ml (o messaggio se nessun dato registrato).
 
 ### get_workouts
 
-Gets list of scheduled/planned workouts.
+Ottiene la lista dei workout pianificati.
 
-**Parameters:**
-- `limit` (optional, number): Maximum number of workouts to return. Default: 10, Max: 100
-- `start` (optional, number): Starting index for pagination. Default: 0
+**Parametri:**
+- `limit` (opzionale, numero): Numero massimo di workout da restituire. Default: 10, Max: 100
+- `start` (opzionale, numero): Indice iniziale per la paginazione. Default: 0
 
-**Returns:** List of planned workouts from Garmin Connect.
+**Restituisce:** Lista dei workout pianificati da Garmin Connect.
 
 ### get_activity_splits
 
-Gets split/lap data for a specific activity.
+Ottiene dati di split/lap per un'attività specifica.
 
-**Parameters:**
-- `activityId` (required, number): The unique activity identifier
+**Parametri:**
+- `activityId` (obbligatorio, numero): L'identificatore univoco dell'attività
 
-**Returns:** Split summaries including pace, distance, and time for each split.
+**Restituisce:** Riepiloghi degli split inclusi passo, distanza e tempo per ogni split.
 
-### get_stress_data (NEW in v1.2)
+### get_stress_data (NUOVO in v1.2)
 
-Gets stress level data for a specific date. Stress is measured on a 0-100 scale:
-- **0-25**: Resting state
-- **26-50**: Low stress
-- **51-75**: Medium stress
-- **76-100**: High stress
+Ottiene i dati del livello di stress per una data specifica. Lo stress è misurato su una scala 0-100:
+- **0-25**: Stato di riposo
+- **26-50**: Stress basso
+- **51-75**: Stress medio
+- **76-100**: Stress alto
 
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
 
-**Returns:** Overall stress level, duration by category (rest, low, medium, high), average/max/min stress, and timestamped stress values.
+**Restituisce:** Livello di stress complessivo, durata per categoria, stress medio/max/min, e valori con timestamp.
 
-### get_body_battery (NEW in v1.2)
+### get_body_battery (NUOVO in v1.2)
 
-Gets Body Battery energy level data. Body Battery tracks energy levels (0-100) throughout the day based on sleep quality, stress, and physical activity.
+Ottiene i dati del livello di energia Body Battery. Body Battery traccia i livelli di energia (0-100) durante il giorno basandosi sulla qualità del sonno, stress e attività fisica.
 
-**Parameters:**
-- `startDate` (optional, string): Start date in YYYY-MM-DD format. Default: today
-- `endDate` (optional, string): End date in YYYY-MM-DD format. Default: same as startDate
+**Parametri:**
+- `startDate` (opzionale, stringa): Data iniziale nel formato YYYY-MM-DD. Default: oggi
+- `endDate` (opzionale, stringa): Data finale nel formato YYYY-MM-DD. Default: uguale a startDate
 
-**Returns:** Energy levels throughout the day, max/min levels, charged and drained amounts.
+**Restituisce:** Livelli di energia durante il giorno, livelli max/min, quantità caricata e scaricata.
 
-### get_hrv_data (NEW in v1.2)
+### get_hrv_data (NUOVO in v1.2)
 
-Gets Heart Rate Variability (HRV) data for a specific date. HRV measures the variation in time between heartbeats, which indicates recovery status and stress levels.
+Ottiene dati di Variabilità della Frequenza Cardiaca (HRV) per una data specifica. L'HRV misura la variazione nel tempo tra i battiti cardiaci, indicando lo stato di recupero e i livelli di stress.
 
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
 
-**Returns:** HRV metrics and readings.
+**Restituisce:** Metriche e letture HRV.
 
-### get_respiration_data (NEW in v1.2)
+### get_respiration_data (NUOVO in v1.2)
 
-Gets respiration/breathing rate data for a specific date.
+Ottiene dati sulla frequenza respiratoria per una data specifica.
 
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
 
-**Returns:** Breaths per minute throughout the day and during sleep.
+**Restituisce:** Respiri al minuto durante il giorno e durante il sonno.
 
-### get_spo2_data (NEW in v1.2)
+### get_spo2_data (NUOVO in v1.2)
 
-Gets SpO2 (blood oxygen saturation) data for a specific date. Normal SpO2 levels are typically 95-100%.
+Ottiene dati SpO2 (saturazione di ossigeno nel sangue) per una data specifica. I livelli normali di SpO2 sono tipicamente 95-100%.
 
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
 
-**Returns:** Pulse oximetry readings as percentage.
+**Restituisce:** Letture di pulsossimetria come percentuale.
 
-## Troubleshooting
+## Risoluzione dei Problemi
 
-### Common Issues
+### Problemi Comuni
 
 #### "Cannot read properties of undefined"
 
-This error typically occurs when the server receives malformed arguments. Ensure you're using the latest version with proper argument handling.
+Questo errore si verifica tipicamente quando il server riceve argomenti malformati. Assicurati di usare l'ultima versione con la corretta gestione degli argomenti.
 
-#### Authentication Failed
+#### Autenticazione Fallita
 
-1. Verify your Garmin credentials are correct
-2. Check if you can log in to [connect.garmin.com](https://connect.garmin.com) manually
-3. Ensure there are no special characters in your password that might need escaping
+1. Verifica che le tue credenziali Garmin siano corrette
+2. Controlla di poter accedere manualmente a [connect.garmin.com](https://connect.garmin.com)
+3. Assicurati che non ci siano caratteri speciali nella password che potrebbero richiedere escape
 
-#### Rate Limiting (Error 429)
+#### Rate Limiting (Errore 429)
 
-Garmin may temporarily block requests if too many are made in a short period. Wait a few minutes and try again.
+Garmin potrebbe bloccare temporaneamente le richieste se ne vengono fatte troppe in un breve periodo. Attendi qualche minuto e riprova.
 
-#### Server Not Appearing in Claude Desktop
+#### Il Server Non Appare in Claude Desktop
 
-1. Check that the path to `dist/index.js` is correct and absolute
-2. Verify the configuration JSON syntax is valid
-3. Restart Claude Desktop completely
-4. Check Claude Desktop logs for errors
+1. Controlla che il percorso a `dist/index.js` sia corretto e assoluto
+2. Verifica che la sintassi del JSON di configurazione sia valida
+3. Riavvia completamente Claude Desktop
+4. Controlla i log di Claude Desktop per eventuali errori
 
-### Viewing Logs
+### Visualizzare i Log
 
-The server outputs diagnostic information to stderr. In Claude Desktop, check the application logs:
+Il server produce informazioni diagnostiche su stderr. In Claude Desktop, controlla i log dell'applicazione:
 
 - **Windows:** `%APPDATA%\Claude\logs\`
 - **macOS:** `~/Library/Logs/Claude/`
 
-### Debug Mode
+### Modalità Debug
 
-Enable debug logging by setting the environment variable:
+Abilita il logging di debug impostando la variabile d'ambiente:
 
 ```json
 {
@@ -402,64 +412,74 @@ Enable debug logging by setting the environment variable:
 }
 ```
 
-## Architecture
+## Architettura
 
 ```
 garmin-mcp-ts/
 ├── src/
-│   ├── index.ts           # Entry point, stdout/stderr handling
+│   ├── index.ts           # Punto di ingresso, gestione stdout/stderr
 │   ├── garmin/
-│   │   ├── client.ts      # Garmin Connect API client
-│   │   ├── types.ts       # TypeScript type definitions
-│   │   └── simple-login.ts # Standalone login test utility
+│   │   ├── client.ts      # Client API Garmin Connect
+│   │   ├── types.ts       # Definizioni tipi TypeScript
+│   │   └── simple-login.ts # Utility standalone per test login
 │   ├── mcp/
-│   │   ├── server.ts      # MCP server setup and request handlers
-│   │   ├── tools.ts       # Tool definitions and schemas
-│   │   └── handlers.ts    # Tool implementation logic
+│   │   ├── server.ts      # Setup server MCP e gestori richieste
+│   │   ├── tools.ts       # Definizioni strumenti e schemi
+│   │   └── handlers.ts    # Logica implementazione strumenti
 │   └── utils/
-│       ├── constants.ts   # Application constants
-│       ├── errors.ts      # Custom error classes
-│       └── logger.ts      # Logging utility (stderr only)
-├── dist/                  # Compiled JavaScript output
+│       ├── constants.ts   # Costanti dell'applicazione
+│       ├── errors.ts      # Classi di errore personalizzate
+│       └── logger.ts      # Utility di logging (solo stderr)
+├── dist/                  # Output JavaScript compilato
 ├── package.json
 └── tsconfig.json
 ```
 
-### Key Design Decisions
+### Decisioni di Design Chiave
 
-- **Stdout Protection:** All console.log calls are redirected to stderr to ensure only valid JSON-RPC messages appear on stdout
-- **Garmin Connect Library:** Uses the `garmin-connect` npm package for reliable authentication
-- **JSON Schema Validation:** Input parameters are validated using JSON Schema with optional fields and sensible defaults
+- **Protezione Stdout:** Tutte le chiamate console.log vengono reindirizzate a stderr per assicurare che solo messaggi JSON-RPC validi appaiano su stdout
+- **Libreria Garmin Connect:** Utilizza il pacchetto npm `garmin-connect` per un'autenticazione affidabile
+- **Validazione JSON Schema:** I parametri di input vengono validati usando JSON Schema con campi opzionali e valori di default sensati
 
-## Credits & Acknowledgments
+## Crediti e Ringraziamenti
 
-This project was inspired by and built upon the work of several open-source projects:
+Questo progetto è stato ispirato e costruito sul lavoro di diversi progetti open-source:
 
-- [Taxuspt/garmin_mcp](https://github.com/Taxuspt/garmin_mcp) - Original Garmin MCP implementation
-- [matin/garth](https://github.com/matin/garth) - Garmin authentication library
-- [matin/garth-mcp-server](https://github.com/matin/garth-mcp-server) - Garth-based MCP server
-- [Async-IO/pierre_mcp_server](https://github.com/Async-IO/pierre_mcp_server) - MCP server patterns
+- [Taxuspt/garmin_mcp](https://github.com/Taxuspt/garmin_mcp) - Implementazione originale Garmin MCP
+- [matin/garth](https://github.com/matin/garth) - Libreria di autenticazione Garmin
+- [matin/garth-mcp-server](https://github.com/matin/garth-mcp-server) - Server MCP basato su Garth
+- [Async-IO/pierre_mcp_server](https://github.com/Async-IO/pierre_mcp_server) - Pattern per server MCP
 
-Special thanks to the [garmin-connect](https://www.npmjs.com/package/garmin-connect) npm package maintainers.
+Un ringraziamento speciale ai manutentori del pacchetto npm [garmin-connect](https://www.npmjs.com/package/garmin-connect).
 
-## Contributing
+## Contribuire
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+I contributi sono benvenuti! Sentiti libero di inviare una Pull Request.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Fai il fork del repository
+2. Crea il tuo branch per la feature (`git checkout -b feature/FunzionalitàIncredibile`)
+3. Committa le tue modifiche (`git commit -m 'Aggiunge una FunzionalitàIncredibile'`)
+4. Pusha il branch (`git push origin feature/FunzionalitàIncredibile`)
+5. Apri una Pull Request
 
-## License
+## Licenza
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Questo progetto è rilasciato sotto Licenza MIT - vedi il file [LICENSE](LICENSE) per i dettagli.
 
 ## Disclaimer
 
-This project is not affiliated with, endorsed by, or connected to Garmin Ltd. or any of its subsidiaries. Garmin and Garmin Connect are trademarks of Garmin Ltd.
+Questo progetto non è affiliato, approvato o connesso a Garmin Ltd. o alle sue sussidiarie. Garmin e Garmin Connect sono marchi registrati di Garmin Ltd.
 
 ---
 
-**[Italian version available](README_IT.md)** | [Report Issues](https://github.com/sedoglia/garmin-mcp-ts/issues)
+<div align="center">
+
+### Supporta lo Sviluppo
+
+Se questo progetto ti è utile, considera di supportarlo con una donazione!
+
+[![PayPal](https://img.shields.io/badge/Dona%20con-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
+
+**[English](README_EN.md)** | **Italiano** | [Segnala Problemi](https://github.com/sedoglia/garmin-mcp-ts/issues)
+
+</div>
