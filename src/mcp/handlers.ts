@@ -35,7 +35,7 @@ export class ToolHandler {
           return await this.handleGetUserProfile();
         case 'get_training_status':
           return await this.handleGetTrainingStatus(safeArgs);
-        // Nuovi tool
+        // Nuovi tool v1.1
         case 'get_steps':
           return await this.handleGetSteps(safeArgs);
         case 'get_heart_rate':
@@ -46,6 +46,17 @@ export class ToolHandler {
           return await this.handleGetWorkouts(safeArgs);
         case 'get_activity_splits':
           return await this.handleGetActivitySplits(safeArgs);
+        // Nuovi tool v1.2 - Wellness
+        case 'get_stress_data':
+          return await this.handleGetStressData(safeArgs);
+        case 'get_body_battery':
+          return await this.handleGetBodyBattery(safeArgs);
+        case 'get_hrv_data':
+          return await this.handleGetHrvData(safeArgs);
+        case 'get_respiration_data':
+          return await this.handleGetRespirationData(safeArgs);
+        case 'get_spo2_data':
+          return await this.handleGetSpO2Data(safeArgs);
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
@@ -316,5 +327,81 @@ export class ToolHandler {
   // Helper per ottenere la data di oggi in formato YYYY-MM-DD
   private getTodayDate(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // NUOVI HANDLER v1.2 - Wellness (Stress, Body Battery, HRV, etc.)
+  // ═══════════════════════════════════════════════════════════════
+
+  private async handleGetStressData(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching stress data for date: ${date}`);
+
+    const stressData = await this.client.getStressData(date);
+
+    return {
+      success: true,
+      date,
+      data: stressData,
+    };
+  }
+
+  private async handleGetBodyBattery(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', this.getTodayDate());
+    const endDate = this.getStringParam(args, 'endDate', startDate);
+
+    logger.info(`Fetching body battery from ${startDate} to ${endDate}`);
+
+    const batteryData = await this.client.getBodyBattery(startDate, endDate);
+
+    return {
+      success: true,
+      startDate,
+      endDate,
+      data: batteryData,
+    };
+  }
+
+  private async handleGetHrvData(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching HRV data for date: ${date}`);
+
+    const hrvData = await this.client.getHrvData(date);
+
+    return {
+      success: true,
+      date,
+      data: hrvData,
+    };
+  }
+
+  private async handleGetRespirationData(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching respiration data for date: ${date}`);
+
+    const respData = await this.client.getRespirationData(date);
+
+    return {
+      success: true,
+      date,
+      data: respData,
+    };
+  }
+
+  private async handleGetSpO2Data(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching SpO2 data for date: ${date}`);
+
+    const spo2Data = await this.client.getSpO2Data(date);
+
+    return {
+      success: true,
+      date,
+      data: spo2Data,
+    };
   }
 }

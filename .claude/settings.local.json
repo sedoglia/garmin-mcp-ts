@@ -7,7 +7,13 @@
       "Bash(set GARMIN_PASSWORD=mQpK9_WRLEv7)",
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nInitial release: Garmin Connect MCP Server v1.0.0\n\nFeatures:\n- 13 MCP tools for Garmin Connect integration\n- Full TypeScript implementation\n- JSON Schema validation (Zod-free)\n- Comprehensive test suite (37 tests)\n- Bilingual documentation (EN/IT)\n\nTools: list_recent_activities, get_activity_details, get_activity_splits,\nget_health_metrics, get_sleep_data, get_body_composition, get_devices,\nget_user_profile, get_training_status, get_steps, get_heart_rate,\nget_hydration, get_workouts\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial release: Garmin Connect MCP Server v1.0.0\n\nFeatures:\n- 13 MCP tools for Garmin Connect integration\n- Full TypeScript implementation\n- JSON Schema validation (Zod-free)\n- Comprehensive test suite (37 tests)\n- Bilingual documentation (EN/IT)\n\nTools: list_recent_activities, get_activity_details, get_activity_splits,\nget_health_metrics, get_sleep_data, get_body_composition, get_devices,\nget_user_profile, get_training_status, get_steps, get_heart_rate,\nget_hydration, get_workouts\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git commit:*)",
+      "Bash(dir C:garmin-mcp-tsnode_modulesgarmin-connect /b)"
     ],
     "deny": [],
     "ask": []

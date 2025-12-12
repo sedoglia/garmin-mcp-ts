@@ -237,4 +237,260 @@ export class GarminConnectClient {
   getGarminConnect(): any {
     return this.gc;
   }
+
+  // ═══════════════════════════════════════════════════════════════
+  // NUOVI METODI: Stress e Body Battery (Priorità Alta)
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Get stress data for a specific date
+   * Uses custom GET request to wellness-service API
+   */
+  async getStressData(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      // Endpoint: /wellness-service/wellness/dailyStress/{date}
+      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/dailyStress/${date}`;
+      const stressData = await this.gc.get(url);
+
+      // Calcola statistiche aggiuntive se i dati sono presenti
+      let avgStress: number | null = null;
+      let maxStress: number | null = null;
+      let minStress: number | null = null;
+      let stressValues: Array<{ timestamp: number; stressLevel: number }> = [];
+
+      if (stressData?.stressValuesArray) {
+        const values = stressData.stressValuesArray
+          .filter((v: [number, number]) => v[1] >= 0) // Filtra valori invalidi (-1, -2)
+          .map((v: [number, number]) => ({ timestamp: v[0], stressLevel: v[1] }));
+
+        stressValues = values;
+
+        if (values.length > 0) {
+          const levels = values.map((v: { stressLevel: number }) => v.stressLevel);
+          avgStress = Math.round(levels.reduce((a: number, b: number) => a + b, 0) / levels.length);
+          maxStress = Math.max(...levels);
+          minStress = Math.min(...levels);
+        }
+      }
+
+      return {
+        date,
+        calendarDate: stressData?.calendarDate,
+        overallStressLevel: stressData?.overallStressLevel,
+        restStressDuration: stressData?.restStressDuration,
+        activityStressDuration: stressData?.activityStressDuration,
+        lowStressDuration: stressData?.lowStressDuration,
+        mediumStressDuration: stressData?.mediumStressDuration,
+        highStressDuration: stressData?.highStressDuration,
+        stressQualifier: stressData?.stressQualifier,
+        avgStress,
+        maxStress,
+        minStress,
+        stressValueCount: stressValues.length,
+        stressValues,
+        raw: stressData,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      // Se non ci sono dati, restituisci un oggetto con messaggio
+      if (error.includes('404') || error.includes('Not Found')) {
+        logger.info(`No stress data available for ${date}`);
+        return {
+          date,
+          message: 'No stress data recorded for this date',
+          stressValues: [],
+        };
+      }
+      logger.error('Error fetching stress data:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get body battery data for a date range
+   * Uses custom GET request to wellness-service API
+   */
+  async getBodyBattery(startDate: string, endDate?: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const end = endDate || startDate;
+      // Endpoint: /wellness-service/wellness/bodyBattery/reports/daily
+      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/bodyBattery/reports/daily`;
+      const params = { startDate: startDate, endDate: end };
+      const batteryData = await this.gc.get(url, params);
+
+      // Processa i dati per ogni giorno
+      const days = Array.isArray(batteryData) ? batteryData : [batteryData];
+      const processedDays = days.map((day: any) => {
+        let bodyBatteryValues: Array<{ timestamp: number; level: number }> = [];
+        let maxLevel: number | null = null;
+        let minLevel: number | null = null;
+        let charged = 0;
+        let drained = 0;
+
+        if (day?.bodyBatteryValuesArray) {
+          bodyBatteryValues = day.bodyBatteryValuesArray
+            .filter((v: [number, number]) => v[1] >= 0)
+            .map((v: [number, number]) => ({ timestamp: v[0], level: v[1] }));
+
+          if (bodyBatteryValues.length > 0) {
+            const levels = bodyBatteryValues.map((v: { level: number }) => v.level);
+            maxLevel = Math.max(...levels);
+            minLevel = Math.min(...levels);
+          }
+        }
+
+        // Calcola charged/drained dai dati
+        if (day?.bodyBatteryFeedbackList) {
+          for (const feedback of day.bodyBatteryFeedbackList) {
+            if (feedback.feedbackType === 'CHARGED') {
+              charged += feedback.feedbackValue || 0;
+            } else if (feedback.feedbackType === 'DRAINED') {
+              drained += feedback.feedbackValue || 0;
+            }
+          }
+        }
+
+        return {
+          date: day?.calendarDate || day?.date,
+          startLevel: day?.startTimestampLocal ? bodyBatteryValues[0]?.level : null,
+          endLevel: bodyBatteryValues.length > 0 ? bodyBatteryValues[bodyBatteryValues.length - 1]?.level : null,
+          maxLevel,
+          minLevel,
+          charged: day?.charged || charged,
+          drained: day?.drained || drained,
+          valueCount: bodyBatteryValues.length,
+          bodyBatteryValues,
+        };
+      });
+
+      return {
+        startDate,
+        endDate: end,
+        dayCount: processedDays.length,
+        days: processedDays,
+        raw: batteryData,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      // Se non ci sono dati, restituisci un oggetto con messaggio
+      if (error.includes('404') || error.includes('Not Found')) {
+        logger.info(`No body battery data available for ${startDate}`);
+        return {
+          startDate,
+          endDate: endDate || startDate,
+          message: 'No body battery data recorded for this date range',
+          days: [],
+        };
+      }
+      logger.error('Error fetching body battery:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get body battery events for a specific date
+   */
+  async getBodyBatteryEvents(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/bodyBattery/events/${date}`;
+      const events = await this.gc.get(url);
+      return {
+        date,
+        events: events || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404') || error.includes('Not Found')) {
+        return {
+          date,
+          message: 'No body battery events for this date',
+          events: [],
+        };
+      }
+      logger.error('Error fetching body battery events:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // ALTRI NUOVI METODI: HRV, Respiration, SpO2
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Get Heart Rate Variability (HRV) data for a specific date
+   */
+  async getHrvData(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connect.garmin.com/modern/proxy/hrv-service/hrv/${date}`;
+      const hrvData = await this.gc.get(url);
+      return {
+        date,
+        ...hrvData,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404') || error.includes('Not Found')) {
+        return {
+          date,
+          message: 'No HRV data recorded for this date',
+        };
+      }
+      logger.error('Error fetching HRV data:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get respiration data for a specific date
+   */
+  async getRespirationData(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/daily/respiration/${date}`;
+      const respData = await this.gc.get(url);
+      return {
+        date,
+        ...respData,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404') || error.includes('Not Found')) {
+        return {
+          date,
+          message: 'No respiration data recorded for this date',
+        };
+      }
+      logger.error('Error fetching respiration data:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get SpO2 (Pulse Oximetry) data for a specific date
+   */
+  async getSpO2Data(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/daily/spo2/${date}`;
+      const spo2Data = await this.gc.get(url);
+      return {
+        date,
+        ...spo2Data,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404') || error.includes('Not Found')) {
+        return {
+          date,
+          message: 'No SpO2 data recorded for this date',
+        };
+      }
+      logger.error('Error fetching SpO2 data:', error);
+      throw err;
+    }
+  }
 }

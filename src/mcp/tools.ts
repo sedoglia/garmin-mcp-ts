@@ -207,4 +207,82 @@ export const toolDefinitions: ToolDefinition[] = [
       required: ['activityId'],
     },
   },
+  // ═══════════════════════════════════════════════════════════════
+  // NUOVI TOOL v1.2 - Wellness (Stress, Body Battery, HRV, etc.)
+  // ═══════════════════════════════════════════════════════════════
+  {
+    name: MCP_TOOL_NAMES.GET_STRESS_DATA,
+    description: 'Get stress level data for a specific date. Returns stress levels throughout the day (0-100 scale), with 0-25 resting, 26-50 low, 51-75 medium, 76-100 high stress. Includes overall stress level, durations by category, and detailed timestamp values.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format. Defaults to today if not specified.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_BODY_BATTERY,
+    description: 'Get Body Battery energy level data for a date range. Body Battery tracks energy levels (0-100) throughout the day based on sleep, stress, and activity. Shows charged/drained periods and sleep quality impact.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format. Defaults to today if not specified.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format. Defaults to startDate if not specified.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_HRV_DATA,
+    description: 'Get Heart Rate Variability (HRV) data for a specific date. HRV measures the variation in time between heartbeats, indicating recovery and stress levels.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format. Defaults to today if not specified.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_RESPIRATION_DATA,
+    description: 'Get respiration/breathing rate data for a specific date. Shows breaths per minute throughout the day and during sleep.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format. Defaults to today if not specified.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_SPO2_DATA,
+    description: 'Get SpO2 (blood oxygen saturation) data for a specific date. Shows pulse oximetry readings as percentage (typically 95-100% is normal).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format. Defaults to today if not specified.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
 ];

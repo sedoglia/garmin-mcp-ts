@@ -1,5 +1,5 @@
 // test-all-tools.ts
-// Test completo di tutti i 13 tool MCP Garmin
+// Test completo di tutti i 18 tool MCP Garmin
 
 import { GarminConnectClient } from './src/garmin/client.js';
 import { ToolHandler } from './src/mcp/handlers.js';
@@ -24,7 +24,7 @@ interface TestResult {
 
 async function runTests(): Promise<void> {
   console.error('\n' + '='.repeat(70));
-  console.error('🧪 GARMIN MCP SERVER - TEST SUITE COMPLETA (13 Tool)');
+  console.error('🧪 GARMIN MCP SERVER - TEST SUITE COMPLETA (18 Tool)');
   console.error('='.repeat(70) + '\n');
 
   const results: TestResult[] = [];
@@ -133,6 +133,38 @@ async function runTests(): Promise<void> {
     { name: 'get_workouts', args: undefined, description: 'Workouts pianificati (default)' },
     { name: 'get_workouts', args: {}, description: 'Workouts pianificati (empty object)' },
     { name: 'get_workouts', args: { limit: 5 }, description: 'Workouts pianificati (limit=5)' },
+
+    // ═══════════════════════════════════════════════════════════════
+    // TOOL 14: get_stress_data (NUOVO v1.2 - PRIORITÀ ALTA)
+    // ═══════════════════════════════════════════════════════════════
+    { name: 'get_stress_data', args: undefined, description: 'Stress (oggi)' },
+    { name: 'get_stress_data', args: {}, description: 'Stress (empty object)' },
+    { name: 'get_stress_data', args: { date: yesterday }, description: `Stress (${yesterday})` },
+
+    // ═══════════════════════════════════════════════════════════════
+    // TOOL 15: get_body_battery (NUOVO v1.2 - PRIORITÀ ALTA)
+    // ═══════════════════════════════════════════════════════════════
+    { name: 'get_body_battery', args: undefined, description: 'Body Battery (oggi)' },
+    { name: 'get_body_battery', args: {}, description: 'Body Battery (empty object)' },
+    { name: 'get_body_battery', args: { startDate: yesterday, endDate: today }, description: `Body Battery (${yesterday} - ${today})` },
+
+    // ═══════════════════════════════════════════════════════════════
+    // TOOL 16: get_hrv_data (NUOVO v1.2)
+    // ═══════════════════════════════════════════════════════════════
+    { name: 'get_hrv_data', args: undefined, description: 'HRV (oggi)' },
+    { name: 'get_hrv_data', args: { date: yesterday }, description: `HRV (${yesterday})` },
+
+    // ═══════════════════════════════════════════════════════════════
+    // TOOL 17: get_respiration_data (NUOVO v1.2)
+    // ═══════════════════════════════════════════════════════════════
+    { name: 'get_respiration_data', args: undefined, description: 'Respirazione (oggi)' },
+    { name: 'get_respiration_data', args: { date: yesterday }, description: `Respirazione (${yesterday})` },
+
+    // ═══════════════════════════════════════════════════════════════
+    // TOOL 18: get_spo2_data (NUOVO v1.2)
+    // ═══════════════════════════════════════════════════════════════
+    { name: 'get_spo2_data', args: undefined, description: 'SpO2 (oggi)' },
+    { name: 'get_spo2_data', args: { date: yesterday }, description: `SpO2 (${yesterday})` },
   ];
 
   // Esegui ogni test

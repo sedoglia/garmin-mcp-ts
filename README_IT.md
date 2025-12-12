@@ -9,23 +9,41 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 
 ## Funzionalità
 
-Questo server MCP fornisce **13 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
+Questo server MCP fornisce **18 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
 
+### Strumenti Attività
 | Strumento | Descrizione |
 |-----------|-------------|
 | `list_recent_activities` | Ottiene la lista delle attività recenti con filtri opzionali |
 | `get_activity_details` | Ottiene informazioni dettagliate su un'attività specifica |
 | `get_activity_splits` | Ottiene dati di split/lap per un'attività specifica |
+| `get_workouts` | Ottiene la lista dei workout pianificati |
+
+### Strumenti Salute & Benessere
+| Strumento | Descrizione |
+|-----------|-------------|
 | `get_health_metrics` | Ottiene metriche di salute giornaliere (passi, frequenza cardiaca, VO2 max) |
 | `get_sleep_data` | Ottiene informazioni dettagliate sul sonno (durata, qualità, fasi) |
 | `get_body_composition` | Ottiene dati sulla composizione corporea (peso, BMI, grasso corporeo) |
-| `get_devices` | Ottiene la lista dei dispositivi Garmin connessi |
-| `get_user_profile` | Ottiene informazioni sul profilo utente |
-| `get_training_status` | Ottiene lo stato di allenamento e statistiche delle attività |
 | `get_steps` | Ottiene il conteggio passi per una data specifica |
 | `get_heart_rate` | Ottiene dati dettagliati sulla frequenza cardiaca |
 | `get_hydration` | Ottiene dati giornalieri sull'idratazione |
-| `get_workouts` | Ottiene la lista dei workout pianificati |
+
+### Metriche Wellness (NUOVO in v1.2)
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_stress_data` | **Ottiene i livelli di stress durante il giorno (scala 0-100)** |
+| `get_body_battery` | **Ottiene i livelli di energia Body Battery (0-100)** |
+| `get_hrv_data` | Ottiene dati di variabilità cardiaca (HRV) |
+| `get_respiration_data` | Ottiene dati sulla frequenza respiratoria |
+| `get_spo2_data` | Ottiene dati SpO2 (saturazione di ossigeno nel sangue) |
+
+### Strumenti Utente & Dispositivi
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_devices` | Ottiene la lista dei dispositivi Garmin connessi |
+| `get_user_profile` | Ottiene informazioni sul profilo utente |
+| `get_training_status` | Ottiene lo stato di allenamento e statistiche delle attività |
 
 ## Prerequisiti
 
@@ -287,6 +305,56 @@ Ottiene dati di split/lap per un'attività specifica.
 - `activityId` (obbligatorio, numero): L'identificatore univoco dell'attività
 
 **Restituisce:** Riepiloghi degli split inclusi passo, distanza e tempo per ogni split.
+
+### get_stress_data (NUOVO in v1.2)
+
+Ottiene i dati del livello di stress per una data specifica. Lo stress è misurato su una scala 0-100:
+- **0-25**: Stato di riposo
+- **26-50**: Stress basso
+- **51-75**: Stress medio
+- **76-100**: Stress alto
+
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
+
+**Restituisce:** Livello di stress complessivo, durata per categoria, stress medio/max/min, e valori con timestamp.
+
+### get_body_battery (NUOVO in v1.2)
+
+Ottiene i dati del livello di energia Body Battery. Body Battery traccia i livelli di energia (0-100) durante il giorno basandosi sulla qualità del sonno, stress e attività fisica.
+
+**Parametri:**
+- `startDate` (opzionale, stringa): Data iniziale nel formato YYYY-MM-DD. Default: oggi
+- `endDate` (opzionale, stringa): Data finale nel formato YYYY-MM-DD. Default: uguale a startDate
+
+**Restituisce:** Livelli di energia durante il giorno, livelli max/min, quantità caricata e scaricata.
+
+### get_hrv_data (NUOVO in v1.2)
+
+Ottiene dati di Variabilità della Frequenza Cardiaca (HRV) per una data specifica. L'HRV misura la variazione nel tempo tra i battiti cardiaci, indicando lo stato di recupero e i livelli di stress.
+
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
+
+**Restituisce:** Metriche e letture HRV.
+
+### get_respiration_data (NUOVO in v1.2)
+
+Ottiene dati sulla frequenza respiratoria per una data specifica.
+
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
+
+**Restituisce:** Respiri al minuto durante il giorno e durante il sonno.
+
+### get_spo2_data (NUOVO in v1.2)
+
+Ottiene dati SpO2 (saturazione di ossigeno nel sangue) per una data specifica. I livelli normali di SpO2 sono tipicamente 95-100%.
+
+**Parametri:**
+- `date` (opzionale, stringa): Data nel formato YYYY-MM-DD. Default: oggi
+
+**Restituisce:** Letture di pulsossimetria come percentuale.
 
 ## Risoluzione dei Problemi
 

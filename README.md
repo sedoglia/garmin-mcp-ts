@@ -9,23 +9,41 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 
 ## Features
 
-This MCP server provides **13 powerful tools** to interact with your Garmin Connect data:
+This MCP server provides **18 powerful tools** to interact with your Garmin Connect data:
 
+### Activity Tools
 | Tool | Description |
 |------|-------------|
 | `list_recent_activities` | Get a list of recent activities with optional filters |
 | `get_activity_details` | Get detailed information about a specific activity |
 | `get_activity_splits` | Get split/lap data for a specific activity |
+| `get_workouts` | Get list of scheduled/planned workouts |
+
+### Health & Wellness Tools
+| Tool | Description |
+|------|-------------|
 | `get_health_metrics` | Get daily health metrics (steps, heart rate, VO2 max) |
 | `get_sleep_data` | Get detailed sleep information (duration, quality, stages) |
 | `get_body_composition` | Get body composition data (weight, BMI, body fat) |
-| `get_devices` | Get list of connected Garmin devices |
-| `get_user_profile` | Get user profile information |
-| `get_training_status` | Get training status and activity statistics |
 | `get_steps` | Get step count for a specific date |
 | `get_heart_rate` | Get detailed heart rate data for a specific date |
 | `get_hydration` | Get daily hydration/water intake data |
-| `get_workouts` | Get list of scheduled/planned workouts |
+
+### Wellness Metrics (NEW in v1.2)
+| Tool | Description |
+|------|-------------|
+| `get_stress_data` | **Get stress levels throughout the day (0-100 scale)** |
+| `get_body_battery` | **Get Body Battery energy levels (0-100)** |
+| `get_hrv_data` | Get Heart Rate Variability (HRV) data |
+| `get_respiration_data` | Get respiration/breathing rate data |
+| `get_spo2_data` | Get SpO2 (blood oxygen saturation) data |
+
+### User & Device Tools
+| Tool | Description |
+|------|-------------|
+| `get_devices` | Get list of connected Garmin devices |
+| `get_user_profile` | Get user profile information |
+| `get_training_status` | Get training status and activity statistics |
 
 ## Prerequisites
 
@@ -287,6 +305,56 @@ Gets split/lap data for a specific activity.
 - `activityId` (required, number): The unique activity identifier
 
 **Returns:** Split summaries including pace, distance, and time for each split.
+
+### get_stress_data (NEW in v1.2)
+
+Gets stress level data for a specific date. Stress is measured on a 0-100 scale:
+- **0-25**: Resting state
+- **26-50**: Low stress
+- **51-75**: Medium stress
+- **76-100**: High stress
+
+**Parameters:**
+- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+
+**Returns:** Overall stress level, duration by category (rest, low, medium, high), average/max/min stress, and timestamped stress values.
+
+### get_body_battery (NEW in v1.2)
+
+Gets Body Battery energy level data. Body Battery tracks energy levels (0-100) throughout the day based on sleep quality, stress, and physical activity.
+
+**Parameters:**
+- `startDate` (optional, string): Start date in YYYY-MM-DD format. Default: today
+- `endDate` (optional, string): End date in YYYY-MM-DD format. Default: same as startDate
+
+**Returns:** Energy levels throughout the day, max/min levels, charged and drained amounts.
+
+### get_hrv_data (NEW in v1.2)
+
+Gets Heart Rate Variability (HRV) data for a specific date. HRV measures the variation in time between heartbeats, which indicates recovery status and stress levels.
+
+**Parameters:**
+- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+
+**Returns:** HRV metrics and readings.
+
+### get_respiration_data (NEW in v1.2)
+
+Gets respiration/breathing rate data for a specific date.
+
+**Parameters:**
+- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+
+**Returns:** Breaths per minute throughout the day and during sleep.
+
+### get_spo2_data (NEW in v1.2)
+
+Gets SpO2 (blood oxygen saturation) data for a specific date. Normal SpO2 levels are typically 95-100%.
+
+**Parameters:**
+- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
+
+**Returns:** Pulse oximetry readings as percentage.
 
 ## Troubleshooting
 
