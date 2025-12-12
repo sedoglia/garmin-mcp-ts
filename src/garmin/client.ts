@@ -249,8 +249,8 @@ export class GarminConnectClient {
   async getStressData(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      // Endpoint: /wellness-service/wellness/dailyStress/{date}
-      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/dailyStress/${date}`;
+      // Endpoint corretto: connectapi.garmin.com (non connect.garmin.com/modern/proxy)
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/dailyStress/${date}`;
       const stressData = await this.gc.get(url);
 
       // Calcola statistiche aggiuntive se i dati sono presenti
@@ -315,10 +315,9 @@ export class GarminConnectClient {
     this.checkInitialized();
     try {
       const end = endDate || startDate;
-      // Endpoint: /wellness-service/wellness/bodyBattery/reports/daily
-      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/bodyBattery/reports/daily`;
-      const params = { startDate: startDate, endDate: end };
-      const batteryData = await this.gc.get(url, params);
+      // Endpoint corretto: connectapi.garmin.com con query params
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/bodyBattery/reports/daily?startDate=${startDate}&endDate=${end}`;
+      const batteryData = await this.gc.get(url);
 
       // Processa i dati per ogni giorno
       const days = Array.isArray(batteryData) ? batteryData : [batteryData];
@@ -395,7 +394,7 @@ export class GarminConnectClient {
   async getBodyBatteryEvents(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/bodyBattery/events/${date}`;
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/bodyBattery/events/${date}`;
       const events = await this.gc.get(url);
       return {
         date,
@@ -425,7 +424,7 @@ export class GarminConnectClient {
   async getHrvData(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connect.garmin.com/modern/proxy/hrv-service/hrv/${date}`;
+      const url = `https://connectapi.garmin.com/hrv-service/hrv/${date}`;
       const hrvData = await this.gc.get(url);
       return {
         date,
@@ -450,7 +449,7 @@ export class GarminConnectClient {
   async getRespirationData(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/daily/respiration/${date}`;
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/daily/respiration/${date}`;
       const respData = await this.gc.get(url);
       return {
         date,
@@ -475,7 +474,7 @@ export class GarminConnectClient {
   async getSpO2Data(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connect.garmin.com/modern/proxy/wellness-service/wellness/daily/spo2/${date}`;
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/daily/spo2/${date}`;
       const spo2Data = await this.gc.get(url);
       return {
         date,
