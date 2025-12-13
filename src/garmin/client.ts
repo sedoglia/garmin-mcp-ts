@@ -3,10 +3,20 @@
 import GarminConnectModule from 'garmin-connect';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import logger from '../utils/logger.js';
 
 // La libreria è CommonJS, quindi l'export default contiene la classe
 const GarminConnect = (GarminConnectModule as any).GarminConnect || GarminConnectModule;
+
+// Get project root directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
+
+// Token file paths in project root
+const OAUTH1_TOKEN_PATH = path.join(PROJECT_ROOT, 'oauth1_token.json');
+const OAUTH2_TOKEN_PATH = path.join(PROJECT_ROOT, 'oauth2_token.json');
 
 // Token storage interface
 interface OAuthTokens {
@@ -25,17 +35,17 @@ export class GarminConnectClient {
 
   /**
    * Initialize with email/password credentials
-   * Optionally load/save OAuth tokens from/to a directory
+   * OAuth tokens are automatically saved/loaded from project root
    */
-  async initialize(email: string, password: string, tokenDir?: string): Promise<void> {
+  async initialize(email: string, password: string): Promise<void> {
     try {
       logger.info('🔐 Authenticating with Garmin Connect...');
 
       this.gc = new GarminConnect({ username: email, password: password });
 
-      // Try to load existing tokens first
-      if (tokenDir && this.tryLoadTokens(tokenDir)) {
-        logger.info('✅ Loaded existing OAuth tokens');
+      // Try to load existing tokens first from project root
+      if (this.tryLoadTokens()) {
+        logger.info('✅ Loaded existing OAuth tokens from project root');
         this.initialized = true;
 
         // Verify tokens are still valid by making a simple request
@@ -53,10 +63,8 @@ export class GarminConnectClient {
       this.initialized = true;
       logger.info('✅ Authentication successful');
 
-      // Save tokens if tokenDir is specified
-      if (tokenDir) {
-        this.saveTokens(tokenDir);
-      }
+      // Always save tokens to project root
+      this.saveTokens();
 
       // Get display name for user-specific API calls
       try {
@@ -106,45 +114,32 @@ export class GarminConnectClient {
   }
 
   /**
-   * Save OAuth tokens to files in the specified directory
+   * Save OAuth tokens to files in project root
    */
-  saveTokens(dirPath: string): void {
+  saveTokens(): void {
     try {
       const tokens = this.gc.exportToken();
       if (!tokens) return;
 
-      if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
-      }
-
-      fs.writeFileSync(
-        path.join(dirPath, 'oauth1_token.json'),
-        JSON.stringify(tokens.oauth1, null, 2)
-      );
-      fs.writeFileSync(
-        path.join(dirPath, 'oauth2_token.json'),
-        JSON.stringify(tokens.oauth2, null, 2)
-      );
-      logger.info(`✅ OAuth tokens saved to ${dirPath}`);
+      fs.writeFileSync(OAUTH1_TOKEN_PATH, JSON.stringify(tokens.oauth1, null, 2));
+      fs.writeFileSync(OAUTH2_TOKEN_PATH, JSON.stringify(tokens.oauth2, null, 2));
+      logger.info(`✅ OAuth tokens saved to ${PROJECT_ROOT}`);
     } catch (err) {
       logger.warn('Failed to save OAuth tokens:', err);
     }
   }
 
   /**
-   * Try to load OAuth tokens from files in the specified directory
+   * Try to load OAuth tokens from files in project root
    */
-  private tryLoadTokens(dirPath: string): boolean {
+  private tryLoadTokens(): boolean {
     try {
-      const oauth1Path = path.join(dirPath, 'oauth1_token.json');
-      const oauth2Path = path.join(dirPath, 'oauth2_token.json');
-
-      if (!fs.existsSync(oauth1Path) || !fs.existsSync(oauth2Path)) {
+      if (!fs.existsSync(OAUTH1_TOKEN_PATH) || !fs.existsSync(OAUTH2_TOKEN_PATH)) {
         return false;
       }
 
-      const oauth1 = JSON.parse(fs.readFileSync(oauth1Path, 'utf-8'));
-      const oauth2 = JSON.parse(fs.readFileSync(oauth2Path, 'utf-8'));
+      const oauth1 = JSON.parse(fs.readFileSync(OAUTH1_TOKEN_PATH, 'utf-8'));
+      const oauth2 = JSON.parse(fs.readFileSync(OAUTH2_TOKEN_PATH, 'utf-8'));
 
       this.gc.loadToken(oauth1, oauth2);
       return true;

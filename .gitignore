@@ -4,6 +4,10 @@
 .env.*.local
 config.json
 
+# OAuth tokens (automatically saved by the app)
+oauth1_token.json
+oauth2_token.json
+
 # Dependencies
 node_modules/
 npm-debug.log
