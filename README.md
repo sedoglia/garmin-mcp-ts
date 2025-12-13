@@ -19,10 +19,6 @@
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
 
 ## Novità v3.0.0
-
-**Espansione completa dall'API Python Garmin Connect!** Totale: **71 strumenti MCP testati**
-
-### Nuove funzionalità v3.0:
 - **OAuth Token Persistence**: Salvataggio/caricamento token OAuth per riutilizzo sessione
 - **User Summary**: Riepilogo giornaliero completo dell'utente
 - **Steps Avanzati**: Daily steps con range di date, steps data dettagliati
