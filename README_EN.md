@@ -274,11 +274,7 @@ Add the Garmin MCP server to your `claude_desktop_config.json`:
   "mcpServers": {
     "garmin": {
       "command": "node",
-      "args": ["C:\\path\\to\\garmin-mcp-ts\\dist\\index.js"],
-      "env": {
-        "GARMIN_EMAIL": "your.email@example.com",
-        "GARMIN_PASSWORD": "your_garmin_password"
-      }
+      "args": ["C:\\percorso\\a\\garmin-mcp-ts\\dist\\index.js"]
     }
   }
 }
@@ -291,11 +287,7 @@ Add the Garmin MCP server to your `claude_desktop_config.json`:
   "mcpServers": {
     "garmin": {
       "command": "node",
-      "args": ["/path/to/garmin-mcp-ts/dist/index.js"],
-      "env": {
-        "GARMIN_EMAIL": "your.email@example.com",
-        "GARMIN_PASSWORD": "your_garmin_password"
-      }
+      "args": ["/percorso/a/garmin-mcp-ts/dist/index.js"]
     }
   }
 }
