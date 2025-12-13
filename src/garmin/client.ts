@@ -560,34 +560,109 @@ export class GarminConnectClient {
   }): Promise<any> {
     this.checkInitialized();
     try {
-      // Try using the library's addWorkout if available
-      const gc = this.gc as any;
-      if (typeof gc.addWorkout === 'function') {
-        const result = await gc.addWorkout(workout);
-        return {
-          success: true,
-          workoutId: result?.workoutId,
-          workoutName: workout.workoutName,
-          ...result,
-        };
+      // Build the workout payload in Garmin's exact format
+      const sportType = this.mapSportType(workout.sportType);
+
+      // Calculate estimated duration from steps
+      let estimatedDuration = 0;
+      for (const segment of workout.workoutSegments) {
+        for (const step of segment.workoutSteps) {
+          if (step.endCondition === 'time' && step.endConditionValue) {
+            estimatedDuration += step.endConditionValue;
+          } else if (step.endCondition === 'distance' && step.endConditionValue) {
+            // Estimate ~6 min/km for running
+            estimatedDuration += (step.endConditionValue / 1000) * 360;
+          }
+        }
       }
 
-      // Fallback: try addRunningWorkout for running workouts
-      if (workout.sportType.toLowerCase() === 'running' && typeof gc.addRunningWorkout === 'function') {
-        const result = await gc.addRunningWorkout(workout.workoutName, workout.description || '', workout.workoutSegments);
-        return {
-          success: true,
-          workoutId: result?.workoutId,
-          workoutName: workout.workoutName,
-          ...result,
-        };
-      }
+      const workoutPayload = {
+        workoutName: workout.workoutName,
+        description: workout.description || null,
+        sportType,
+        estimatedDurationInSecs: estimatedDuration || 1800,
+        estimatedDistanceInMeters: null,
+        estimateType: null,
+        estimatedDistanceUnit: { unitId: null, unitKey: null, factor: null },
+        poolLength: 0,
+        poolLengthUnit: { unitId: null, unitKey: null, factor: null },
+        workoutProvider: null,
+        workoutSourceId: null,
+        consumer: null,
+        atpPlanId: null,
+        workoutNameI18nKey: null,
+        descriptionI18nKey: null,
+        shared: false,
+        estimated: false,
+        workoutSegments: workout.workoutSegments.map(seg => ({
+          segmentOrder: seg.segmentOrder,
+          sportType: this.mapSportType(seg.sportType),
+          workoutSteps: seg.workoutSteps.map(step => {
+            const stepType = this.mapStepType(step.stepType);
+            const endCondition = this.mapEndCondition(step.endCondition);
+            const targetType = step.targetType
+              ? this.mapTargetType(step.targetType)
+              : { workoutTargetTypeId: 1, workoutTargetTypeKey: 'no.target' };
 
-      // Return info about the limitation
+            return {
+              type: 'ExecutableStepDTO',
+              stepId: null,
+              stepOrder: step.stepOrder,
+              childStepId: step.childStepId || null,
+              description: null,
+              stepType: {
+                stepTypeId: stepType.stepTypeId,
+                stepTypeKey: stepType.stepTypeKey,
+                displayOrder: step.stepOrder,
+              },
+              endCondition: {
+                conditionTypeId: endCondition.conditionTypeId,
+                conditionTypeKey: endCondition.conditionTypeKey,
+                displayOrder: 1,
+                displayable: true,
+              },
+              endConditionValue: step.endConditionValue || null,
+              preferredEndConditionUnit: step.endCondition === 'distance'
+                ? { unitKey: 'meter' }
+                : step.endCondition === 'time'
+                  ? { unitKey: 'second' }
+                  : null,
+              endConditionCompare: null,
+              endConditionZone: null,
+              targetType: {
+                workoutTargetTypeId: targetType.workoutTargetTypeId,
+                workoutTargetTypeKey: targetType.workoutTargetTypeKey,
+                displayOrder: 1,
+              },
+              targetValueOne: step.targetValueLow || null,
+              targetValueTwo: step.targetValueHigh || null,
+              targetValueUnit: null,
+              zoneNumber: null,
+              secondaryTargetType: null,
+              secondaryTargetValueOne: null,
+              secondaryTargetValueTwo: null,
+              secondaryTargetValueUnit: null,
+              secondaryZoneNumber: null,
+              strokeType: { strokeTypeId: 0, strokeTypeKey: null, displayOrder: 0 },
+              equipmentType: { equipmentTypeId: 0, equipmentTypeKey: null, displayOrder: 0 },
+              category: null,
+              exerciseName: null,
+              workoutProvider: null,
+              providerExerciseSourceId: null,
+              weightValue: null,
+              weightUnit: null,
+            };
+          }),
+        })),
+      };
+
+      // Use the library's addWorkout method with properly formatted payload
+      const result = await this.gc.addWorkout(workoutPayload);
       return {
-        success: false,
-        message: 'Workout creation requires Garmin Connect web interface or the garmin-connect library addWorkout method',
-        workoutDefinition: workout,
+        success: true,
+        workoutId: result?.workoutId,
+        workoutName: workout.workoutName,
+        ...result,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -596,7 +671,7 @@ export class GarminConnectClient {
       return {
         success: false,
         error,
-        message: 'Workout creation failed. Complex workouts may require Garmin Connect web interface.',
+        message: 'Workout creation failed. Please check the workout format.',
         workoutDefinition: workout,
       };
     }
@@ -641,8 +716,8 @@ export class GarminConnectClient {
   async deleteWorkout(workoutId: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/workout-service/workout/${workoutId}`;
-      await this.gc.delete(url);
+      // Use the library's deleteWorkout method
+      await this.gc.deleteWorkout({ workoutId });
       return {
         success: true,
         workoutId,
