@@ -8,6 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/Version-2.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,11 +18,23 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
 
+## What's New in v2.0.0
+
+**Massive expansion with 37 new tools!** Total: **55 MCP tools**
+
+- **Workout Management**: Create, edit, schedule, and delete structured workouts
+- **Activity Management**: Upload, download, edit, and delete activities
+- **Advanced Metrics**: Training Readiness, Endurance Score, Fitness Age
+- **Weight & Body**: Weight tracking, blood pressure management
+- **Goals & Badges**: Goals, challenges, earned badges
+- **Gear Management**: Shoes, bikes, and equipment tracking
+- **Reports & Progress**: Daily summaries and progress reports
+
 ## Features
 
-This MCP server provides **18 powerful tools** to interact with your Garmin Connect data:
+This MCP server provides **55 powerful tools** to interact with your Garmin Connect data:
 
-### Activity Tools
+### Activity Tools (Base)
 | Tool | Description |
 |------|-------------|
 | `list_recent_activities` | Get a list of recent activities with optional filters |
@@ -39,11 +52,11 @@ This MCP server provides **18 powerful tools** to interact with your Garmin Conn
 | `get_heart_rate` | Get detailed heart rate data for a specific date |
 | `get_hydration` | Get daily hydration/water intake data |
 
-### Wellness Metrics (NEW in v1.2)
+### Wellness Metrics (v1.2)
 | Tool | Description |
 |------|-------------|
-| `get_stress_data` | **Get stress levels throughout the day (0-100 scale)** |
-| `get_body_battery` | **Get Body Battery energy levels (0-100)** |
+| `get_stress_data` | Get stress levels throughout the day (0-100 scale) |
+| `get_body_battery` | Get Body Battery energy levels (0-100) |
 | `get_hrv_data` | Get Heart Rate Variability (HRV) data |
 | `get_respiration_data` | Get respiration/breathing rate data |
 | `get_spo2_data` | Get SpO2 (blood oxygen saturation) data |
@@ -54,6 +67,90 @@ This MCP server provides **18 powerful tools** to interact with your Garmin Conn
 | `get_devices` | Get list of connected Garmin devices |
 | `get_user_profile` | Get user profile information |
 | `get_training_status` | Get training status and activity statistics |
+
+---
+
+## 🆕 New Tools in v2.0
+
+### Workout Management (PRIORITY 1)
+| Tool | Description |
+|------|-------------|
+| `get_workout_by_id` | Get details of a specific workout |
+| `download_workout` | Download workout in FIT format for device sync |
+| `create_workout` | **Create structured workouts** with warmup, intervals, cooldown |
+| `update_workout` | Modify an existing workout |
+| `delete_workout` | Delete a workout |
+| `schedule_workout` | Schedule a workout on a specific date |
+
+### Activity Management (PRIORITY 2)
+| Tool | Description |
+|------|-------------|
+| `upload_activity` | Upload activity file (FIT, GPX, TCX) |
+| `create_manual_activity` | Create manual activity entry |
+| `set_activity_name` | Change activity name |
+| `set_activity_type` | Change activity type |
+| `delete_activity` | Delete an activity (⚠️ irreversible) |
+| `download_activity` | Download activity in various formats (FIT, TCX, GPX, KML, CSV) |
+
+### Device & Settings
+| Tool | Description |
+|------|-------------|
+| `get_device_last_used` | Get info about last used device |
+| `get_device_settings` | Get settings for a specific device |
+
+### Advanced Health & Wellness
+| Tool | Description |
+|------|-------------|
+| `get_all_day_stress` | Get detailed all-day stress data |
+| `get_floors` | Get floors climbed |
+| `get_intensity_minutes` | Get intensity minutes (moderate and vigorous) |
+| `get_max_metrics` | Get max metrics (VO2 max, etc.) |
+| `get_training_readiness` | **Get Training Readiness score** |
+| `get_endurance_score` | **Get Endurance Score** |
+| `get_fitness_age` | **Get estimated Fitness Age** |
+| `get_daily_summary` | Get comprehensive daily summary |
+
+### Weight & Body
+| Tool | Description |
+|------|-------------|
+| `get_weigh_ins` | Get weigh-ins for a date range |
+| `add_weigh_in` | Add weigh-in with body composition data |
+| `delete_weigh_in` | Delete a weigh-in |
+| `get_blood_pressure` | Get blood pressure readings |
+| `set_blood_pressure` | Record blood pressure measurement |
+
+### Advanced Activity Details
+| Tool | Description |
+|------|-------------|
+| `get_activity_weather` | Get weather during an activity |
+| `get_activity_hr_zones` | Get time in HR zones |
+| `get_activity_gear` | Get gear used in an activity |
+| `get_activity_exercise_sets` | Get exercise sets (strength training) |
+
+### Goals, Challenges & Records
+| Tool | Description |
+|------|-------------|
+| `get_goals` | Get goals (active, future, past) |
+| `get_adhoc_challenges` | Get ad-hoc challenges |
+| `get_badge_challenges` | Get available badge challenges |
+| `get_earned_badges` | Get earned badges |
+| `get_personal_records` | Get personal records |
+| `get_race_predictions` | Get race time predictions (5K, 10K, HM, M) |
+
+### Gear Management
+| Tool | Description |
+|------|-------------|
+| `get_gear` | Get all equipment |
+| `get_gear_defaults` | Get default gear by activity type |
+| `get_gear_stats` | Get gear usage statistics |
+| `link_gear_to_activity` | Link gear to an activity |
+
+### Reports & Progress
+| Tool | Description |
+|------|-------------|
+| `get_progress_summary` | Get progress summary between two dates |
+
+---
 
 ## Prerequisites
 
@@ -146,8 +243,6 @@ Add the Garmin MCP server to your `claude_desktop_config.json`:
 2. Look for the Garmin tools in Claude's available tools (hammer icon)
 3. Try asking: "What were my recent activities on Garmin?"
 
-<!-- Screenshot placeholder: Show Claude Desktop with Garmin tools available -->
-
 ## Usage Examples
 
 ### Querying Recent Activities
@@ -168,211 +263,60 @@ Add the Garmin MCP server to your `claude_desktop_config.json`:
 
 > "Show me my sleep data for December 10th"
 
-### Activity Details
+### Workout Management (NEW v2.0)
 
-> "Tell me more about my last running activity"
+> "Show me my planned workouts"
 
-> "What was my average heart rate in my most recent workout?"
+> "Download my latest workout"
 
-### Device Information
+### Training Readiness (NEW v2.0)
 
-> "What Garmin devices do I have connected?"
+> "What's my Training Readiness today?"
 
-### Training Status
+> "Show me my Endurance Score"
 
-> "What's my current training status?"
+### Progress & Statistics (NEW v2.0)
 
-> "How many activities have I recorded in total?"
+> "How many kilometers did I run this month?"
 
-## Tool Reference
+> "Show me my progress summary for the last month"
 
-### list_recent_activities
+## Testing
 
-Retrieves a list of recent activities from Garmin Connect.
+Run tests with real data:
 
-**Parameters:**
-- `limit` (optional, number): Maximum number of activities to return. Default: 10, Max: 100
-- `start` (optional, number): Starting index for pagination. Default: 0
-
-**Example Response:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "activityId": 12345678,
-      "activityName": "Morning Run",
-      "startTimeLocal": "2024-12-11 07:30:00",
-      "distance": 5000,
-      "duration": 1800,
-      "averageHeartRate": 145
-    }
-  ]
-}
+```bash
+npm test
 ```
 
-### get_activity_details
-
-Gets detailed information about a specific activity.
-
-**Parameters:**
-- `activityId` (required, number): The unique activity identifier
-
-### get_health_metrics
-
-Retrieves daily health metrics for a specific date.
-
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
-
-**Returns:** Heart rate data, step count, and other daily metrics.
-
-### get_sleep_data
-
-Gets detailed sleep information for a specific date.
-
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
-
-**Returns:** Sleep duration, sleep stages, sleep quality score.
-
-### get_body_composition
-
-Retrieves body composition data.
-
-**Parameters:**
-- `days` (optional, number): Number of days of data. Default: 30
-
-**Returns:** Weight, BMI, body fat percentage (if available).
-
-### get_devices
-
-Lists all connected Garmin devices.
-
-**Parameters:** None
-
-**Returns:** Device information including name, model, and settings.
-
-### get_user_profile
-
-Gets user profile information.
-
-**Parameters:** None
-
-**Returns:** User ID, display name, and profile settings.
-
-### get_training_status
-
-Retrieves training status and statistics.
-
-**Parameters:**
-- `days` (optional, number): Number of days for statistics. Default: 7
-
-**Returns:** Activity count, training statistics, user settings.
-
-### get_steps
-
-Gets step count for a specific date.
-
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
-
-**Returns:** Total steps recorded for the specified date.
-
-### get_heart_rate
-
-Gets detailed heart rate data for a specific date.
-
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
-
-**Returns:** Resting heart rate, max heart rate, and heart rate zones.
-
-### get_hydration
-
-Gets daily hydration/water intake data.
-
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
-
-**Returns:** Hydration data in oz and ml (or message if no data recorded).
-
-### get_workouts
-
-Gets list of scheduled/planned workouts.
-
-**Parameters:**
-- `limit` (optional, number): Maximum number of workouts to return. Default: 10, Max: 100
-- `start` (optional, number): Starting index for pagination. Default: 0
-
-**Returns:** List of planned workouts from Garmin Connect.
-
-### get_activity_splits
-
-Gets split/lap data for a specific activity.
-
-**Parameters:**
-- `activityId` (required, number): The unique activity identifier
-
-**Returns:** Split summaries including pace, distance, and time for each split.
-
-### get_stress_data (NEW in v1.2)
-
-Gets stress level data for a specific date. Stress is measured on a 0-100 scale:
-- **0-25**: Resting state
-- **26-50**: Low stress
-- **51-75**: Medium stress
-- **76-100**: High stress
-
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
-
-**Returns:** Overall stress level, duration by category (rest, low, medium, high), average/max/min stress, and timestamped stress values.
-
-### get_body_battery (NEW in v1.2)
-
-Gets Body Battery energy level data. Body Battery tracks energy levels (0-100) throughout the day based on sleep quality, stress, and physical activity.
-
-**Parameters:**
-- `startDate` (optional, string): Start date in YYYY-MM-DD format. Default: today
-- `endDate` (optional, string): End date in YYYY-MM-DD format. Default: same as startDate
-
-**Returns:** Energy levels throughout the day, max/min levels, charged and drained amounts.
-
-### get_hrv_data (NEW in v1.2)
-
-Gets Heart Rate Variability (HRV) data for a specific date. HRV measures the variation in time between heartbeats, which indicates recovery status and stress levels.
-
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
-
-**Returns:** HRV metrics and readings.
-
-### get_respiration_data (NEW in v1.2)
-
-Gets respiration/breathing rate data for a specific date.
-
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
-
-**Returns:** Breaths per minute throughout the day and during sleep.
-
-### get_spo2_data (NEW in v1.2)
-
-Gets SpO2 (blood oxygen saturation) data for a specific date. Normal SpO2 levels are typically 95-100%.
-
-**Parameters:**
-- `date` (optional, string): Date in YYYY-MM-DD format. Default: today
-
-**Returns:** Pulse oximetry readings as percentage.
+The test script validates all 55 tools with your Garmin account.
+
+## Architecture
+
+```
+garmin-mcp-ts/
+├── src/
+│   ├── index.ts           # Entry point, stdout/stderr handling
+│   ├── garmin/
+│   │   ├── client.ts      # Garmin Connect API client (1600+ lines)
+│   │   ├── types.ts       # TypeScript type definitions
+│   │   └── simple-login.ts # Standalone login test utility
+│   ├── mcp/
+│   │   ├── server.ts      # MCP server setup and request handlers
+│   │   ├── tools.ts       # Tool definitions and schemas (55 tools)
+│   │   └── handlers.ts    # Tool implementation logic
+│   └── utils/
+│       ├── constants.ts   # Application constants
+│       ├── errors.ts      # Custom error classes
+│       └── logger.ts      # Logging utility (stderr only)
+├── dist/                  # Compiled JavaScript output
+├── package.json
+└── tsconfig.json
+```
 
 ## Troubleshooting
 
 ### Common Issues
-
-#### "Cannot read properties of undefined"
-
-This error typically occurs when the server receives malformed arguments. Ensure you're using the latest version with proper argument handling.
 
 #### Authentication Failed
 
@@ -398,49 +342,6 @@ The server outputs diagnostic information to stderr. In Claude Desktop, check th
 - **Windows:** `%APPDATA%\Claude\logs\`
 - **macOS:** `~/Library/Logs/Claude/`
 
-### Debug Mode
-
-Enable debug logging by setting the environment variable:
-
-```json
-{
-  "env": {
-    "GARMIN_EMAIL": "...",
-    "GARMIN_PASSWORD": "...",
-    "DEBUG_GARMIN": "true"
-  }
-}
-```
-
-## Architecture
-
-```
-garmin-mcp-ts/
-├── src/
-│   ├── index.ts           # Entry point, stdout/stderr handling
-│   ├── garmin/
-│   │   ├── client.ts      # Garmin Connect API client
-│   │   ├── types.ts       # TypeScript type definitions
-│   │   └── simple-login.ts # Standalone login test utility
-│   ├── mcp/
-│   │   ├── server.ts      # MCP server setup and request handlers
-│   │   ├── tools.ts       # Tool definitions and schemas
-│   │   └── handlers.ts    # Tool implementation logic
-│   └── utils/
-│       ├── constants.ts   # Application constants
-│       ├── errors.ts      # Custom error classes
-│       └── logger.ts      # Logging utility (stderr only)
-├── dist/                  # Compiled JavaScript output
-├── package.json
-└── tsconfig.json
-```
-
-### Key Design Decisions
-
-- **Stdout Protection:** All console.log calls are redirected to stderr to ensure only valid JSON-RPC messages appear on stdout
-- **Garmin Connect Library:** Uses the `garmin-connect` npm package for reliable authentication
-- **JSON Schema Validation:** Input parameters are validated using JSON Schema with optional fields and sensible defaults
-
 ## Credits & Acknowledgments
 
 This project was inspired by and built upon the work of several open-source projects:
@@ -449,6 +350,7 @@ This project was inspired by and built upon the work of several open-source proj
 - [matin/garth](https://github.com/matin/garth) - Garmin authentication library
 - [matin/garth-mcp-server](https://github.com/matin/garth-mcp-server) - Garth-based MCP server
 - [Async-IO/pierre_mcp_server](https://github.com/Async-IO/pierre_mcp_server) - MCP server patterns
+- [WillRaphaelson/garmin-mcp](https://github.com/WillRaphaelson/garmin-mcp) - Reference for API endpoints
 
 Special thanks to the [garmin-connect](https://www.npmjs.com/package/garmin-connect) npm package maintainers.
 

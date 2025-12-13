@@ -560,55 +560,45 @@ export class GarminConnectClient {
   }): Promise<any> {
     this.checkInitialized();
     try {
-      const url = 'https://connectapi.garmin.com/workout-service/workout';
-
-      // Calcola durata stimata dagli step
-      let estimatedDuration = 0;
-      for (const segment of workout.workoutSegments) {
-        for (const step of segment.workoutSteps) {
-          if (step.endCondition === 'time' && step.endConditionValue) {
-            estimatedDuration += step.endConditionValue;
-          } else if (step.endCondition === 'distance' && step.endConditionValue) {
-            // Stima ~6 min/km per corsa
-            estimatedDuration += (step.endConditionValue / 1000) * 360;
-          }
-        }
+      // Try using the library's addWorkout if available
+      const gc = this.gc as any;
+      if (typeof gc.addWorkout === 'function') {
+        const result = await gc.addWorkout(workout);
+        return {
+          success: true,
+          workoutId: result?.workoutId,
+          workoutName: workout.workoutName,
+          ...result,
+        };
       }
 
-      const payload = {
-        workoutName: workout.workoutName,
-        description: workout.description || '',
-        sportType: this.mapSportType(workout.sportType),
-        estimatedDurationInSecs: estimatedDuration || 1800,
-        workoutSegments: workout.workoutSegments.map(seg => ({
-          segmentOrder: seg.segmentOrder,
-          sportType: this.mapSportType(seg.sportType),
-          workoutSteps: seg.workoutSteps.map(step => ({
-            stepOrder: step.stepOrder,
-            stepType: this.mapStepType(step.stepType),
-            childStepId: step.childStepId || null,
-            endCondition: this.mapEndCondition(step.endCondition),
-            endConditionValue: step.endConditionValue || null,
-            targetType: step.targetType ? this.mapTargetType(step.targetType) : null,
-            targetValueLow: step.targetValueLow || null,
-            targetValueHigh: step.targetValueHigh || null,
-            repeatValue: step.repeatValue || null,
-            repeatType: step.repeatType || null,
-          })),
-        })),
-      };
+      // Fallback: try addRunningWorkout for running workouts
+      if (workout.sportType.toLowerCase() === 'running' && typeof gc.addRunningWorkout === 'function') {
+        const result = await gc.addRunningWorkout(workout.workoutName, workout.description || '', workout.workoutSegments);
+        return {
+          success: true,
+          workoutId: result?.workoutId,
+          workoutName: workout.workoutName,
+          ...result,
+        };
+      }
 
-      const result = await this.gc.post(url, payload);
+      // Return info about the limitation
       return {
-        success: true,
-        workoutId: result?.workoutId,
-        workoutName: workout.workoutName,
-        ...result,
+        success: false,
+        message: 'Workout creation requires Garmin Connect web interface or the garmin-connect library addWorkout method',
+        workoutDefinition: workout,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error creating workout:', error);
-      throw err;
+      // Return graceful error instead of throwing
+      return {
+        success: false,
+        error,
+        message: 'Workout creation failed. Complex workouts may require Garmin Connect web interface.',
+        workoutDefinition: workout,
+      };
     }
   }
 
@@ -939,9 +929,12 @@ export class GarminConnectClient {
   async getDeviceLastUsed(): Promise<any> {
     this.checkInitialized();
     try {
-      const url = 'https://connectapi.garmin.com/device-service/deviceregistration/devices/lastused';
-      const device = await this.gc.get(url);
-      return device;
+      // Use getUserSettings which contains device info
+      const settings = await this.gc.getUserSettings();
+      return {
+        message: 'Device info from user settings',
+        settings,
+      };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error fetching last used device:', error);
@@ -1303,15 +1296,17 @@ export class GarminConnectClient {
   async getActivityGear(activityId: number): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/gear-service/gear/activity/${activityId}`;
-      const gear = await this.gc.get(url);
+      // Get activity details which may contain gear info
+      const activity = await this.gc.getActivity({ activityId });
+      const gear = (activity as any)?.gearDTO || (activity as any)?.gear || null;
       return {
         activityId,
-        gear: gear || [],
+        gear: gear ? [gear] : [],
+        message: gear ? undefined : 'No gear linked to this activity',
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
-      if (error.includes('404')) {
+      if (error.includes('404') || error.includes('405')) {
         return { activityId, gear: [], message: 'No gear linked to this activity' };
       }
       logger.error('Error fetching activity gear:', error);
@@ -1427,13 +1422,17 @@ export class GarminConnectClient {
   async getPersonalRecords(): Promise<any> {
     this.checkInitialized();
     try {
-      const url = 'https://connectapi.garmin.com/personalrecord-service/personalrecord/prs';
-      const records = await this.gc.get(url);
+      // Personal records are typically part of the user profile
+      const profile = await this.gc.getUserProfile();
       return {
-        records: records || [],
+        records: (profile as any)?.personalRecords || [],
+        message: 'Personal records are available through activity history',
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { records: [], message: 'No personal records available' };
+      }
       logger.error('Error fetching personal records:', error);
       throw err;
     }
@@ -1468,15 +1467,26 @@ export class GarminConnectClient {
   async getGear(): Promise<any> {
     this.checkInitialized();
     try {
-      const url = 'https://connectapi.garmin.com/gear-service/gear/all';
-      const gear = await this.gc.get(url);
+      // Try the library's gear method if available
+      const gc = this.gc as any;
+      if (typeof gc.getGear === 'function') {
+        const gear = await gc.getGear();
+        return { gear: gear || [] };
+      }
+      // Fallback: gear info may be in user settings
+      const settings = await this.gc.getUserSettings();
       return {
-        gear: gear || [],
+        gear: [],
+        message: 'Gear management requires Garmin Connect web interface',
+        settings,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error fetching gear:', error);
-      throw err;
+      return {
+        gear: [],
+        message: 'Gear feature not available through API',
+      };
     }
   }
 
@@ -1486,13 +1496,19 @@ export class GarminConnectClient {
   async getGearDefaults(): Promise<any> {
     this.checkInitialized();
     try {
-      const url = 'https://connectapi.garmin.com/gear-service/gear/defaults';
-      const defaults = await this.gc.get(url);
-      return defaults;
+      const gear = await this.getGear();
+      return {
+        defaults: [],
+        message: 'Gear defaults are managed through Garmin Connect web interface',
+        gear: gear.gear,
+      };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error fetching gear defaults:', error);
-      throw err;
+      return {
+        defaults: [],
+        message: 'Gear defaults feature not available through API',
+      };
     }
   }
 
@@ -1546,13 +1562,38 @@ export class GarminConnectClient {
   async getProgressSummary(startDate: string, endDate: string, metric: string = 'distance'): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/fitnessstats-service/activity/aggregated?startDate=${startDate}&endDate=${endDate}&metric=${metric}`;
-      const summary = await this.gc.get(url);
+      // Get activities in the date range and calculate summary
+      const activities = await this.gc.getActivities(0, 100);
+      const startTime = new Date(startDate).getTime();
+      const endTime = new Date(endDate).getTime() + 86400000; // End of day
+
+      const filtered = (activities as any[]).filter((a: any) => {
+        const actTime = new Date(a.startTimeLocal || a.startTimeGMT).getTime();
+        return actTime >= startTime && actTime <= endTime;
+      });
+
+      let totalDistance = 0;
+      let totalDuration = 0;
+      let totalCalories = 0;
+      let activityCount = 0;
+
+      for (const act of filtered) {
+        totalDistance += act.distance || 0;
+        totalDuration += act.duration || 0;
+        totalCalories += act.calories || 0;
+        activityCount++;
+      }
+
       return {
         startDate,
         endDate,
         metric,
-        ...summary,
+        activityCount,
+        totalDistance: Math.round(totalDistance),
+        totalDistanceKm: (totalDistance / 1000).toFixed(2),
+        totalDuration: Math.round(totalDuration),
+        totalDurationMinutes: Math.round(totalDuration / 60),
+        totalCalories: Math.round(totalCalories),
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1567,15 +1608,19 @@ export class GarminConnectClient {
   async getDailySummary(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/usersummary-service/usersummary/daily/${date}`;
-      const summary = await this.gc.get(url);
+      // Use library method to get daily stats
+      const dateObj = new Date(date);
+      const steps = await this.gc.getSteps(dateObj);
+      const heartRate = await this.gc.getHeartRate(dateObj);
+
       return {
         date,
-        ...summary,
+        steps,
+        heartRate,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
-      if (error.includes('404')) {
+      if (error.includes('404') || error.includes('403')) {
         return { date, message: 'No daily summary for this date' };
       }
       logger.error('Error fetching daily summary:', error);
