@@ -72,7 +72,7 @@ This MCP server provides **55 powerful tools** to interact with your Garmin Conn
 
 ## 🆕 New Tools in v2.0
 
-### Workout Management (PRIORITY 1)
+### Workout Management
 | Tool | Description |
 |------|-------------|
 | `get_workout_by_id` | Get details of a specific workout |
@@ -82,7 +82,7 @@ This MCP server provides **55 powerful tools** to interact with your Garmin Conn
 | `delete_workout` | Delete a workout |
 | `schedule_workout` | Schedule a workout on a specific date |
 
-### Activity Management (PRIORITY 2)
+### Activity Management
 | Tool | Description |
 |------|-------------|
 | `upload_activity` | Upload activity file (FIT, GPX, TCX) |
