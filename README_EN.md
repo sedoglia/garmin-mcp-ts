@@ -37,15 +37,6 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 - **Activity Count**: Total activity count
 - **Fitness Stats**: Fitness statistics over date ranges
 
-### From v2.0.0:
-- **Workout Management**: Create, edit, schedule, and delete structured workouts
-- **Activity Management**: Upload, download, edit, and delete activities
-- **Advanced Metrics**: Training Readiness, Endurance Score, Fitness Age
-- **Weight & Body**: Weight tracking, blood pressure management
-- **Goals & Badges**: Goals, challenges, earned badges
-- **Gear Management**: Shoes, bikes, and equipment tracking
-- **Reports & Progress**: Daily summaries and progress reports
-
 ## Features
 
 This MCP server provides **71 powerful tools** to interact with your Garmin Connect data:
@@ -86,7 +77,7 @@ This MCP server provides **71 powerful tools** to interact with your Garmin Conn
 
 ---
 
-## 🆕 New Tools in v2.0
+# New Tools in v2.0
 
 ### Workout Management
 | Tool | Description |
