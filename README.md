@@ -72,7 +72,7 @@ Questo server MCP fornisce **55 potenti strumenti** per interagire con i tuoi da
 
 ## 🆕 Nuovi Strumenti v2.0
 
-### Gestione Workout (PRIORITÀ 1)
+### Gestione Workout
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_workout_by_id` | Ottiene dettagli di un workout specifico |
@@ -82,7 +82,7 @@ Questo server MCP fornisce **55 potenti strumenti** per interagire con i tuoi da
 | `delete_workout` | Elimina un workout |
 | `schedule_workout` | Schedula un workout su una data specifica |
 
-### Gestione Attività (PRIORITÀ 2)
+### Gestione Attività
 | Strumento | Descrizione |
 |-----------|-------------|
 | `upload_activity` | Upload file attività (FIT, GPX, TCX) |
