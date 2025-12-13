@@ -53,7 +53,6 @@ async function main() {
   const handler = new ToolHandler(client);
   const today = new Date().toISOString().split('T')[0];
   const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-  const lastWeek = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
   const lastMonth = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
 
   console.log('═══════════════════════════════════════════════════════════════');

@@ -563,37 +563,11 @@ export class GarminConnectClient {
       // Build the workout payload in Garmin's exact format
       const sportType = this.mapSportType(workout.sportType);
 
-      // Calculate estimated duration from steps
-      let estimatedDuration = 0;
-      for (const segment of workout.workoutSegments) {
-        for (const step of segment.workoutSteps) {
-          if (step.endCondition === 'time' && step.endConditionValue) {
-            estimatedDuration += step.endConditionValue;
-          } else if (step.endCondition === 'distance' && step.endConditionValue) {
-            // Estimate ~6 min/km for running
-            estimatedDuration += (step.endConditionValue / 1000) * 360;
-          }
-        }
-      }
-
+      // Build minimal payload - only required fields, let Garmin fill in defaults
       const workoutPayload = {
         workoutName: workout.workoutName,
         description: workout.description || null,
         sportType,
-        estimatedDurationInSecs: estimatedDuration || 1800,
-        estimatedDistanceInMeters: null,
-        estimateType: null,
-        estimatedDistanceUnit: { unitId: null, unitKey: null, factor: null },
-        poolLength: 0,
-        poolLengthUnit: { unitId: null, unitKey: null, factor: null },
-        workoutProvider: null,
-        workoutSourceId: null,
-        consumer: null,
-        atpPlanId: null,
-        workoutNameI18nKey: null,
-        descriptionI18nKey: null,
-        shared: false,
-        estimated: false,
         workoutSegments: workout.workoutSegments.map(seg => ({
           segmentOrder: seg.segmentOrder,
           sportType: this.mapSportType(seg.sportType),
