@@ -492,4 +492,1094 @@ export class GarminConnectClient {
       throw err;
     }
   }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - PRIORITÀ 1: WORKOUT MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get workout details by ID
+   */
+  async getWorkoutById(workoutId: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/workout-service/workout/${workoutId}`;
+      const workout = await this.gc.get(url);
+      return workout;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching workout by ID:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Download workout in FIT format
+   */
+  async downloadWorkout(workoutId: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/workout-service/workout/FIT/${workoutId}`;
+      const fitData = await this.gc.get(url);
+      return {
+        workoutId,
+        format: 'FIT',
+        data: fitData,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error downloading workout:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Create a new structured workout
+   * @param workout Workout definition with steps
+   */
+  async createWorkout(workout: {
+    workoutName: string;
+    sportType: string;
+    workoutSegments: Array<{
+      segmentOrder: number;
+      sportType: string;
+      workoutSteps: Array<{
+        stepOrder: number;
+        stepType: string;
+        childStepId?: number;
+        endCondition: string;
+        endConditionValue?: number;
+        targetType?: string;
+        targetValueLow?: number;
+        targetValueHigh?: number;
+        repeatValue?: number;
+        repeatType?: string;
+      }>;
+    }>;
+    description?: string;
+  }): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/workout-service/workout';
+
+      // Calcola durata stimata dagli step
+      let estimatedDuration = 0;
+      for (const segment of workout.workoutSegments) {
+        for (const step of segment.workoutSteps) {
+          if (step.endCondition === 'time' && step.endConditionValue) {
+            estimatedDuration += step.endConditionValue;
+          } else if (step.endCondition === 'distance' && step.endConditionValue) {
+            // Stima ~6 min/km per corsa
+            estimatedDuration += (step.endConditionValue / 1000) * 360;
+          }
+        }
+      }
+
+      const payload = {
+        workoutName: workout.workoutName,
+        description: workout.description || '',
+        sportType: this.mapSportType(workout.sportType),
+        estimatedDurationInSecs: estimatedDuration || 1800,
+        workoutSegments: workout.workoutSegments.map(seg => ({
+          segmentOrder: seg.segmentOrder,
+          sportType: this.mapSportType(seg.sportType),
+          workoutSteps: seg.workoutSteps.map(step => ({
+            stepOrder: step.stepOrder,
+            stepType: this.mapStepType(step.stepType),
+            childStepId: step.childStepId || null,
+            endCondition: this.mapEndCondition(step.endCondition),
+            endConditionValue: step.endConditionValue || null,
+            targetType: step.targetType ? this.mapTargetType(step.targetType) : null,
+            targetValueLow: step.targetValueLow || null,
+            targetValueHigh: step.targetValueHigh || null,
+            repeatValue: step.repeatValue || null,
+            repeatType: step.repeatType || null,
+          })),
+        })),
+      };
+
+      const result = await this.gc.post(url, payload);
+      return {
+        success: true,
+        workoutId: result?.workoutId,
+        workoutName: workout.workoutName,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error creating workout:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Update an existing workout
+   */
+  async updateWorkout(workoutId: string, updates: {
+    workoutName?: string;
+    description?: string;
+    workoutSegments?: any[];
+  }): Promise<any> {
+    this.checkInitialized();
+    try {
+      // Prima ottieni il workout esistente
+      const existing = await this.getWorkoutById(workoutId);
+
+      const url = `https://connectapi.garmin.com/workout-service/workout/${workoutId}`;
+      const payload = {
+        ...existing,
+        ...updates,
+        workoutId,
+      };
+
+      const result = await this.gc.put(url, payload);
+      return {
+        success: true,
+        workoutId,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error updating workout:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Delete a workout
+   */
+  async deleteWorkout(workoutId: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/workout-service/workout/${workoutId}`;
+      await this.gc.delete(url);
+      return {
+        success: true,
+        workoutId,
+        message: 'Workout deleted successfully',
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error deleting workout:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Schedule a workout on a specific date
+   */
+  async scheduleWorkout(workoutId: string, date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/workout-service/schedule/${workoutId}`;
+      const payload = {
+        date,
+      };
+      const result = await this.gc.post(url, payload);
+      return {
+        success: true,
+        workoutId,
+        scheduledDate: date,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error scheduling workout:', error);
+      throw err;
+    }
+  }
+
+  // Helper per mappare sport types
+  private mapSportType(sport: string): { sportTypeId: number; sportTypeKey: string } {
+    const sportMap: Record<string, { sportTypeId: number; sportTypeKey: string }> = {
+      running: { sportTypeId: 1, sportTypeKey: 'running' },
+      cycling: { sportTypeId: 2, sportTypeKey: 'cycling' },
+      swimming: { sportTypeId: 5, sportTypeKey: 'swimming' },
+      strength: { sportTypeId: 4, sportTypeKey: 'strength_training' },
+      cardio: { sportTypeId: 3, sportTypeKey: 'fitness_equipment' },
+      walking: { sportTypeId: 9, sportTypeKey: 'walking' },
+      hiking: { sportTypeId: 17, sportTypeKey: 'hiking' },
+      yoga: { sportTypeId: 43, sportTypeKey: 'yoga' },
+    };
+    return sportMap[sport.toLowerCase()] || sportMap.running;
+  }
+
+  // Helper per mappare step types
+  private mapStepType(stepType: string): { stepTypeId: number; stepTypeKey: string } {
+    const stepMap: Record<string, { stepTypeId: number; stepTypeKey: string }> = {
+      warmup: { stepTypeId: 1, stepTypeKey: 'warmup' },
+      cooldown: { stepTypeId: 2, stepTypeKey: 'cooldown' },
+      interval: { stepTypeId: 3, stepTypeKey: 'interval' },
+      recovery: { stepTypeId: 4, stepTypeKey: 'recovery' },
+      rest: { stepTypeId: 5, stepTypeKey: 'rest' },
+      repeat: { stepTypeId: 6, stepTypeKey: 'repeat' },
+      other: { stepTypeId: 7, stepTypeKey: 'other' },
+    };
+    return stepMap[stepType.toLowerCase()] || stepMap.interval;
+  }
+
+  // Helper per mappare end conditions
+  private mapEndCondition(condition: string): { conditionTypeId: number; conditionTypeKey: string } {
+    const conditionMap: Record<string, { conditionTypeId: number; conditionTypeKey: string }> = {
+      time: { conditionTypeId: 2, conditionTypeKey: 'time' },
+      distance: { conditionTypeId: 3, conditionTypeKey: 'distance' },
+      lap_button: { conditionTypeId: 1, conditionTypeKey: 'lap.button' },
+      iterations: { conditionTypeId: 7, conditionTypeKey: 'iterations' },
+    };
+    return conditionMap[condition.toLowerCase()] || conditionMap.time;
+  }
+
+  // Helper per mappare target types
+  private mapTargetType(target: string): { workoutTargetTypeId: number; workoutTargetTypeKey: string } {
+    const targetMap: Record<string, { workoutTargetTypeId: number; workoutTargetTypeKey: string }> = {
+      pace: { workoutTargetTypeId: 6, workoutTargetTypeKey: 'pace.zone' },
+      heart_rate: { workoutTargetTypeId: 4, workoutTargetTypeKey: 'heart.rate.zone' },
+      power: { workoutTargetTypeId: 2, workoutTargetTypeKey: 'power.zone' },
+      cadence: { workoutTargetTypeId: 3, workoutTargetTypeKey: 'cadence' },
+      speed: { workoutTargetTypeId: 5, workoutTargetTypeKey: 'speed.zone' },
+      no_target: { workoutTargetTypeId: 1, workoutTargetTypeKey: 'no.target' },
+    };
+    return targetMap[target.toLowerCase()] || targetMap.no_target;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - PRIORITÀ 2: ACTIVITY MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Upload an activity file (FIT, GPX, TCX)
+   */
+  async uploadActivity(filePath: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const fileName = filePath.split(/[\\/]/).pop() || 'activity.fit';
+      const ext = fileName.split('.').pop()?.toLowerCase();
+
+      const result = await this.gc.uploadActivity(filePath);
+      return {
+        success: true,
+        fileName,
+        fileType: ext,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error uploading activity:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Create a manual activity
+   */
+  async createManualActivity(params: {
+    activityName: string;
+    activityType: string;
+    startTime: string;
+    duration: number;
+    distance?: number;
+    description?: string;
+    calories?: number;
+  }): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/activity-service/activity';
+
+      const payload = {
+        activityName: params.activityName,
+        activityTypeDTO: {
+          typeKey: params.activityType,
+        },
+        summaryDTO: {
+          startTimeLocal: params.startTime,
+          duration: params.duration,
+          distance: params.distance || 0,
+          calories: params.calories || 0,
+        },
+        description: params.description || '',
+        accessControlRuleDTO: {
+          typeId: 2,
+          typeKey: 'private',
+        },
+        timeZoneUnitDTO: {
+          unitKey: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
+      };
+
+      const result = await this.gc.post(url, payload);
+      return {
+        success: true,
+        activityName: params.activityName,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error creating manual activity:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Set activity name
+   */
+  async setActivityName(activityId: number, name: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}`;
+      const payload = {
+        activityId,
+        activityName: name,
+      };
+      const result = await this.gc.put(url, payload);
+      return {
+        success: true,
+        activityId,
+        newName: name,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error setting activity name:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Set activity type
+   */
+  async setActivityType(activityId: number, typeKey: string, typeId?: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}`;
+      const payload = {
+        activityId,
+        activityTypeDTO: {
+          typeKey,
+          typeId: typeId || null,
+        },
+      };
+      const result = await this.gc.put(url, payload);
+      return {
+        success: true,
+        activityId,
+        newType: typeKey,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error setting activity type:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Delete an activity
+   */
+  async deleteActivity(activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}`;
+      await this.gc.delete(url);
+      return {
+        success: true,
+        activityId,
+        message: 'Activity deleted successfully',
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error deleting activity:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Download activity in various formats
+   */
+  async downloadActivity(activityId: number, format: 'fit' | 'tcx' | 'gpx' | 'kml' | 'csv' = 'fit'): Promise<any> {
+    this.checkInitialized();
+    try {
+      let url: string;
+      switch (format) {
+        case 'tcx':
+          url = `https://connectapi.garmin.com/download-service/export/tcx/activity/${activityId}`;
+          break;
+        case 'gpx':
+          url = `https://connectapi.garmin.com/download-service/export/gpx/activity/${activityId}`;
+          break;
+        case 'kml':
+          url = `https://connectapi.garmin.com/download-service/export/kml/activity/${activityId}`;
+          break;
+        case 'csv':
+          url = `https://connectapi.garmin.com/download-service/export/csv/activity/${activityId}`;
+          break;
+        default:
+          url = `https://connectapi.garmin.com/download-service/files/activity/${activityId}`;
+      }
+
+      const data = await this.gc.get(url);
+      return {
+        activityId,
+        format,
+        data,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error downloading activity:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - DEVICE & SETTINGS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get last used device info
+   */
+  async getDeviceLastUsed(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/device-service/deviceregistration/devices/lastused';
+      const device = await this.gc.get(url);
+      return device;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching last used device:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get device settings
+   */
+  async getDeviceSettings(deviceId: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/device-service/deviceservice/device-info/settings/${deviceId}`;
+      const settings = await this.gc.get(url);
+      return settings;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching device settings:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - HEALTH & WELLNESS AVANZATI
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get all-day stress data with detailed breakdown
+   */
+  async getAllDayStress(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/dailyStress/${date}`;
+      const stressData = await this.gc.get(url);
+      return {
+        date,
+        ...stressData,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No stress data for this date' };
+      }
+      logger.error('Error fetching all day stress:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get floors climbed data
+   */
+  async getFloors(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/daily/floors/${date}`;
+      const floors = await this.gc.get(url);
+      return {
+        date,
+        ...floors,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No floors data for this date' };
+      }
+      logger.error('Error fetching floors:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get intensity minutes data
+   */
+  async getIntensityMinutes(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/daily/intensityMinutes/${date}`;
+      const data = await this.gc.get(url);
+      return {
+        date,
+        ...data,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No intensity minutes data for this date' };
+      }
+      logger.error('Error fetching intensity minutes:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get max metrics (VO2 max, fitness age, etc.)
+   */
+  async getMaxMetrics(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/maxmet/daily/${date}/${date}`;
+      const metrics = await this.gc.get(url);
+      return {
+        date,
+        ...metrics,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No max metrics data for this date' };
+      }
+      logger.error('Error fetching max metrics:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get training readiness score
+   */
+  async getTrainingReadiness(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/trainingreadiness/${date}`;
+      const readiness = await this.gc.get(url);
+      return {
+        date,
+        ...readiness,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No training readiness data for this date' };
+      }
+      logger.error('Error fetching training readiness:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get endurance score
+   */
+  async getEnduranceScore(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/endurancescore/${date}`;
+      const score = await this.gc.get(url);
+      return {
+        date,
+        ...score,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No endurance score data for this date' };
+      }
+      logger.error('Error fetching endurance score:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get fitness age
+   */
+  async getFitnessAge(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/fitnessage/${date}`;
+      const age = await this.gc.get(url);
+      return {
+        date,
+        ...age,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No fitness age data for this date' };
+      }
+      logger.error('Error fetching fitness age:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - WEIGHT & BODY
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get weigh-ins for a date range
+   */
+  async getWeighIns(startDate: string, endDate: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/weight-service/weight/dateRange?startDate=${startDate}&endDate=${endDate}`;
+      const weighIns = await this.gc.get(url);
+      return {
+        startDate,
+        endDate,
+        weighIns: weighIns || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching weigh-ins:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Add a weigh-in
+   */
+  async addWeighIn(weight: number, date: string, bodyFatPercent?: number, bodyWaterPercent?: number, muscleMassPercent?: number, boneMassPercent?: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/weight-service/user-weight';
+      const payload: any = {
+        dateTimestamp: new Date(date).getTime(),
+        gmtTimestamp: new Date(date).getTime(),
+        weight: weight * 1000, // kg to grams
+      };
+
+      if (bodyFatPercent !== undefined) payload.bodyFat = bodyFatPercent;
+      if (bodyWaterPercent !== undefined) payload.bodyWater = bodyWaterPercent;
+      if (muscleMassPercent !== undefined) payload.muscleMass = muscleMassPercent;
+      if (boneMassPercent !== undefined) payload.boneMass = boneMassPercent;
+
+      const result = await this.gc.post(url, payload);
+      return {
+        success: true,
+        weight,
+        date,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error adding weigh-in:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Delete a weigh-in
+   */
+  async deleteWeighIn(weighInId: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/weight-service/user-weight/${weighInId}`;
+      await this.gc.delete(url);
+      return {
+        success: true,
+        weighInId,
+        message: 'Weigh-in deleted successfully',
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error deleting weigh-in:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get blood pressure data
+   */
+  async getBloodPressure(startDate: string, endDate: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/bloodpressure-service/bloodpressure/range/${startDate}/${endDate}`;
+      const data = await this.gc.get(url);
+      return {
+        startDate,
+        endDate,
+        readings: data || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching blood pressure:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Set blood pressure reading
+   */
+  async setBloodPressure(systolic: number, diastolic: number, pulse: number, dateTime: string, notes?: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/bloodpressure-service/bloodpressure';
+      const payload = {
+        systolic,
+        diastolic,
+        pulse,
+        measurementTimestampLocal: dateTime,
+        measurementTimestampGMT: new Date(dateTime).toISOString(),
+        notes: notes || '',
+      };
+      const result = await this.gc.post(url, payload);
+      return {
+        success: true,
+        systolic,
+        diastolic,
+        pulse,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error setting blood pressure:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - ACTIVITY DETAILS AVANZATI
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get weather data for an activity
+   */
+  async getActivityWeather(activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/weather`;
+      const weather = await this.gc.get(url);
+      return {
+        activityId,
+        ...weather,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { activityId, message: 'No weather data for this activity' };
+      }
+      logger.error('Error fetching activity weather:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get heart rate zones for an activity
+   */
+  async getActivityHRZones(activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/hrTimeInZones`;
+      const zones = await this.gc.get(url);
+      return {
+        activityId,
+        ...zones,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { activityId, message: 'No HR zones data for this activity' };
+      }
+      logger.error('Error fetching activity HR zones:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get gear used in an activity
+   */
+  async getActivityGear(activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/gear-service/gear/activity/${activityId}`;
+      const gear = await this.gc.get(url);
+      return {
+        activityId,
+        gear: gear || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { activityId, gear: [], message: 'No gear linked to this activity' };
+      }
+      logger.error('Error fetching activity gear:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get exercise sets for strength activities
+   */
+  async getActivityExerciseSets(activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/exerciseSets`;
+      const sets = await this.gc.get(url);
+      return {
+        activityId,
+        sets: sets || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { activityId, sets: [], message: 'No exercise sets for this activity' };
+      }
+      logger.error('Error fetching activity exercise sets:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - GOALS, CHALLENGES & RECORDS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get user goals
+   */
+  async getGoals(status?: 'active' | 'future' | 'past'): Promise<any> {
+    this.checkInitialized();
+    try {
+      let url = 'https://connectapi.garmin.com/goal-service/goal/goals';
+      if (status) {
+        url += `?status=${status}`;
+      }
+      const goals = await this.gc.get(url);
+      return {
+        status: status || 'all',
+        goals: goals || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching goals:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get adhoc challenges
+   */
+  async getAdhocChallenges(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/adhocchallenge-service/adHocChallenge/historical';
+      const challenges = await this.gc.get(url);
+      return {
+        challenges: challenges || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching adhoc challenges:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get badge challenges
+   */
+  async getBadgeChallenges(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/badgechallenge-service/badgeChallenge/available';
+      const challenges = await this.gc.get(url);
+      return {
+        challenges: challenges || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching badge challenges:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get earned badges
+   */
+  async getEarnedBadges(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/badge-service/badge/earned';
+      const badges = await this.gc.get(url);
+      return {
+        badges: badges || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching earned badges:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get personal records
+   */
+  async getPersonalRecords(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/personalrecord-service/personalrecord/prs';
+      const records = await this.gc.get(url);
+      return {
+        records: records || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching personal records:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get race predictions (5K, 10K, half, marathon)
+   */
+  async getRacePredictions(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/metrics-service/metrics/racepredictions/latest';
+      const predictions = await this.gc.get(url);
+      return predictions;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { message: 'No race predictions available' };
+      }
+      logger.error('Error fetching race predictions:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - GEAR MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get all user gear
+   */
+  async getGear(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/gear-service/gear/all';
+      const gear = await this.gc.get(url);
+      return {
+        gear: gear || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching gear:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get default gear for activities
+   */
+  async getGearDefaults(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/gear-service/gear/defaults';
+      const defaults = await this.gc.get(url);
+      return defaults;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching gear defaults:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get gear stats
+   */
+  async getGearStats(gearUUID: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/gear-service/gear/stats/${gearUUID}`;
+      const stats = await this.gc.get(url);
+      return {
+        gearUUID,
+        ...stats,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching gear stats:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Link gear to an activity
+   */
+  async linkGearToActivity(gearUUID: string, activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/gear-service/gear/link/${gearUUID}/activity/${activityId}`;
+      const result = await this.gc.put(url, {});
+      return {
+        success: true,
+        gearUUID,
+        activityId,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error linking gear to activity:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - REPORTS & PROGRESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get progress summary between dates
+   */
+  async getProgressSummary(startDate: string, endDate: string, metric: string = 'distance'): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/fitnessstats-service/activity/aggregated?startDate=${startDate}&endDate=${endDate}&metric=${metric}`;
+      const summary = await this.gc.get(url);
+      return {
+        startDate,
+        endDate,
+        metric,
+        ...summary,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching progress summary:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get daily summary for a date
+   */
+  async getDailySummary(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/usersummary-service/usersummary/daily/${date}`;
+      const summary = await this.gc.get(url);
+      return {
+        date,
+        ...summary,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No daily summary for this date' };
+      }
+      logger.error('Error fetching daily summary:', error);
+      throw err;
+    }
+  }
 }

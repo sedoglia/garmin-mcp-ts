@@ -57,6 +57,127 @@ export class ToolHandler {
           return await this.handleGetRespirationData(safeArgs);
         case 'get_spo2_data':
           return await this.handleGetSpO2Data(safeArgs);
+
+        // ═══════════════════════════════════════════════════════════════
+        // v2.0 - PRIORITÀ 1: WORKOUT MANAGEMENT
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_workout_by_id':
+          return await this.handleGetWorkoutById(safeArgs);
+        case 'download_workout':
+          return await this.handleDownloadWorkout(safeArgs);
+        case 'create_workout':
+          return await this.handleCreateWorkout(safeArgs);
+        case 'update_workout':
+          return await this.handleUpdateWorkout(safeArgs);
+        case 'delete_workout':
+          return await this.handleDeleteWorkout(safeArgs);
+        case 'schedule_workout':
+          return await this.handleScheduleWorkout(safeArgs);
+
+        // ═══════════════════════════════════════════════════════════════
+        // v2.0 - PRIORITÀ 2: ACTIVITY MANAGEMENT
+        // ═══════════════════════════════════════════════════════════════
+        case 'upload_activity':
+          return await this.handleUploadActivity(safeArgs);
+        case 'create_manual_activity':
+          return await this.handleCreateManualActivity(safeArgs);
+        case 'set_activity_name':
+          return await this.handleSetActivityName(safeArgs);
+        case 'set_activity_type':
+          return await this.handleSetActivityType(safeArgs);
+        case 'delete_activity':
+          return await this.handleDeleteActivity(safeArgs);
+        case 'download_activity':
+          return await this.handleDownloadActivity(safeArgs);
+
+        // ═══════════════════════════════════════════════════════════════
+        // v2.0 - DEVICE & SETTINGS
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_device_last_used':
+          return await this.handleGetDeviceLastUsed();
+        case 'get_device_settings':
+          return await this.handleGetDeviceSettings(safeArgs);
+
+        // ═══════════════════════════════════════════════════════════════
+        // v2.0 - HEALTH & WELLNESS AVANZATI
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_all_day_stress':
+          return await this.handleGetAllDayStress(safeArgs);
+        case 'get_floors':
+          return await this.handleGetFloors(safeArgs);
+        case 'get_intensity_minutes':
+          return await this.handleGetIntensityMinutes(safeArgs);
+        case 'get_max_metrics':
+          return await this.handleGetMaxMetrics(safeArgs);
+        case 'get_training_readiness':
+          return await this.handleGetTrainingReadiness(safeArgs);
+        case 'get_endurance_score':
+          return await this.handleGetEnduranceScore(safeArgs);
+        case 'get_fitness_age':
+          return await this.handleGetFitnessAge(safeArgs);
+
+        // ═══════════════════════════════════════════════════════════════
+        // v2.0 - WEIGHT & BODY
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_weigh_ins':
+          return await this.handleGetWeighIns(safeArgs);
+        case 'add_weigh_in':
+          return await this.handleAddWeighIn(safeArgs);
+        case 'delete_weigh_in':
+          return await this.handleDeleteWeighIn(safeArgs);
+        case 'get_blood_pressure':
+          return await this.handleGetBloodPressure(safeArgs);
+        case 'set_blood_pressure':
+          return await this.handleSetBloodPressure(safeArgs);
+
+        // ═══════════════════════════════════════════════════════════════
+        // v2.0 - ACTIVITY DETAILS AVANZATI
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_activity_weather':
+          return await this.handleGetActivityWeather(safeArgs);
+        case 'get_activity_hr_zones':
+          return await this.handleGetActivityHRZones(safeArgs);
+        case 'get_activity_gear':
+          return await this.handleGetActivityGear(safeArgs);
+        case 'get_activity_exercise_sets':
+          return await this.handleGetActivityExerciseSets(safeArgs);
+
+        // ═══════════════════════════════════════════════════════════════
+        // v2.0 - GOALS, CHALLENGES & RECORDS
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_goals':
+          return await this.handleGetGoals(safeArgs);
+        case 'get_adhoc_challenges':
+          return await this.handleGetAdhocChallenges();
+        case 'get_badge_challenges':
+          return await this.handleGetBadgeChallenges();
+        case 'get_earned_badges':
+          return await this.handleGetEarnedBadges();
+        case 'get_personal_records':
+          return await this.handleGetPersonalRecords();
+        case 'get_race_predictions':
+          return await this.handleGetRacePredictions();
+
+        // ═══════════════════════════════════════════════════════════════
+        // v2.0 - GEAR MANAGEMENT
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_gear':
+          return await this.handleGetGear();
+        case 'get_gear_defaults':
+          return await this.handleGetGearDefaults();
+        case 'get_gear_stats':
+          return await this.handleGetGearStats(safeArgs);
+        case 'link_gear_to_activity':
+          return await this.handleLinkGearToActivity(safeArgs);
+
+        // ═══════════════════════════════════════════════════════════════
+        // v2.0 - REPORTS & PROGRESS
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_progress_summary':
+          return await this.handleGetProgressSummary(safeArgs);
+        case 'get_daily_summary':
+          return await this.handleGetDailySummary(safeArgs);
+
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
@@ -402,6 +523,732 @@ export class ToolHandler {
       success: true,
       date,
       data: spo2Data,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - PRIORITÀ 1: WORKOUT MANAGEMENT HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetWorkoutById(args: Record<string, unknown>): Promise<unknown> {
+    const workoutId = this.getStringParam(args, 'workoutId', '');
+
+    if (!workoutId) {
+      throw new Error('Parameter "workoutId" is required');
+    }
+
+    logger.info(`Fetching workout by ID: ${workoutId}`);
+
+    const workout = await this.client.getWorkoutById(workoutId);
+
+    return {
+      success: true,
+      data: workout,
+    };
+  }
+
+  private async handleDownloadWorkout(args: Record<string, unknown>): Promise<unknown> {
+    const workoutId = this.getStringParam(args, 'workoutId', '');
+
+    if (!workoutId) {
+      throw new Error('Parameter "workoutId" is required');
+    }
+
+    logger.info(`Downloading workout: ${workoutId}`);
+
+    const data = await this.client.downloadWorkout(workoutId);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleCreateWorkout(args: Record<string, unknown>): Promise<unknown> {
+    const workoutName = this.getStringParam(args, 'workoutName', '');
+    const sportType = this.getStringParam(args, 'sportType', 'running');
+    const description = this.getStringParam(args, 'description', '');
+    const workoutSegments = args.workoutSegments as any[];
+
+    if (!workoutName) {
+      throw new Error('Parameter "workoutName" is required');
+    }
+    if (!workoutSegments || !Array.isArray(workoutSegments)) {
+      throw new Error('Parameter "workoutSegments" is required and must be an array');
+    }
+
+    logger.info(`Creating workout: ${workoutName}`);
+
+    const result = await this.client.createWorkout({
+      workoutName,
+      sportType,
+      description,
+      workoutSegments,
+    });
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleUpdateWorkout(args: Record<string, unknown>): Promise<unknown> {
+    const workoutId = this.getStringParam(args, 'workoutId', '');
+
+    if (!workoutId) {
+      throw new Error('Parameter "workoutId" is required');
+    }
+
+    const updates: any = {};
+    if (args.workoutName) updates.workoutName = args.workoutName;
+    if (args.description) updates.description = args.description;
+    if (args.workoutSegments) updates.workoutSegments = args.workoutSegments;
+
+    logger.info(`Updating workout: ${workoutId}`);
+
+    const result = await this.client.updateWorkout(workoutId, updates);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleDeleteWorkout(args: Record<string, unknown>): Promise<unknown> {
+    const workoutId = this.getStringParam(args, 'workoutId', '');
+
+    if (!workoutId) {
+      throw new Error('Parameter "workoutId" is required');
+    }
+
+    logger.info(`Deleting workout: ${workoutId}`);
+
+    const result = await this.client.deleteWorkout(workoutId);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleScheduleWorkout(args: Record<string, unknown>): Promise<unknown> {
+    const workoutId = this.getStringParam(args, 'workoutId', '');
+    const date = this.getStringParam(args, 'date', '');
+
+    if (!workoutId) {
+      throw new Error('Parameter "workoutId" is required');
+    }
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Scheduling workout ${workoutId} for ${date}`);
+
+    const result = await this.client.scheduleWorkout(workoutId, date);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - PRIORITÀ 2: ACTIVITY MANAGEMENT HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleUploadActivity(args: Record<string, unknown>): Promise<unknown> {
+    const filePath = this.getStringParam(args, 'filePath', '');
+
+    if (!filePath) {
+      throw new Error('Parameter "filePath" is required');
+    }
+
+    logger.info(`Uploading activity from: ${filePath}`);
+
+    const result = await this.client.uploadActivity(filePath);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleCreateManualActivity(args: Record<string, unknown>): Promise<unknown> {
+    const activityName = this.getStringParam(args, 'activityName', '');
+    const activityType = this.getStringParam(args, 'activityType', '');
+    const startTime = this.getStringParam(args, 'startTime', '');
+    const duration = this.getNumberParam(args, 'duration', 0);
+    const distance = this.getNumberParam(args, 'distance', 0);
+    const calories = this.getNumberParam(args, 'calories', 0);
+    const description = this.getStringParam(args, 'description', '');
+
+    if (!activityName || !activityType || !startTime || !duration) {
+      throw new Error('Parameters "activityName", "activityType", "startTime", and "duration" are required');
+    }
+
+    logger.info(`Creating manual activity: ${activityName}`);
+
+    const result = await this.client.createManualActivity({
+      activityName,
+      activityType,
+      startTime,
+      duration: duration!,
+      distance,
+      calories,
+      description,
+    });
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleSetActivityName(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+    const name = this.getStringParam(args, 'name', '');
+
+    if (activityId === undefined || !name) {
+      throw new Error('Parameters "activityId" and "name" are required');
+    }
+
+    logger.info(`Setting activity ${activityId} name to: ${name}`);
+
+    const result = await this.client.setActivityName(activityId, name);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleSetActivityType(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+    const typeKey = this.getStringParam(args, 'typeKey', '');
+    const typeId = this.getNumberParam(args, 'typeId', undefined);
+
+    if (activityId === undefined || !typeKey) {
+      throw new Error('Parameters "activityId" and "typeKey" are required');
+    }
+
+    logger.info(`Setting activity ${activityId} type to: ${typeKey}`);
+
+    const result = await this.client.setActivityType(activityId, typeKey, typeId);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleDeleteActivity(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+
+    if (activityId === undefined) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    logger.info(`Deleting activity: ${activityId}`);
+
+    const result = await this.client.deleteActivity(activityId);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleDownloadActivity(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+    const format = this.getStringParam(args, 'format', 'fit') as 'fit' | 'tcx' | 'gpx' | 'kml' | 'csv';
+
+    if (activityId === undefined) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    logger.info(`Downloading activity ${activityId} in ${format} format`);
+
+    const result = await this.client.downloadActivity(activityId, format);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - DEVICE & SETTINGS HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetDeviceLastUsed(): Promise<unknown> {
+    logger.info('Fetching last used device');
+
+    const device = await this.client.getDeviceLastUsed();
+
+    return {
+      success: true,
+      data: device,
+    };
+  }
+
+  private async handleGetDeviceSettings(args: Record<string, unknown>): Promise<unknown> {
+    const deviceId = this.getStringParam(args, 'deviceId', '');
+
+    if (!deviceId) {
+      throw new Error('Parameter "deviceId" is required');
+    }
+
+    logger.info(`Fetching device settings for: ${deviceId}`);
+
+    const settings = await this.client.getDeviceSettings(deviceId);
+
+    return {
+      success: true,
+      data: settings,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - HEALTH & WELLNESS AVANZATI HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetAllDayStress(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching all day stress for: ${date}`);
+
+    const stress = await this.client.getAllDayStress(date);
+
+    return {
+      success: true,
+      date,
+      data: stress,
+    };
+  }
+
+  private async handleGetFloors(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching floors for: ${date}`);
+
+    const floors = await this.client.getFloors(date);
+
+    return {
+      success: true,
+      date,
+      data: floors,
+    };
+  }
+
+  private async handleGetIntensityMinutes(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching intensity minutes for: ${date}`);
+
+    const minutes = await this.client.getIntensityMinutes(date);
+
+    return {
+      success: true,
+      date,
+      data: minutes,
+    };
+  }
+
+  private async handleGetMaxMetrics(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching max metrics for: ${date}`);
+
+    const metrics = await this.client.getMaxMetrics(date);
+
+    return {
+      success: true,
+      date,
+      data: metrics,
+    };
+  }
+
+  private async handleGetTrainingReadiness(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching training readiness for: ${date}`);
+
+    const readiness = await this.client.getTrainingReadiness(date);
+
+    return {
+      success: true,
+      date,
+      data: readiness,
+    };
+  }
+
+  private async handleGetEnduranceScore(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching endurance score for: ${date}`);
+
+    const score = await this.client.getEnduranceScore(date);
+
+    return {
+      success: true,
+      date,
+      data: score,
+    };
+  }
+
+  private async handleGetFitnessAge(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching fitness age for: ${date}`);
+
+    const age = await this.client.getFitnessAge(date);
+
+    return {
+      success: true,
+      date,
+      data: age,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - WEIGHT & BODY HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetWeighIns(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '');
+
+    if (!startDate || !endDate) {
+      throw new Error('Parameters "startDate" and "endDate" are required');
+    }
+
+    logger.info(`Fetching weigh-ins from ${startDate} to ${endDate}`);
+
+    const weighIns = await this.client.getWeighIns(startDate, endDate);
+
+    return {
+      success: true,
+      data: weighIns,
+    };
+  }
+
+  private async handleAddWeighIn(args: Record<string, unknown>): Promise<unknown> {
+    const weight = this.getNumberParam(args, 'weight', undefined);
+    const date = this.getStringParam(args, 'date', '');
+    const bodyFatPercent = this.getNumberParam(args, 'bodyFatPercent', undefined);
+    const bodyWaterPercent = this.getNumberParam(args, 'bodyWaterPercent', undefined);
+    const muscleMassPercent = this.getNumberParam(args, 'muscleMassPercent', undefined);
+    const boneMassPercent = this.getNumberParam(args, 'boneMassPercent', undefined);
+
+    if (weight === undefined || !date) {
+      throw new Error('Parameters "weight" and "date" are required');
+    }
+
+    logger.info(`Adding weigh-in: ${weight}kg on ${date}`);
+
+    const result = await this.client.addWeighIn(weight, date, bodyFatPercent, bodyWaterPercent, muscleMassPercent, boneMassPercent);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleDeleteWeighIn(args: Record<string, unknown>): Promise<unknown> {
+    const weighInId = this.getStringParam(args, 'weighInId', '');
+
+    if (!weighInId) {
+      throw new Error('Parameter "weighInId" is required');
+    }
+
+    logger.info(`Deleting weigh-in: ${weighInId}`);
+
+    const result = await this.client.deleteWeighIn(weighInId);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleGetBloodPressure(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '');
+
+    if (!startDate || !endDate) {
+      throw new Error('Parameters "startDate" and "endDate" are required');
+    }
+
+    logger.info(`Fetching blood pressure from ${startDate} to ${endDate}`);
+
+    const data = await this.client.getBloodPressure(startDate, endDate);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleSetBloodPressure(args: Record<string, unknown>): Promise<unknown> {
+    const systolic = this.getNumberParam(args, 'systolic', undefined);
+    const diastolic = this.getNumberParam(args, 'diastolic', undefined);
+    const pulse = this.getNumberParam(args, 'pulse', undefined);
+    const dateTime = this.getStringParam(args, 'dateTime', '');
+    const notes = this.getStringParam(args, 'notes', '');
+
+    if (systolic === undefined || diastolic === undefined || pulse === undefined || !dateTime) {
+      throw new Error('Parameters "systolic", "diastolic", "pulse", and "dateTime" are required');
+    }
+
+    logger.info(`Recording blood pressure: ${systolic}/${diastolic} mmHg`);
+
+    const result = await this.client.setBloodPressure(systolic, diastolic, pulse, dateTime, notes);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - ACTIVITY DETAILS AVANZATI HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetActivityWeather(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+
+    if (activityId === undefined) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    logger.info(`Fetching weather for activity: ${activityId}`);
+
+    const weather = await this.client.getActivityWeather(activityId);
+
+    return {
+      success: true,
+      data: weather,
+    };
+  }
+
+  private async handleGetActivityHRZones(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+
+    if (activityId === undefined) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    logger.info(`Fetching HR zones for activity: ${activityId}`);
+
+    const zones = await this.client.getActivityHRZones(activityId);
+
+    return {
+      success: true,
+      data: zones,
+    };
+  }
+
+  private async handleGetActivityGear(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+
+    if (activityId === undefined) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    logger.info(`Fetching gear for activity: ${activityId}`);
+
+    const gear = await this.client.getActivityGear(activityId);
+
+    return {
+      success: true,
+      data: gear,
+    };
+  }
+
+  private async handleGetActivityExerciseSets(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+
+    if (activityId === undefined) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    logger.info(`Fetching exercise sets for activity: ${activityId}`);
+
+    const sets = await this.client.getActivityExerciseSets(activityId);
+
+    return {
+      success: true,
+      data: sets,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - GOALS, CHALLENGES & RECORDS HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetGoals(args: Record<string, unknown>): Promise<unknown> {
+    const status = this.getStringParam(args, 'status', '') as 'active' | 'future' | 'past' | undefined;
+
+    logger.info(`Fetching goals with status: ${status || 'all'}`);
+
+    const goals = await this.client.getGoals(status || undefined);
+
+    return {
+      success: true,
+      data: goals,
+    };
+  }
+
+  private async handleGetAdhocChallenges(): Promise<unknown> {
+    logger.info('Fetching adhoc challenges');
+
+    const challenges = await this.client.getAdhocChallenges();
+
+    return {
+      success: true,
+      data: challenges,
+    };
+  }
+
+  private async handleGetBadgeChallenges(): Promise<unknown> {
+    logger.info('Fetching badge challenges');
+
+    const challenges = await this.client.getBadgeChallenges();
+
+    return {
+      success: true,
+      data: challenges,
+    };
+  }
+
+  private async handleGetEarnedBadges(): Promise<unknown> {
+    logger.info('Fetching earned badges');
+
+    const badges = await this.client.getEarnedBadges();
+
+    return {
+      success: true,
+      data: badges,
+    };
+  }
+
+  private async handleGetPersonalRecords(): Promise<unknown> {
+    logger.info('Fetching personal records');
+
+    const records = await this.client.getPersonalRecords();
+
+    return {
+      success: true,
+      data: records,
+    };
+  }
+
+  private async handleGetRacePredictions(): Promise<unknown> {
+    logger.info('Fetching race predictions');
+
+    const predictions = await this.client.getRacePredictions();
+
+    return {
+      success: true,
+      data: predictions,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - GEAR MANAGEMENT HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetGear(): Promise<unknown> {
+    logger.info('Fetching all gear');
+
+    const gear = await this.client.getGear();
+
+    return {
+      success: true,
+      data: gear,
+    };
+  }
+
+  private async handleGetGearDefaults(): Promise<unknown> {
+    logger.info('Fetching gear defaults');
+
+    const defaults = await this.client.getGearDefaults();
+
+    return {
+      success: true,
+      data: defaults,
+    };
+  }
+
+  private async handleGetGearStats(args: Record<string, unknown>): Promise<unknown> {
+    const gearUUID = this.getStringParam(args, 'gearUUID', '');
+
+    if (!gearUUID) {
+      throw new Error('Parameter "gearUUID" is required');
+    }
+
+    logger.info(`Fetching stats for gear: ${gearUUID}`);
+
+    const stats = await this.client.getGearStats(gearUUID);
+
+    return {
+      success: true,
+      data: stats,
+    };
+  }
+
+  private async handleLinkGearToActivity(args: Record<string, unknown>): Promise<unknown> {
+    const gearUUID = this.getStringParam(args, 'gearUUID', '');
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+
+    if (!gearUUID || activityId === undefined) {
+      throw new Error('Parameters "gearUUID" and "activityId" are required');
+    }
+
+    logger.info(`Linking gear ${gearUUID} to activity ${activityId}`);
+
+    const result = await this.client.linkGearToActivity(gearUUID, activityId);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - REPORTS & PROGRESS HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetProgressSummary(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '');
+    const metric = this.getStringParam(args, 'metric', 'distance');
+
+    if (!startDate || !endDate) {
+      throw new Error('Parameters "startDate" and "endDate" are required');
+    }
+
+    logger.info(`Fetching progress summary from ${startDate} to ${endDate}`);
+
+    const summary = await this.client.getProgressSummary(startDate, endDate, metric);
+
+    return {
+      success: true,
+      data: summary,
+    };
+  }
+
+  private async handleGetDailySummary(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
+
+    logger.info(`Fetching daily summary for: ${date}`);
+
+    const summary = await this.client.getDailySummary(date);
+
+    return {
+      success: true,
+      date,
+      data: summary,
     };
   }
 }

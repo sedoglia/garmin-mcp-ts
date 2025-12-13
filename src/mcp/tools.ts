@@ -285,4 +285,737 @@ export const toolDefinitions: ToolDefinition[] = [
       },
     },
   },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - PRIORITÀ 1: WORKOUT MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_WORKOUT_BY_ID,
+    description: 'Get detailed information about a specific workout by its ID.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        workoutId: {
+          type: 'string',
+          description: 'The unique workout identifier (required)',
+        },
+      },
+      required: ['workoutId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.DOWNLOAD_WORKOUT,
+    description: 'Download a workout in FIT format for syncing to a Garmin device.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        workoutId: {
+          type: 'string',
+          description: 'The unique workout identifier (required)',
+        },
+      },
+      required: ['workoutId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.CREATE_WORKOUT,
+    description: `Create a new structured workout in Garmin Connect. Supports complex interval workouts with warmup, cooldown, and repeat blocks.
+
+Example for interval running workout:
+{
+  "workoutName": "5x3min Intervals",
+  "sportType": "running",
+  "description": "Interval training",
+  "workoutSegments": [{
+    "segmentOrder": 1,
+    "sportType": "running",
+    "workoutSteps": [
+      { "stepOrder": 1, "stepType": "warmup", "endCondition": "time", "endConditionValue": 600 },
+      { "stepOrder": 2, "stepType": "interval", "endCondition": "time", "endConditionValue": 180, "targetType": "pace" },
+      { "stepOrder": 3, "stepType": "recovery", "endCondition": "time", "endConditionValue": 120 },
+      { "stepOrder": 4, "stepType": "cooldown", "endCondition": "time", "endConditionValue": 600 }
+    ]
+  }]
+}`,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        workoutName: {
+          type: 'string',
+          description: 'Name of the workout (required)',
+        },
+        sportType: {
+          type: 'string',
+          description: 'Sport type: running, cycling, swimming, strength, cardio, walking, hiking, yoga',
+        },
+        description: {
+          type: 'string',
+          description: 'Optional workout description',
+        },
+        workoutSegments: {
+          type: 'array',
+          description: 'Array of workout segments containing steps',
+        },
+      },
+      required: ['workoutName', 'sportType', 'workoutSegments'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.UPDATE_WORKOUT,
+    description: 'Update an existing workout (name, description, or structure).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        workoutId: {
+          type: 'string',
+          description: 'The unique workout identifier (required)',
+        },
+        workoutName: {
+          type: 'string',
+          description: 'New name for the workout',
+        },
+        description: {
+          type: 'string',
+          description: 'New description for the workout',
+        },
+        workoutSegments: {
+          type: 'array',
+          description: 'Updated workout segments',
+        },
+      },
+      required: ['workoutId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.DELETE_WORKOUT,
+    description: 'Delete a workout from Garmin Connect.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        workoutId: {
+          type: 'string',
+          description: 'The unique workout identifier (required)',
+        },
+      },
+      required: ['workoutId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.SCHEDULE_WORKOUT,
+    description: 'Schedule an existing workout on a specific date.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        workoutId: {
+          type: 'string',
+          description: 'The unique workout identifier (required)',
+        },
+        date: {
+          type: 'string',
+          description: 'Date to schedule workout in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['workoutId', 'date'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - PRIORITÀ 2: ACTIVITY MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.UPLOAD_ACTIVITY,
+    description: 'Upload an activity file (FIT, GPX, TCX format) to Garmin Connect.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        filePath: {
+          type: 'string',
+          description: 'Full path to the activity file (required)',
+        },
+      },
+      required: ['filePath'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.CREATE_MANUAL_ACTIVITY,
+    description: 'Create a manual activity entry in Garmin Connect.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityName: {
+          type: 'string',
+          description: 'Name of the activity (required)',
+        },
+        activityType: {
+          type: 'string',
+          description: 'Type of activity: running, cycling, swimming, walking, hiking, strength_training, yoga, etc. (required)',
+        },
+        startTime: {
+          type: 'string',
+          description: 'Start time in ISO format YYYY-MM-DDTHH:MM:SS (required)',
+        },
+        duration: {
+          type: 'number',
+          description: 'Duration in seconds (required)',
+        },
+        distance: {
+          type: 'number',
+          description: 'Distance in meters (optional)',
+        },
+        calories: {
+          type: 'number',
+          description: 'Calories burned (optional)',
+        },
+        description: {
+          type: 'string',
+          description: 'Activity description (optional)',
+        },
+      },
+      required: ['activityName', 'activityType', 'startTime', 'duration'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.SET_ACTIVITY_NAME,
+    description: 'Change the name of an existing activity.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+        name: {
+          type: 'string',
+          description: 'New name for the activity (required)',
+        },
+      },
+      required: ['activityId', 'name'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.SET_ACTIVITY_TYPE,
+    description: 'Change the type/category of an existing activity.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+        typeKey: {
+          type: 'string',
+          description: 'Activity type key: running, cycling, swimming, walking, etc. (required)',
+        },
+        typeId: {
+          type: 'number',
+          description: 'Optional activity type ID',
+        },
+      },
+      required: ['activityId', 'typeKey'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.DELETE_ACTIVITY,
+    description: 'Delete an activity from Garmin Connect. WARNING: This action cannot be undone.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+      },
+      required: ['activityId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.DOWNLOAD_ACTIVITY,
+    description: 'Download an activity in various formats (FIT, TCX, GPX, KML, CSV).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+        format: {
+          type: 'string',
+          description: 'Download format: fit, tcx, gpx, kml, csv. Defaults to fit.',
+        },
+      },
+      required: ['activityId'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - DEVICE & SETTINGS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_DEVICE_LAST_USED,
+    description: 'Get information about the last used Garmin device.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_DEVICE_SETTINGS,
+    description: 'Get settings for a specific Garmin device.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        deviceId: {
+          type: 'string',
+          description: 'The device identifier (required)',
+        },
+      },
+      required: ['deviceId'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - HEALTH & WELLNESS AVANZATI
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_ALL_DAY_STRESS,
+    description: 'Get detailed all-day stress data with full breakdown.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_FLOORS,
+    description: 'Get floors climbed data for a specific date.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_INTENSITY_MINUTES,
+    description: 'Get intensity minutes (moderate and vigorous) for a specific date.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_MAX_METRICS,
+    description: 'Get max metrics including VO2 max and related fitness data.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_TRAINING_READINESS,
+    description: 'Get training readiness score indicating how prepared your body is for training.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_ENDURANCE_SCORE,
+    description: 'Get endurance score based on recent training load.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_FITNESS_AGE,
+    description: 'Get fitness age estimation based on VO2 max and other metrics.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - WEIGHT & BODY
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_WEIGH_INS,
+    description: 'Get weigh-in records for a date range.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['startDate', 'endDate'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.ADD_WEIGH_IN,
+    description: 'Add a new weigh-in record with optional body composition data.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        weight: {
+          type: 'number',
+          description: 'Weight in kilograms (required)',
+        },
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        bodyFatPercent: {
+          type: 'number',
+          description: 'Body fat percentage (optional)',
+        },
+        bodyWaterPercent: {
+          type: 'number',
+          description: 'Body water percentage (optional)',
+        },
+        muscleMassPercent: {
+          type: 'number',
+          description: 'Muscle mass percentage (optional)',
+        },
+        boneMassPercent: {
+          type: 'number',
+          description: 'Bone mass percentage (optional)',
+        },
+      },
+      required: ['weight', 'date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.DELETE_WEIGH_IN,
+    description: 'Delete a weigh-in record.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        weighInId: {
+          type: 'string',
+          description: 'The unique weigh-in identifier (required)',
+        },
+      },
+      required: ['weighInId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_BLOOD_PRESSURE,
+    description: 'Get blood pressure readings for a date range.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['startDate', 'endDate'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.SET_BLOOD_PRESSURE,
+    description: 'Record a blood pressure reading.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        systolic: {
+          type: 'number',
+          description: 'Systolic pressure in mmHg (required)',
+        },
+        diastolic: {
+          type: 'number',
+          description: 'Diastolic pressure in mmHg (required)',
+        },
+        pulse: {
+          type: 'number',
+          description: 'Pulse rate in BPM (required)',
+        },
+        dateTime: {
+          type: 'string',
+          description: 'Date and time in ISO format YYYY-MM-DDTHH:MM:SS (required)',
+        },
+        notes: {
+          type: 'string',
+          description: 'Optional notes',
+        },
+      },
+      required: ['systolic', 'diastolic', 'pulse', 'dateTime'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - ACTIVITY DETAILS AVANZATI
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_ACTIVITY_WEATHER,
+    description: 'Get weather conditions during an activity.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+      },
+      required: ['activityId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_ACTIVITY_HR_ZONES,
+    description: 'Get time spent in each heart rate zone during an activity.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+      },
+      required: ['activityId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_ACTIVITY_GEAR,
+    description: 'Get gear/equipment used in an activity.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+      },
+      required: ['activityId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_ACTIVITY_EXERCISE_SETS,
+    description: 'Get exercise sets from a strength training activity.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+      },
+      required: ['activityId'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - GOALS, CHALLENGES & RECORDS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_GOALS,
+    description: 'Get user goals (active, future, or past).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        status: {
+          type: 'string',
+          description: 'Filter by status: active, future, past. Defaults to all.',
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_ADHOC_CHALLENGES,
+    description: 'Get ad-hoc challenges history.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_BADGE_CHALLENGES,
+    description: 'Get available badge challenges.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_EARNED_BADGES,
+    description: 'Get all badges earned by the user.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_PERSONAL_RECORDS,
+    description: 'Get all personal records (PRs) across activities.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_RACE_PREDICTIONS,
+    description: 'Get predicted race times for 5K, 10K, half marathon, and marathon based on current fitness.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - GEAR MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_GEAR,
+    description: 'Get all user gear (shoes, bikes, etc.).',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_GEAR_DEFAULTS,
+    description: 'Get default gear settings for different activity types.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_GEAR_STATS,
+    description: 'Get usage statistics for a specific piece of gear.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        gearUUID: {
+          type: 'string',
+          description: 'The unique gear identifier (required)',
+        },
+      },
+      required: ['gearUUID'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.LINK_GEAR_TO_ACTIVITY,
+    description: 'Link a piece of gear to an activity.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        gearUUID: {
+          type: 'string',
+          description: 'The unique gear identifier (required)',
+        },
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+      },
+      required: ['gearUUID', 'activityId'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.0 - REPORTS & PROGRESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_PROGRESS_SUMMARY,
+    description: 'Get aggregated progress summary between two dates.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        metric: {
+          type: 'string',
+          description: 'Metric to aggregate: distance, duration, calories. Defaults to distance.',
+        },
+      },
+      required: ['startDate', 'endDate'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_DAILY_SUMMARY,
+    description: 'Get comprehensive daily summary including steps, calories, distance, floors, and more.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+    },
+  },
 ];
