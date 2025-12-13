@@ -138,4 +138,34 @@ export const MCP_TOOL_NAMES = {
   // ═══════════════════════════════════════════════════════════════
   GET_PROGRESS_SUMMARY: 'get_progress_summary',
   GET_DAILY_SUMMARY: 'get_daily_summary',
+
+  // ═══════════════════════════════════════════════════════════════
+  // NUOVI TOOL v3.0 - From Python API
+  // ═══════════════════════════════════════════════════════════════
+  GET_USER_SUMMARY: 'get_user_summary',
+  GET_STEPS_DATA: 'get_steps_data',
+  GET_DAILY_STEPS: 'get_daily_steps',
+  GET_ACTIVITIES_BY_DATE: 'get_activities_by_date',
+  GET_ACTIVITY_TYPED_SPLITS: 'get_activity_typed_splits',
+  GET_RHR_DAY: 'get_rhr_day',
+  GET_HILL_SCORE: 'get_hill_score',
+  GET_ALL_DAY_EVENTS: 'get_all_day_events',
+  GET_BODY_BATTERY_EVENTS: 'get_body_battery_events',
+  ADD_HYDRATION_DATA: 'add_hydration_data',
+  GET_AVAILABLE_BADGES: 'get_available_badges',
+  GET_IN_PROGRESS_BADGES: 'get_in_progress_badges',
+  GET_AVAILABLE_BADGE_CHALLENGES: 'get_available_badge_challenges',
+  GET_NON_COMPLETED_BADGE_CHALLENGES: 'get_non_completed_badge_challenges',
+  GET_IN_PROGRESS_VIRTUAL_CHALLENGES: 'get_in_progress_virtual_challenges',
+  REMOVE_GEAR_FROM_ACTIVITY: 'remove_gear_from_activity',
+  GET_GEAR_ACTIVITIES: 'get_gear_activities',
+  GET_TRAINING_PLANS: 'get_training_plans',
+  GET_TRAINING_PLAN_BY_ID: 'get_training_plan_by_id',
+  GET_MENSTRUAL_DATA: 'get_menstrual_data',
+  GET_PREGNANCY_SUMMARY: 'get_pregnancy_summary',
+  REQUEST_RELOAD: 'request_reload',
+  GET_ACTIVITY_TYPES: 'get_activity_types',
+  GET_PRIMARY_TRAINING_DEVICE: 'get_primary_training_device',
+  COUNT_ACTIVITIES: 'count_activities',
+  GET_FITNESS_STATS: 'get_fitness_stats',
 } as const;

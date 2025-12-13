@@ -241,6 +241,58 @@ async function main() {
     metric: 'distance',
   }));
 
+  console.log('\n═══════════════════════════════════════════════════════════════');
+  console.log('TESTING v3.0 NEW TOOLS - FROM PYTHON API');
+  console.log('═══════════════════════════════════════════════════════════════\n');
+
+  // User & Activity Summary
+  results.push(await testTool(handler, 'get_user_summary', { date: today }));
+  results.push(await testTool(handler, 'get_steps_data', { date: today }));
+  // Note: get_daily_steps has a 28-day limit
+  const twoWeeksAgo = new Date(Date.now() - 14 * 86400000).toISOString().split('T')[0];
+  results.push(await testTool(handler, 'get_daily_steps', { startDate: twoWeeksAgo, endDate: today }));
+  results.push(await testTool(handler, 'get_activities_by_date', { startDate: lastMonth, endDate: today }));
+
+  // Activity typed splits (using activityId if available)
+  if (activityId) {
+    results.push(await testTool(handler, 'get_activity_typed_splits', { activityId }));
+  }
+
+  // Health metrics
+  results.push(await testTool(handler, 'get_rhr_day', { date: today }));
+  results.push(await testTool(handler, 'get_hill_score', { startDate: lastMonth, endDate: today }));
+  results.push(await testTool(handler, 'get_all_day_events', { date: today }));
+  results.push(await testTool(handler, 'get_body_battery_events', { date: today }));
+
+  // Badges & Challenges
+  results.push(await testTool(handler, 'get_available_badges'));
+  results.push(await testTool(handler, 'get_in_progress_badges'));
+  results.push(await testTool(handler, 'get_available_badge_challenges'));
+  results.push(await testTool(handler, 'get_non_completed_badge_challenges'));
+  results.push(await testTool(handler, 'get_in_progress_virtual_challenges'));
+
+  // Gear activities (using gear UUID if available)
+  if (gearResult?.success && gearResult.result?.data?.gear?.length > 0) {
+    const gearUUID = gearResult.result.data.gear[0].uuid;
+    results.push(await testTool(handler, 'get_gear_activities', { gearUUID }));
+  }
+
+  // Training plans
+  results.push(await testTool(handler, 'get_training_plans', { locale: 'it-IT' }));
+
+  // Menstrual & Pregnancy (may return empty for male users)
+  results.push(await testTool(handler, 'get_menstrual_data', { date: today }));
+  results.push(await testTool(handler, 'get_pregnancy_summary'));
+
+  // Utility tools
+  results.push(await testTool(handler, 'get_activity_types'));
+  results.push(await testTool(handler, 'get_primary_training_device'));
+  results.push(await testTool(handler, 'count_activities'));
+  results.push(await testTool(handler, 'get_fitness_stats', { startDate: lastMonth, endDate: today }));
+
+  // Skip add_hydration_data, remove_gear_from_activity to preserve data
+  console.log('⚠️  Skipping modification tools (add_hydration_data, remove_gear_from_activity) to preserve data');
+
   // ═══════════════════════════════════════════════════════════════════════════
   // SUMMARY
   // ═══════════════════════════════════════════════════════════════════════════

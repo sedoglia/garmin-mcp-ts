@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-2.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-3.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,10 +18,30 @@
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
 
-## Novità v2.0.0
+## Novità v3.0.0
 
-**Espansione massiva con 37 nuovi strumenti!** Totale: **55 strumenti MCP**
+**Espansione completa dall'API Python Garmin Connect!** Totale: **71 strumenti MCP testati**
 
+### Nuove funzionalità v3.0:
+- **OAuth Token Persistence**: Salvataggio/caricamento token OAuth per riutilizzo sessione
+- **User Summary**: Riepilogo giornaliero completo dell'utente
+- **Steps Avanzati**: Daily steps con range di date, steps data dettagliati
+- **Attività per Data**: Ricerca attività in un range di date
+- **Activity Typed Splits**: Split dettagliati per tipo di attività
+- **Resting Heart Rate**: Frequenza cardiaca a riposo giornaliera
+- **Hill Score**: Punteggio prestazioni in salita
+- **All Day Events**: Eventi di tutto il giorno (stress, body battery)
+- **Badges Avanzati**: Badge disponibili, in progress, challenges
+- **Virtual Challenges**: Sfide virtuali in corso
+- **Gear Activities**: Attività associate a equipaggiamento
+- **Training Plans**: Piani di allenamento disponibili
+- **Salute Femminile**: Dati mestruali e gravidanza
+- **Activity Types**: Tutti i tipi di attività disponibili
+- **Primary Device**: Dispositivo di allenamento primario
+- **Activity Count**: Conteggio totale attività
+- **Fitness Stats**: Statistiche fitness in range di date
+
+### Dalla v2.0.0:
 - **Gestione Workout**: Crea, modifica, schedula ed elimina workout strutturati
 - **Gestione Attività**: Upload, download, modifica e cancellazione attività
 - **Metriche Avanzate**: Training Readiness, Endurance Score, Fitness Age
@@ -32,7 +52,7 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 
 ## Funzionalità
 
-Questo server MCP fornisce **55 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
+Questo server MCP fornisce **71 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
 
 ### Strumenti Attività (Base)
 | Strumento | Descrizione |
@@ -149,6 +169,63 @@ Questo server MCP fornisce **55 potenti strumenti** per interagire con i tuoi da
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_progress_summary` | Ottiene sommario progressi tra due date |
+
+---
+
+## 🆕 Nuovi Strumenti v3.0
+
+### User & Activity Summary
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_user_summary` | Ottiene riepilogo utente per una data (steps, calories, etc.) |
+| `get_steps_data` | Ottiene dati passi dettagliati per una data |
+| `get_daily_steps` | Ottiene passi giornalieri in un range di date (max 28 giorni) |
+| `get_activities_by_date` | Ottiene attività in un range di date |
+| `get_activity_typed_splits` | Ottiene split per tipo di attività |
+
+### Health Metrics Avanzati
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_rhr_day` | Ottiene frequenza cardiaca a riposo giornaliera |
+| `get_hill_score` | Ottiene punteggio Hill Score in un range di date |
+| `get_all_day_events` | Ottiene tutti gli eventi del giorno (stress, body battery) |
+| `get_body_battery_events` | Ottiene eventi Body Battery dettagliati |
+
+### Badges & Challenges Avanzati
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_available_badges` | Ottiene tutti i badge disponibili |
+| `get_in_progress_badges` | Ottiene badge in corso di completamento |
+| `get_available_badge_challenges` | Ottiene sfide badge disponibili |
+| `get_non_completed_badge_challenges` | Ottiene sfide badge non completate |
+| `get_in_progress_virtual_challenges` | Ottiene sfide virtuali in corso |
+
+### Gear Avanzato
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_gear_activities` | Ottiene attività associate a un gear |
+| `remove_gear_from_activity` | Rimuove gear da un'attività |
+
+### Training Plans
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_training_plans` | Ottiene piani di allenamento disponibili |
+| `get_training_plan_by_id` | Ottiene dettagli piano di allenamento |
+
+### Salute Femminile
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_menstrual_data` | Ottiene dati ciclo mestruale per una data |
+| `get_pregnancy_summary` | Ottiene riepilogo gravidanza |
+
+### Utility & Stats
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_activity_types` | Ottiene tutti i tipi di attività disponibili |
+| `get_primary_training_device` | Ottiene dispositivo di allenamento primario |
+| `count_activities` | Conta il numero totale di attività |
+| `get_fitness_stats` | Ottiene statistiche fitness in un range di date |
+| `add_hydration_data` | Aggiunge dati idratazione |
 
 ---
 
@@ -289,7 +366,7 @@ Esegui i test con dati reali:
 npm test
 ```
 
-Il test script verifica tutti i 55 strumenti con il tuo account Garmin.
+Il test script verifica tutti i 71 strumenti con il tuo account Garmin (100% success rate).
 
 ## Architettura
 
@@ -298,12 +375,12 @@ garmin-mcp-ts/
 ├── src/
 │   ├── index.ts           # Punto di ingresso, gestione stdout/stderr
 │   ├── garmin/
-│   │   ├── client.ts      # Client API Garmin Connect (1600+ righe)
+│   │   ├── client.ts      # Client API Garmin Connect (2200+ righe)
 │   │   ├── types.ts       # Definizioni tipi TypeScript
 │   │   └── simple-login.ts # Utility standalone per test login
 │   ├── mcp/
 │   │   ├── server.ts      # Setup server MCP e gestori richieste
-│   │   ├── tools.ts       # Definizioni strumenti e schemi (55 tools)
+│   │   ├── tools.ts       # Definizioni strumenti e schemi (71 tools)
 │   │   └── handlers.ts    # Logica implementazione strumenti
 │   └── utils/
 │       ├── constants.ts   # Costanti dell'applicazione

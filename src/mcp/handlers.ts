@@ -178,6 +178,62 @@ export class ToolHandler {
         case 'get_daily_summary':
           return await this.handleGetDailySummary(safeArgs);
 
+        // ═══════════════════════════════════════════════════════════════
+        // v3.0 - NEW TOOLS FROM PYTHON API
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_user_summary':
+          return await this.handleGetUserSummary(safeArgs);
+        case 'get_steps_data':
+          return await this.handleGetStepsData(safeArgs);
+        case 'get_daily_steps':
+          return await this.handleGetDailySteps(safeArgs);
+        case 'get_activities_by_date':
+          return await this.handleGetActivitiesByDate(safeArgs);
+        case 'get_activity_typed_splits':
+          return await this.handleGetActivityTypedSplits(safeArgs);
+        case 'get_rhr_day':
+          return await this.handleGetRhrDay(safeArgs);
+        case 'get_hill_score':
+          return await this.handleGetHillScore(safeArgs);
+        case 'get_all_day_events':
+          return await this.handleGetAllDayEvents(safeArgs);
+        case 'get_body_battery_events':
+          return await this.handleGetBodyBatteryEvents(safeArgs);
+        case 'add_hydration_data':
+          return await this.handleAddHydrationData(safeArgs);
+        case 'get_available_badges':
+          return await this.handleGetAvailableBadges();
+        case 'get_in_progress_badges':
+          return await this.handleGetInProgressBadges();
+        case 'get_available_badge_challenges':
+          return await this.handleGetAvailableBadgeChallenges(safeArgs);
+        case 'get_non_completed_badge_challenges':
+          return await this.handleGetNonCompletedBadgeChallenges(safeArgs);
+        case 'get_in_progress_virtual_challenges':
+          return await this.handleGetInProgressVirtualChallenges(safeArgs);
+        case 'remove_gear_from_activity':
+          return await this.handleRemoveGearFromActivity(safeArgs);
+        case 'get_gear_activities':
+          return await this.handleGetGearActivities(safeArgs);
+        case 'get_training_plans':
+          return await this.handleGetTrainingPlans();
+        case 'get_training_plan_by_id':
+          return await this.handleGetTrainingPlanById(safeArgs);
+        case 'get_menstrual_data':
+          return await this.handleGetMenstrualData(safeArgs);
+        case 'get_pregnancy_summary':
+          return await this.handleGetPregnancySummary();
+        case 'request_reload':
+          return await this.handleRequestReload(safeArgs);
+        case 'get_activity_types':
+          return await this.handleGetActivityTypes();
+        case 'get_primary_training_device':
+          return await this.handleGetPrimaryTrainingDevice();
+        case 'count_activities':
+          return await this.handleCountActivities();
+        case 'get_fitness_stats':
+          return await this.handleGetFitnessStats(safeArgs);
+
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
@@ -1249,6 +1305,397 @@ export class ToolHandler {
       success: true,
       date,
       data: summary,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v3.0 - NEW HANDLERS FROM PYTHON API
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetUserSummary(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Fetching user summary for: ${date}`);
+    const summary = await this.client.getUserSummary(date);
+
+    return {
+      success: true,
+      date,
+      data: summary,
+    };
+  }
+
+  private async handleGetStepsData(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Fetching steps data for: ${date}`);
+    const data = await this.client.getStepsData(date);
+
+    return {
+      success: true,
+      date,
+      data,
+    };
+  }
+
+  private async handleGetDailySteps(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '');
+
+    if (!startDate || !endDate) {
+      throw new Error('Parameters "startDate" and "endDate" are required');
+    }
+
+    logger.info(`Fetching daily steps from ${startDate} to ${endDate}`);
+    const data = await this.client.getDailySteps(startDate, endDate);
+
+    return {
+      success: true,
+      startDate,
+      endDate,
+      data,
+    };
+  }
+
+  private async handleGetActivitiesByDate(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '') || undefined;
+    const activityType = this.getStringParam(args, 'activityType', '') || undefined;
+    const sortOrder = this.getStringParam(args, 'sortOrder', '') || undefined;
+
+    if (!startDate) {
+      throw new Error('Parameter "startDate" is required');
+    }
+
+    logger.info(`Fetching activities by date from ${startDate}`);
+    const activities = await this.client.getActivitiesByDate(startDate, endDate, activityType, sortOrder);
+
+    return {
+      success: true,
+      startDate,
+      endDate,
+      count: activities.length,
+      data: activities,
+    };
+  }
+
+  private async handleGetActivityTypedSplits(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+    if (activityId === undefined) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    logger.info(`Fetching typed splits for activity: ${activityId}`);
+    const data = await this.client.getActivityTypedSplits(activityId);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetRhrDay(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Fetching RHR for: ${date}`);
+    const data = await this.client.getRhrDay(date);
+
+    return {
+      success: true,
+      date,
+      data,
+    };
+  }
+
+  private async handleGetHillScore(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '') || undefined;
+
+    if (!startDate) {
+      throw new Error('Parameter "startDate" is required');
+    }
+
+    logger.info(`Fetching hill score for: ${startDate}`);
+    const data = await this.client.getHillScore(startDate, endDate);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetAllDayEvents(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Fetching all day events for: ${date}`);
+    const data = await this.client.getAllDayEvents(date);
+
+    return {
+      success: true,
+      date,
+      data,
+    };
+  }
+
+  private async handleGetBodyBatteryEvents(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Fetching body battery events for: ${date}`);
+    const data = await this.client.getBodyBatteryEvents(date);
+
+    return {
+      success: true,
+      date,
+      data,
+    };
+  }
+
+  private async handleAddHydrationData(args: Record<string, unknown>): Promise<unknown> {
+    const valueInMl = this.getNumberParam(args, 'valueInMl', undefined);
+    const date = this.getStringParam(args, 'date', '') || undefined;
+    const timestamp = this.getStringParam(args, 'timestamp', '') || undefined;
+
+    if (valueInMl === undefined) {
+      throw new Error('Parameter "valueInMl" is required');
+    }
+
+    logger.info(`Adding hydration data: ${valueInMl}ml`);
+    const data = await this.client.addHydrationData(valueInMl, date, timestamp);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetAvailableBadges(): Promise<unknown> {
+    logger.info('Fetching available badges');
+    const data = await this.client.getAvailableBadges();
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetInProgressBadges(): Promise<unknown> {
+    logger.info('Fetching in-progress badges');
+    const data = await this.client.getInProgressBadges();
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetAvailableBadgeChallenges(args: Record<string, unknown>): Promise<unknown> {
+    const start = this.getNumberParam(args, 'start', 0);
+    const limit = this.getNumberParam(args, 'limit', 30);
+
+    logger.info('Fetching available badge challenges');
+    const data = await this.client.getAvailableBadgeChallenges(start, limit);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetNonCompletedBadgeChallenges(args: Record<string, unknown>): Promise<unknown> {
+    const start = this.getNumberParam(args, 'start', 0);
+    const limit = this.getNumberParam(args, 'limit', 30);
+
+    logger.info('Fetching non-completed badge challenges');
+    const data = await this.client.getNonCompletedBadgeChallenges(start, limit);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetInProgressVirtualChallenges(args: Record<string, unknown>): Promise<unknown> {
+    const start = this.getNumberParam(args, 'start', 0);
+    const limit = this.getNumberParam(args, 'limit', 30);
+
+    logger.info('Fetching in-progress virtual challenges');
+    const data = await this.client.getInProgressVirtualChallenges(start, limit);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleRemoveGearFromActivity(args: Record<string, unknown>): Promise<unknown> {
+    const gearUUID = this.getStringParam(args, 'gearUUID', '');
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+
+    if (!gearUUID || activityId === undefined) {
+      throw new Error('Parameters "gearUUID" and "activityId" are required');
+    }
+
+    logger.info(`Removing gear ${gearUUID} from activity ${activityId}`);
+    const data = await this.client.removeGearFromActivity(gearUUID, activityId);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetGearActivities(args: Record<string, unknown>): Promise<unknown> {
+    const gearUUID = this.getStringParam(args, 'gearUUID', '');
+    const limit = this.getNumberParam(args, 'limit', 100);
+
+    if (!gearUUID) {
+      throw new Error('Parameter "gearUUID" is required');
+    }
+
+    logger.info(`Fetching activities for gear: ${gearUUID}`);
+    const activities = await this.client.getGearActivities(gearUUID, limit);
+
+    return {
+      success: true,
+      count: activities.length,
+      data: activities,
+    };
+  }
+
+  private async handleGetTrainingPlans(): Promise<unknown> {
+    logger.info('Fetching training plans');
+    const data = await this.client.getTrainingPlans();
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetTrainingPlanById(args: Record<string, unknown>): Promise<unknown> {
+    const planId = this.getStringParam(args, 'planId', '');
+
+    if (!planId) {
+      throw new Error('Parameter "planId" is required');
+    }
+
+    logger.info(`Fetching training plan: ${planId}`);
+    const data = await this.client.getTrainingPlanById(planId);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetMenstrualData(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Fetching menstrual data for: ${date}`);
+    const data = await this.client.getMenstrualDataForDate(date);
+
+    return {
+      success: true,
+      date,
+      data,
+    };
+  }
+
+  private async handleGetPregnancySummary(): Promise<unknown> {
+    logger.info('Fetching pregnancy summary');
+    const data = await this.client.getPregnancySummary();
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleRequestReload(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Requesting data reload for: ${date}`);
+    const data = await this.client.requestReload(date);
+
+    return {
+      success: true,
+      date,
+      data,
+    };
+  }
+
+  private async handleGetActivityTypes(): Promise<unknown> {
+    logger.info('Fetching activity types');
+    const data = await this.client.getActivityTypes();
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleGetPrimaryTrainingDevice(): Promise<unknown> {
+    logger.info('Fetching primary training device');
+    const data = await this.client.getPrimaryTrainingDevice();
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleCountActivities(): Promise<unknown> {
+    logger.info('Counting activities');
+    const count = await this.client.countActivities();
+
+    return {
+      success: true,
+      totalCount: count,
+    };
+  }
+
+  private async handleGetFitnessStats(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '');
+    const metric = this.getStringParam(args, 'metric', 'distance');
+    const groupByActivities = args.groupByActivities !== false;
+
+    if (!startDate || !endDate) {
+      throw new Error('Parameters "startDate" and "endDate" are required');
+    }
+
+    logger.info(`Fetching fitness stats from ${startDate} to ${endDate}`);
+    const data = await this.client.getFitnessStats(startDate, endDate, metric, groupByActivities);
+
+    return {
+      success: true,
+      startDate,
+      endDate,
+      metric,
+      data,
     };
   }
 }

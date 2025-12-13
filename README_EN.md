@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-2.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-3.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,10 +18,30 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
 
-## What's New in v2.0.0
+## What's New in v3.0.0
 
-**Massive expansion with 37 new tools!** Total: **55 MCP tools**
+**Complete expansion from Python Garmin Connect API!** Total: **71 MCP tools tested**
 
+### New Features in v3.0:
+- **OAuth Token Persistence**: Save/load OAuth tokens for session reuse
+- **User Summary**: Complete daily user summary
+- **Advanced Steps**: Daily steps with date ranges, detailed steps data
+- **Activities by Date**: Search activities in a date range
+- **Activity Typed Splits**: Detailed splits by activity type
+- **Resting Heart Rate**: Daily resting heart rate
+- **Hill Score**: Hill performance score
+- **All Day Events**: Full day events (stress, body battery)
+- **Advanced Badges**: Available badges, in progress, challenges
+- **Virtual Challenges**: In-progress virtual challenges
+- **Gear Activities**: Activities associated with equipment
+- **Training Plans**: Available training plans
+- **Women's Health**: Menstrual and pregnancy data
+- **Activity Types**: All available activity types
+- **Primary Device**: Primary training device
+- **Activity Count**: Total activity count
+- **Fitness Stats**: Fitness statistics over date ranges
+
+### From v2.0.0:
 - **Workout Management**: Create, edit, schedule, and delete structured workouts
 - **Activity Management**: Upload, download, edit, and delete activities
 - **Advanced Metrics**: Training Readiness, Endurance Score, Fitness Age
@@ -32,7 +52,7 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 
 ## Features
 
-This MCP server provides **55 powerful tools** to interact with your Garmin Connect data:
+This MCP server provides **71 powerful tools** to interact with your Garmin Connect data:
 
 ### Activity Tools (Base)
 | Tool | Description |
@@ -149,6 +169,63 @@ This MCP server provides **55 powerful tools** to interact with your Garmin Conn
 | Tool | Description |
 |------|-------------|
 | `get_progress_summary` | Get progress summary between two dates |
+
+---
+
+## 🆕 New Tools in v3.0
+
+### User & Activity Summary
+| Tool | Description |
+|------|-------------|
+| `get_user_summary` | Get user summary for a date (steps, calories, etc.) |
+| `get_steps_data` | Get detailed steps data for a date |
+| `get_daily_steps` | Get daily steps over a date range (max 28 days) |
+| `get_activities_by_date` | Get activities within a date range |
+| `get_activity_typed_splits` | Get splits by activity type |
+
+### Advanced Health Metrics
+| Tool | Description |
+|------|-------------|
+| `get_rhr_day` | Get daily resting heart rate |
+| `get_hill_score` | Get Hill Score over a date range |
+| `get_all_day_events` | Get all day events (stress, body battery) |
+| `get_body_battery_events` | Get detailed Body Battery events |
+
+### Advanced Badges & Challenges
+| Tool | Description |
+|------|-------------|
+| `get_available_badges` | Get all available badges |
+| `get_in_progress_badges` | Get badges in progress |
+| `get_available_badge_challenges` | Get available badge challenges |
+| `get_non_completed_badge_challenges` | Get non-completed badge challenges |
+| `get_in_progress_virtual_challenges` | Get in-progress virtual challenges |
+
+### Advanced Gear
+| Tool | Description |
+|------|-------------|
+| `get_gear_activities` | Get activities associated with gear |
+| `remove_gear_from_activity` | Remove gear from an activity |
+
+### Training Plans
+| Tool | Description |
+|------|-------------|
+| `get_training_plans` | Get available training plans |
+| `get_training_plan_by_id` | Get training plan details |
+
+### Women's Health
+| Tool | Description |
+|------|-------------|
+| `get_menstrual_data` | Get menstrual cycle data for a date |
+| `get_pregnancy_summary` | Get pregnancy summary |
+
+### Utility & Stats
+| Tool | Description |
+|------|-------------|
+| `get_activity_types` | Get all available activity types |
+| `get_primary_training_device` | Get primary training device |
+| `count_activities` | Count total number of activities |
+| `get_fitness_stats` | Get fitness statistics over a date range |
+| `add_hydration_data` | Add hydration data |
 
 ---
 
@@ -289,7 +366,7 @@ Run tests with real data:
 npm test
 ```
 
-The test script validates all 55 tools with your Garmin account.
+The test script validates all 71 tools with your Garmin account (100% success rate).
 
 ## Architecture
 
@@ -298,12 +375,12 @@ garmin-mcp-ts/
 ├── src/
 │   ├── index.ts           # Entry point, stdout/stderr handling
 │   ├── garmin/
-│   │   ├── client.ts      # Garmin Connect API client (1600+ lines)
+│   │   ├── client.ts      # Garmin Connect API client (2200+ lines)
 │   │   ├── types.ts       # TypeScript type definitions
 │   │   └── simple-login.ts # Standalone login test utility
 │   ├── mcp/
 │   │   ├── server.ts      # MCP server setup and request handlers
-│   │   ├── tools.ts       # Tool definitions and schemas (55 tools)
+│   │   ├── tools.ts       # Tool definitions and schemas (71 tools)
 │   │   └── handlers.ts    # Tool implementation logic
 │   └── utils/
 │       ├── constants.ts   # Application constants

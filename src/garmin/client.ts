@@ -1,27 +1,70 @@
 // src/garmin/client.ts
 
 import GarminConnectModule from 'garmin-connect';
+import * as fs from 'fs';
+import * as path from 'path';
 import logger from '../utils/logger.js';
 
 // La libreria è CommonJS, quindi l'export default contiene la classe
 const GarminConnect = (GarminConnectModule as any).GarminConnect || GarminConnectModule;
 
+// Token storage interface
+interface OAuthTokens {
+  oauth1: any;
+  oauth2: any;
+}
+
 export class GarminConnectClient {
   private gc: any;
   private initialized: boolean = false;
+  private displayName: string | null = null;
 
   constructor() {
     // Non inizializzare qui, lo faremo in initialize()
   }
 
-  async initialize(email: string, password: string): Promise<void> {
+  /**
+   * Initialize with email/password credentials
+   * Optionally load/save OAuth tokens from/to a directory
+   */
+  async initialize(email: string, password: string, tokenDir?: string): Promise<void> {
     try {
       logger.info('🔐 Authenticating with Garmin Connect...');
-      // Passa le credenziali al costruttore
+
       this.gc = new GarminConnect({ username: email, password: password });
+
+      // Try to load existing tokens first
+      if (tokenDir && this.tryLoadTokens(tokenDir)) {
+        logger.info('✅ Loaded existing OAuth tokens');
+        this.initialized = true;
+
+        // Verify tokens are still valid by making a simple request
+        try {
+          await this.gc.getUserProfile();
+          logger.info('✅ OAuth tokens are valid');
+          return;
+        } catch {
+          logger.info('⚠️ Stored tokens expired, re-authenticating...');
+        }
+      }
+
+      // Login with credentials
       await this.gc.login();
       this.initialized = true;
       logger.info('✅ Authentication successful');
+
+      // Save tokens if tokenDir is specified
+      if (tokenDir) {
+        this.saveTokens(tokenDir);
+      }
+
+      // Get display name for user-specific API calls
+      try {
+        const profile = await this.gc.getUserProfile();
+        this.displayName = profile?.displayName || profile?.userName || null;
+      } catch {
+        // Non-critical, some endpoints may not need it
+      }
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Failed to initialize Garmin client:', error);
@@ -29,10 +72,98 @@ export class GarminConnectClient {
     }
   }
 
+  /**
+   * Initialize using only OAuth tokens (no credentials needed)
+   */
+  async initializeWithTokens(tokens: OAuthTokens): Promise<void> {
+    try {
+      logger.info('🔐 Authenticating with OAuth tokens...');
+      this.gc = new GarminConnect({});
+      this.gc.loadToken(tokens.oauth1, tokens.oauth2);
+      this.initialized = true;
+
+      // Verify tokens are valid
+      const profile = await this.gc.getUserProfile();
+      this.displayName = profile?.displayName || profile?.userName || null;
+      logger.info('✅ OAuth token authentication successful');
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Failed to initialize with OAuth tokens:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Export current OAuth tokens for later reuse
+   */
+  exportTokens(): OAuthTokens | null {
+    if (!this.initialized || !this.gc) return null;
+    try {
+      return this.gc.exportToken();
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Save OAuth tokens to files in the specified directory
+   */
+  saveTokens(dirPath: string): void {
+    try {
+      const tokens = this.gc.exportToken();
+      if (!tokens) return;
+
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+      }
+
+      fs.writeFileSync(
+        path.join(dirPath, 'oauth1_token.json'),
+        JSON.stringify(tokens.oauth1, null, 2)
+      );
+      fs.writeFileSync(
+        path.join(dirPath, 'oauth2_token.json'),
+        JSON.stringify(tokens.oauth2, null, 2)
+      );
+      logger.info(`✅ OAuth tokens saved to ${dirPath}`);
+    } catch (err) {
+      logger.warn('Failed to save OAuth tokens:', err);
+    }
+  }
+
+  /**
+   * Try to load OAuth tokens from files in the specified directory
+   */
+  private tryLoadTokens(dirPath: string): boolean {
+    try {
+      const oauth1Path = path.join(dirPath, 'oauth1_token.json');
+      const oauth2Path = path.join(dirPath, 'oauth2_token.json');
+
+      if (!fs.existsSync(oauth1Path) || !fs.existsSync(oauth2Path)) {
+        return false;
+      }
+
+      const oauth1 = JSON.parse(fs.readFileSync(oauth1Path, 'utf-8'));
+      const oauth2 = JSON.parse(fs.readFileSync(oauth2Path, 'utf-8'));
+
+      this.gc.loadToken(oauth1, oauth2);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   private checkInitialized(): void {
     if (!this.initialized) {
       throw new Error('Garmin client not initialized. Call initialize() first.');
     }
+  }
+
+  /**
+   * Get the display name of the logged-in user
+   */
+  getDisplayName(): string | null {
+    return this.displayName;
   }
 
   async getRecentActivities(limit: number = 10, start: number = 0): Promise<any> {
@@ -1673,6 +1804,635 @@ export class GarminConnectClient {
         return { date, message: 'No daily summary for this date' };
       }
       logger.error('Error fetching daily summary:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v3.0 - NEW TOOLS FROM PYTHON API
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get user summary/stats for a specific date (comprehensive daily summary)
+   */
+  async getUserSummary(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const displayName = this.displayName || (await this.gc.getUserProfile())?.displayName;
+      const url = `https://connectapi.garmin.com/usersummary-service/usersummary/daily/${displayName}`;
+      const params = { calendarDate: date };
+      const summary = await this.gc.get(url, { params });
+      return summary;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No user summary for this date' };
+      }
+      logger.error('Error fetching user summary:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get step data chart for a specific date
+   */
+  async getStepsData(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const displayName = this.displayName || (await this.gc.getUserProfile())?.displayName;
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/dailySummaryChart/${displayName}`;
+      const params = { date };
+      const data = await this.gc.get(url, { params });
+      return data || [];
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return [];
+      }
+      logger.error('Error fetching steps data:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get daily steps in a date range
+   */
+  async getDailySteps(startDate: string, endDate: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/usersummary-service/stats/steps/daily/${startDate}/${endDate}`;
+      const data = await this.gc.get(url);
+      return data || [];
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching daily steps:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get activities filtered by date range
+   */
+  async getActivitiesByDate(
+    startDate: string,
+    endDate?: string,
+    activityType?: string,
+    sortOrder?: string
+  ): Promise<any[]> {
+    this.checkInitialized();
+    try {
+      const activities: any[] = [];
+      let start = 0;
+      const limit = 20;
+      const url = 'https://connectapi.garmin.com/activitylist-service/activities/search/activities';
+
+      const baseParams: Record<string, string> = {
+        startDate,
+        limit: String(limit),
+      };
+
+      if (endDate) baseParams.endDate = endDate;
+      if (activityType) baseParams.activityType = activityType;
+      if (sortOrder) baseParams.sortOrder = sortOrder;
+
+      while (true) {
+        baseParams.start = String(start);
+        const result = await this.gc.get(url, { params: baseParams });
+        if (result && result.length > 0) {
+          activities.push(...result);
+          start += limit;
+        } else {
+          break;
+        }
+      }
+
+      return activities;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching activities by date:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get activities for a specific date
+   */
+  async getActivitiesForDate(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/mobile-gateway/heartRate/forDate/${date}`;
+      const data = await this.gc.get(url);
+      return data;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching activities for date:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get typed splits for an activity (more detailed than regular splits)
+   */
+  async getActivityTypedSplits(activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/typedsplits`;
+      const splits = await this.gc.get(url);
+      return { activityId, splits };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { activityId, message: 'No typed splits for this activity' };
+      }
+      logger.error('Error fetching typed splits:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get split summaries for an activity
+   */
+  async getActivitySplitSummaries(activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/split_summaries`;
+      const summaries = await this.gc.get(url);
+      return { activityId, summaries };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { activityId, message: 'No split summaries for this activity' };
+      }
+      logger.error('Error fetching split summaries:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get resting heart rate for a specific day
+   */
+  async getRhrDay(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const displayName = this.displayName || (await this.gc.getUserProfile())?.displayName;
+      const url = `https://connectapi.garmin.com/userstats-service/wellness/daily/${displayName}`;
+      const params = { fromDate: date, untilDate: date, metricId: 60 };
+      const data = await this.gc.get(url, { params });
+      return { date, ...data };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No RHR data for this date' };
+      }
+      logger.error('Error fetching RHR:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get hill score data
+   */
+  async getHillScore(startDate: string, endDate?: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      if (!endDate) {
+        const url = 'https://connectapi.garmin.com/metrics-service/metrics/hillscore';
+        const params = { calendarDate: startDate };
+        const data = await this.gc.get(url, { params });
+        return { date: startDate, ...data };
+      } else {
+        const url = 'https://connectapi.garmin.com/metrics-service/metrics/hillscore/stats';
+        const params = { startDate, endDate, aggregation: 'daily' };
+        const data = await this.gc.get(url, { params });
+        return { startDate, endDate, ...data };
+      }
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date: startDate, message: 'No hill score data' };
+      }
+      logger.error('Error fetching hill score:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get all day events (auto-detected activities, etc.)
+   */
+  async getAllDayEvents(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/dailyEvents`;
+      const params = { calendarDate: date };
+      const events = await this.gc.get(url, { params });
+      return { date, events: events || [] };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, events: [] };
+      }
+      logger.error('Error fetching all day events:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Add hydration data
+   */
+  async addHydrationData(valueInMl: number, date?: string, timestamp?: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/usersummary-service/usersummary/hydration/log';
+      const calendarDate = date || new Date().toISOString().split('T')[0];
+      const timestampLocal = timestamp || new Date().toISOString().replace('Z', '');
+
+      const payload = {
+        calendarDate,
+        timestampLocal,
+        valueInML: valueInMl,
+      };
+
+      const result = await this.gc.put(url, payload);
+      return { success: true, ...result };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error adding hydration data:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get available badges
+   */
+  async getAvailableBadges(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/badge-service/badge/available';
+      const params = { showExclusiveBadge: 'true' };
+      const badges = await this.gc.get(url, { params });
+      return { badges: badges || [] };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching available badges:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get in-progress badges
+   */
+  async getInProgressBadges(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const earned = await this.getEarnedBadges();
+      const available = await this.getAvailableBadges();
+
+      const isInProgress = (badge: any) => {
+        const progress = badge?.badgeProgressValue;
+        if (!progress || progress === 0) return false;
+        const target = badge?.badgeTargetValue;
+        if (progress === target) {
+          if (badge?.badgeLimitCount == null) return false;
+          return (badge?.badgeEarnedNumber || 0) < badge.badgeLimitCount;
+        }
+        return true;
+      };
+
+      const earnedInProgress = (earned.badges || []).filter(isInProgress);
+      const availableInProgress = (available.badges || []).filter(isInProgress);
+
+      const combined: Record<string, any> = {};
+      for (const b of earnedInProgress) {
+        combined[b.badgeId] = b;
+      }
+      for (const b of availableInProgress) {
+        combined[b.badgeId] = b;
+      }
+
+      return { badges: Object.values(combined) };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching in-progress badges:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get available badge challenges
+   */
+  async getAvailableBadgeChallenges(start: number = 1, limit: number = 30): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/badgechallenge-service/badgeChallenge/available';
+      const params = { start: String(Math.max(1, start)), limit: String(limit) };
+      const challenges = await this.gc.get(url, { params });
+      return { challenges: challenges || [] };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching available badge challenges:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get non-completed badge challenges
+   */
+  async getNonCompletedBadgeChallenges(start: number = 1, limit: number = 30): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/badgechallenge-service/badgeChallenge/non-completed';
+      const params = { start: String(Math.max(1, start)), limit: String(limit) };
+      const challenges = await this.gc.get(url, { params });
+      return { challenges: challenges || [] };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching non-completed badge challenges:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get in-progress virtual challenges
+   */
+  async getInProgressVirtualChallenges(start: number = 1, limit: number = 30): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/badgechallenge-service/virtualChallenge/inProgress';
+      const params = { start: String(Math.max(1, start)), limit: String(limit) };
+      const challenges = await this.gc.get(url, { params });
+      return { challenges: challenges || [] };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching in-progress virtual challenges:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Remove gear from an activity
+   */
+  async removeGearFromActivity(gearUUID: string, activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/gear-service/gear/unlink/${gearUUID}/activity/${activityId}`;
+      const result = await this.gc.put(url, {});
+      return {
+        success: true,
+        gearUUID,
+        activityId,
+        message: 'Gear removed from activity',
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error removing gear from activity:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get activities where gear was used
+   */
+  async getGearActivities(gearUUID: string, limit: number = 100): Promise<any[]> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activitylist-service/activities/${gearUUID}/gear`;
+      const params = { start: '0', limit: String(Math.min(limit, 1000)) };
+      const activities = await this.gc.get(url, { params });
+      return activities || [];
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return [];
+      }
+      logger.error('Error fetching gear activities:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get training plans
+   */
+  async getTrainingPlans(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/trainingplan-service/trainingplan/plans';
+      const plans = await this.gc.get(url);
+      return { plans: plans || [] };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching training plans:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get training plan by ID
+   */
+  async getTrainingPlanById(planId: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/trainingplan-service/trainingplan/phased/${planId}`;
+      const plan = await this.gc.get(url);
+      return plan;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { message: 'Training plan not found' };
+      }
+      logger.error('Error fetching training plan:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get menstrual data for a date
+   */
+  async getMenstrualDataForDate(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/periodichealth-service/menstrualcycle/dayview/${date}`;
+      const data = await this.gc.get(url);
+      return { date, ...data };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No menstrual data for this date' };
+      }
+      logger.error('Error fetching menstrual data:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get menstrual calendar data for a date range
+   */
+  async getMenstrualCalendarData(startDate: string, endDate: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/periodichealth-service/menstrualcycle/calendar/${startDate}/${endDate}`;
+      const data = await this.gc.get(url);
+      return { startDate, endDate, ...data };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { startDate, endDate, message: 'No menstrual calendar data' };
+      }
+      logger.error('Error fetching menstrual calendar data:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get pregnancy summary/snapshot
+   */
+  async getPregnancySummary(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/periodichealth-service/menstrualcycle/pregnancysnapshot';
+      const data = await this.gc.get(url);
+      return data;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { message: 'No pregnancy data available' };
+      }
+      logger.error('Error fetching pregnancy summary:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Request data reload for a specific date (for older data that was offloaded)
+   */
+  async requestReload(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/epoch/request/${date}`;
+      const result = await this.gc.post(url, {});
+      return { success: true, date, ...result };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error requesting data reload:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get activity types available in Garmin
+   */
+  async getActivityTypes(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/activity-service/activity/activityTypes';
+      const types = await this.gc.get(url);
+      return types || [];
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching activity types:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get primary training device info
+   */
+  async getPrimaryTrainingDevice(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/web-gateway/device-info/primary-training-device';
+      const device = await this.gc.get(url);
+      return device;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { message: 'No primary training device set' };
+      }
+      logger.error('Error fetching primary training device:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get device solar data
+   */
+  async getDeviceSolarData(deviceId: string, startDate: string, endDate?: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const end = endDate || startDate;
+      const singleDay = !endDate;
+      const url = `https://connectapi.garmin.com/web-gateway/solar/${deviceId}/${startDate}/${end}`;
+      const params = { singleDayView: singleDay };
+      const data = await this.gc.get(url, { params });
+      return data?.deviceSolarInput || [];
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return [];
+      }
+      logger.error('Error fetching device solar data:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Count total activities
+   */
+  async countActivities(): Promise<number> {
+    this.checkInitialized();
+    try {
+      const count = await this.gc.countActivities();
+      return typeof count === 'object' ? count.totalCount || 0 : count;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error counting activities:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get fitness stats for activities
+   */
+  async getFitnessStats(
+    startDate: string,
+    endDate: string,
+    metric: string = 'distance',
+    groupByActivities: boolean = true
+  ): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/fitnessstats-service/activity';
+      const params = {
+        startDate,
+        endDate,
+        aggregation: 'lifetime',
+        groupByParentActivityType: String(groupByActivities),
+        metric,
+      };
+      const stats = await this.gc.get(url, { params });
+      return stats;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching fitness stats:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get scheduled workout by ID
+   */
+  async getScheduledWorkoutById(scheduledWorkoutId: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/workout-service/schedule/${scheduledWorkoutId}`;
+      const workout = await this.gc.get(url);
+      return workout;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { message: 'Scheduled workout not found' };
+      }
+      logger.error('Error fetching scheduled workout:', error);
       throw err;
     }
   }

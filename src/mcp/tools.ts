@@ -1018,4 +1018,415 @@ Example for interval running workout:
       },
     },
   },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v3.0 - NEW TOOLS FROM PYTHON API
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_USER_SUMMARY,
+    description: 'Get comprehensive user activity summary for a specific date including steps, calories, distance, active minutes, and more.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_STEPS_DATA,
+    description: 'Get detailed step data chart for a specific date with timestamps.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_DAILY_STEPS,
+    description: 'Get daily step counts for a date range (max 28 days per request, auto-chunked for longer ranges).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['startDate', 'endDate'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_ACTIVITIES_BY_DATE,
+    description: 'Get all activities within a date range with optional filtering by type.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        activityType: {
+          type: 'string',
+          description: 'Filter by activity type: running, cycling, swimming, hiking, walking, etc.',
+        },
+        sortOrder: {
+          type: 'string',
+          description: 'Sort order: asc (oldest first) or desc (newest first, default)',
+        },
+      },
+      required: ['startDate'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_ACTIVITY_TYPED_SPLITS,
+    description: 'Get typed splits for an activity (more detailed than regular splits, useful for bouldering, strength training, etc.).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+      },
+      required: ['activityId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_RHR_DAY,
+    description: 'Get resting heart rate for a specific day.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_HILL_SCORE,
+    description: 'Get hill score data indicating climbing/vertical performance.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date for range query (optional)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['startDate'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_ALL_DAY_EVENTS,
+    description: 'Get all daily events including auto-detected activities that may not have been recorded.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_BODY_BATTERY_EVENTS,
+    description: 'Get Body Battery events for a date (sleep, activities, naps that affected energy levels).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.ADD_HYDRATION_DATA,
+    description: 'Add hydration/water intake data in milliliters.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        valueInMl: {
+          type: 'number',
+          description: 'Amount of water in milliliters (positive to add, negative to subtract)',
+        },
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (defaults to today)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        timestamp: {
+          type: 'string',
+          description: 'Timestamp in ISO format YYYY-MM-DDTHH:MM:SS (optional)',
+        },
+      },
+      required: ['valueInMl'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_AVAILABLE_BADGES,
+    description: 'Get all badges available to earn.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_IN_PROGRESS_BADGES,
+    description: 'Get badges that are currently in progress (started but not completed).',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_AVAILABLE_BADGE_CHALLENGES,
+    description: 'Get available badge challenges to join.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        start: {
+          type: 'number',
+          description: 'Starting index for pagination',
+          minimum: 0,
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum results to return',
+          minimum: 1,
+          maximum: 100,
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_NON_COMPLETED_BADGE_CHALLENGES,
+    description: 'Get badge challenges that have not been completed yet.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        start: {
+          type: 'number',
+          description: 'Starting index for pagination',
+          minimum: 0,
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum results to return',
+          minimum: 1,
+          maximum: 100,
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_IN_PROGRESS_VIRTUAL_CHALLENGES,
+    description: 'Get virtual challenges that are currently in progress.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        start: {
+          type: 'number',
+          description: 'Starting index for pagination',
+          minimum: 0,
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum results to return',
+          minimum: 1,
+          maximum: 100,
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.REMOVE_GEAR_FROM_ACTIVITY,
+    description: 'Remove/unlink a piece of gear from an activity.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        gearUUID: {
+          type: 'string',
+          description: 'The unique gear identifier (required)',
+        },
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+      },
+      required: ['gearUUID', 'activityId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_GEAR_ACTIVITIES,
+    description: 'Get activities where a specific piece of gear was used.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        gearUUID: {
+          type: 'string',
+          description: 'The unique gear identifier (required)',
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of activities to return (default: 100)',
+          minimum: 1,
+          maximum: 1000,
+        },
+      },
+      required: ['gearUUID'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_TRAINING_PLANS,
+    description: 'Get all available training plans.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_TRAINING_PLAN_BY_ID,
+    description: 'Get detailed information about a specific training plan.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        planId: {
+          type: 'string',
+          description: 'The unique training plan identifier (required)',
+        },
+      },
+      required: ['planId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_MENSTRUAL_DATA,
+    description: 'Get menstrual cycle data for a specific date.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_PREGNANCY_SUMMARY,
+    description: 'Get pregnancy tracking summary/snapshot data.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.REQUEST_RELOAD,
+    description: 'Request reload of data for a specific date (useful for older data that was offloaded by Garmin).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_ACTIVITY_TYPES,
+    description: 'Get all activity types available in Garmin Connect.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_PRIMARY_TRAINING_DEVICE,
+    description: 'Get information about the primary training device and device priorities.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.COUNT_ACTIVITIES,
+    description: 'Get the total count of activities in Garmin Connect.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_FITNESS_STATS,
+    description: 'Get aggregated fitness statistics between two dates.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        metric: {
+          type: 'string',
+          description: 'Metric to aggregate: distance, duration, elevationGain, movingDuration (default: distance)',
+        },
+        groupByActivities: {
+          type: 'boolean',
+          description: 'Group results by activity type (default: true)',
+        },
+      },
+      required: ['startDate', 'endDate'],
+    },
+  },
 ];
