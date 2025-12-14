@@ -1254,11 +1254,17 @@ export class GarminConnectClient {
 
   /**
    * Get fitness age
+   * Uses the fitnessage-service endpoint which returns:
+   * - chronologicalAge: actual age
+   * - fitnessAge: calculated fitness age
+   * - achievableFitnessAge: target/goal fitness age
+   * - components: breakdown of factors affecting fitness age
    */
   async getFitnessAge(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/metrics-service/metrics/fitnessage/${date}`;
+      // The correct endpoint is fitnessage-service, not metrics-service
+      const url = `https://connectapi.garmin.com/fitnessage-service/fitnessage/${date}`;
       const age = await this.gc.get(url);
       return {
         date,
