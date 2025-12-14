@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-3.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-3.1.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,7 +18,15 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
 
-## What's New in v3.0.0
+## What's New in v3.1.0 - Secure Encryption
+
+### 🔐 At-Rest Encryption System
+- **Encryption key in native OS vault**: Windows Credential Manager, macOS Keychain, Linux Secret Service
+- **Credentials and tokens always encrypted**: AES-256-GCM encryption
+- **Smart fallback**: Protected file if vault is not available
+- **Cross-platform**: Works on Windows, macOS and Linux
+
+### What's New in v3.0.0
 - **OAuth Token Persistence**: Save/load OAuth tokens for session reuse
 - **User Summary**: Complete daily user summary
 - **Advanced Steps**: Daily steps with date ranges, detailed steps data
@@ -238,22 +246,64 @@ cd garmin-mcp-ts
 npm install
 ```
 
-### 3. Build the Project
+### 3. Install Keytar (Recommended for Maximum Security)
+
+To use the native OS vault (Windows Credential Manager, macOS Keychain, Linux Secret Service), install `keytar`:
+
+```bash
+npm install keytar
+```
+
+**Platform Prerequisites:**
+
+**Windows:**
+- Visual Studio Build Tools (for compiling native modules)
+- Install with: `npm install --global windows-build-tools` (from admin terminal)
+
+**macOS:**
+- Xcode Command Line Tools: `xcode-select --install`
+
+**Linux:**
+- libsecret-1-dev (Debian/Ubuntu): `sudo apt-get install libsecret-1-dev`
+- libsecret-devel (Fedora): `sudo dnf install libsecret-devel`
+
+> **Note:** If `keytar` cannot be installed, the system will automatically use an encrypted file as fallback.
+
+### 4. Build the Project
 
 ```bash
 npm run build
 ```
 
-### 4. Configure Garmin Credentials
+### 5. Configure Garmin Credentials (Secure Method - Recommended)
 
-Create a `.env` file in the project root:
+Run the setup script to configure credentials securely:
+
+```bash
+npm run setup-encryption
+```
+
+This script will:
+1. Create a secure directory in your home folder
+2. Generate an encryption key and save it in the native OS vault
+3. Ask for Garmin email and password
+4. Encrypt and save credentials securely
+
+To verify the configuration:
+```bash
+npm run check-encryption
+```
+
+### 5b. Alternative Method (Legacy)
+
+Alternatively, you can create a `.env` file in the project root:
 
 ```env
 GARMIN_EMAIL=your.email@example.com
 GARMIN_PASSWORD=your_garmin_password
 ```
 
-> **Security Note:** Never commit your `.env` file to version control. It's already included in `.gitignore`.
+> **Security Note:** Never commit your `.env` file to version control. It's already included in `.gitignore`. It's recommended to use the secure method described above.
 
 ## Claude Desktop Configuration
 
@@ -364,10 +414,58 @@ garmin-mcp-ts/
 │   └── utils/
 │       ├── constants.ts   # Application constants
 │       ├── errors.ts      # Custom error classes
-│       └── logger.ts      # Logging utility (stderr only)
+│       ├── logger.ts      # Logging utility (stderr only)
+│       └── secure-storage.ts # Secure storage module with encryption
+├── scripts/
+│   ├── setup-encryption.ts  # Interactive credentials setup script
+│   ├── check-encryption.ts  # Diagnostic script for encryption verification
+│   └── test-keytar.ts       # Keytar integration test script
 ├── dist/                  # Compiled JavaScript output
 ├── package.json
 └── tsconfig.json
+```
+
+## 🔐 Security Architecture
+
+The security system uses a two-tier architecture to protect credentials:
+
+### Where Data is Stored
+
+| Operating System | Encryption Key | Encrypted Data |
+|------------------|----------------|----------------|
+| **Windows** | Windows Credential Manager | `%LOCALAPPDATA%\garmin-mcp\` |
+| **macOS** | Keychain (Face ID/Touch ID) | `~/Library/Application Support/garmin-mcp/` |
+| **Linux** | Secret Service (D-Bus/GNOME) | `~/.config/garmin-mcp/` |
+
+### How It Works
+
+1. **Encryption Key**: An AES-256 key is generated on first run and saved in the native OS vault
+2. **Credentials**: Email and password are encrypted with AES-256-GCM and saved in `garmin-credentials.enc`
+3. **OAuth Tokens**: Tokens are encrypted and saved in `garmin-tokens.enc` for session reuse
+
+### Why It's Secure
+
+- **Key is never stored in plaintext on disk**: It's in the hardware/software OS vault
+- **If the repository is exposed**: Data remains useless without the key
+- **If the PC is cloned**: Data is inaccessible (key remains in original user's vault)
+- **Strong encryption**: AES-256-GCM with random IV for each operation
+
+### Fallback
+
+If `keytar` is not available (native vault), the system uses an `.encryption.key` file with restricted permissions (0o600) in the data directory.
+
+### Verify Encryption Status
+
+To check the complete encryption and keytar status:
+
+```bash
+npm run check-encryption
+```
+
+To test keytar integration:
+
+```bash
+npm run test-keytar
 ```
 
 ## Troubleshooting

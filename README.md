@@ -246,13 +246,36 @@ cd garmin-mcp-ts
 npm install
 ```
 
-### 3. Compila il Progetto
+### 3. Installa Keytar (Raccomandato per sicurezza massima)
+
+Per utilizzare il vault nativo del sistema operativo (Windows Credential Manager, macOS Keychain, Linux Secret Service), installa `keytar`:
+
+```bash
+npm install keytar
+```
+
+**Prerequisiti per piattaforma:**
+
+**Windows:**
+- Visual Studio Build Tools (per compilare moduli nativi)
+- Installa con: `npm install --global windows-build-tools` (da terminale amministratore)
+
+**macOS:**
+- Xcode Command Line Tools: `xcode-select --install`
+
+**Linux:**
+- libsecret-1-dev (Debian/Ubuntu): `sudo apt-get install libsecret-1-dev`
+- libsecret-devel (Fedora): `sudo dnf install libsecret-devel`
+
+> **Nota:** Se `keytar` non può essere installato, il sistema userà automaticamente un file criptato come fallback.
+
+### 4. Compila il Progetto
 
 ```bash
 npm run build
 ```
 
-### 4. Configura le Credenziali Garmin (Metodo Sicuro - Raccomandato)
+### 5. Configura le Credenziali Garmin (Metodo Sicuro - Raccomandato)
 
 Esegui lo script di setup per configurare le credenziali in modo sicuro:
 
@@ -271,7 +294,7 @@ Per verificare la configurazione:
 npm run check-encryption
 ```
 
-### 4b. Metodo Alternativo (Legacy)
+### 5b. Metodo Alternativo (Legacy)
 
 In alternativa, puoi creare un file `.env` nella root del progetto:
 
@@ -429,6 +452,20 @@ Il sistema di sicurezza utilizza un'architettura a due livelli per proteggere le
 ### Fallback
 
 Se `keytar` non è disponibile (vault nativo), il sistema usa un file `.encryption.key` con permessi ristretti (0o600) nella directory dati.
+
+### Verifica stato encryption
+
+Per verificare lo stato completo dell'encryption e keytar:
+
+```bash
+npm run check-encryption
+```
+
+Per testare l'integrazione con keytar:
+
+```bash
+npm run test-keytar
+```
 
 ## Risoluzione dei Problemi
 
