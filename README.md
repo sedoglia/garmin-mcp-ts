@@ -436,7 +436,7 @@ garmin-mcp-ts/
 │       └── secure-storage.ts # Modulo di storage sicuro con encryption
 ├── scripts/
 │   ├── setup-encryption.ts  # Script interattivo per setup credenziali
-│   └── check-encryption.ts  # Script diagnostico per verificare encryption
+│   ├── check-encryption.ts  # Script diagnostico per verificare encryption
 │   └── test-keytar.ts       # Script diagnostico per testare l'integrazione con Keytar
 ├── dist/                  # Output JavaScript compilato
 ├── package.json
