@@ -3,6 +3,7 @@
 
 import { GarminConnectClient } from './garmin/client.js';
 import { ToolHandler } from './mcp/handlers.js';
+import { secureStorage } from './utils/secure-storage.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -36,19 +37,50 @@ async function testTool(
   }
 }
 
-async function main() {
-  const email = process.env.GARMIN_EMAIL;
-  const password = process.env.GARMIN_PASSWORD;
+/**
+ * Load credentials from multiple sources in priority order:
+ * 1. Environment variables
+ * 2. Encrypted secure storage
+ * 3. .env file (already loaded by dotenv)
+ */
+async function loadCredentials(): Promise<{ email: string; password: string } | null> {
+  // Try environment variables first
+  if (process.env.GARMIN_EMAIL && process.env.GARMIN_PASSWORD) {
+    return {
+      email: process.env.GARMIN_EMAIL,
+      password: process.env.GARMIN_PASSWORD
+    };
+  }
 
-  if (!email || !password) {
-    console.error('❌ Missing GARMIN_EMAIL or GARMIN_PASSWORD in environment');
+  // Try encrypted secure storage
+  try {
+    const encrypted = await secureStorage.loadCredentials();
+    if (encrypted?.email && encrypted?.password) {
+      console.log('📦 Using credentials from encrypted secure storage');
+      return encrypted;
+    }
+  } catch {
+    // Continue to next source
+  }
+
+  return null;
+}
+
+async function main() {
+  const credentials = await loadCredentials();
+
+  if (!credentials) {
+    console.error('❌ No credentials found. Please either:');
+    console.error('   1. Run: npm run setup-encryption (recommended)');
+    console.error('   2. Set GARMIN_EMAIL and GARMIN_PASSWORD environment variables');
+    console.error('   3. Create a .env file with GARMIN_EMAIL and GARMIN_PASSWORD');
     process.exit(1);
   }
 
   console.log('🔐 Connecting to Garmin Connect...\n');
 
   const client = new GarminConnectClient();
-  await client.initialize(email, password);
+  await client.initialize(credentials.email, credentials.password);
 
   const handler = new ToolHandler(client);
   const today = new Date().toISOString().split('T')[0];
