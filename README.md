@@ -387,6 +387,24 @@ Aggiungi il server MCP Garmin al tuo `claude_desktop_config.json`:
 
 > "Mostrami il sommario dei miei progressi dell'ultimo mese"
 
+### Health Metrics Avanzati (NUOVO v3.0)
+
+> "Qual è stata la mia frequenza cardiaca a riposo oggi?"
+
+> "Mostrami gli eventi di tutto il giorno per stress e body battery"
+
+## Advanced Gear Tools (NUOVO v3.0)
+
+> "Quali attività ho fatto con le mie scarpe da corsa preferite?"
+
+> "Mostrami l'equipaggiamento che ho usato per correre questo mese"
+
+## Salute Femminile (NUOVO v3.0)
+
+> "Come influisce il mio ciclo mestruale sulla mia performance di allenamento?"
+
+> "In base al mio ciclo, quale tipo di allenamento dovrei fare?"
+
 ## Test
 
 Esegui i test con dati reali:
