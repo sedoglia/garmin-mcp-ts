@@ -413,7 +413,7 @@ Esegui i test con dati reali:
 npm test
 ```
 
-Il test script verifica tutti i 71 strumenti con il tuo account Garmin (100% success rate).
+Il test script verifica tutti i 71 strumenti con il tuo account Garmin.
 
 ## Architettura
 

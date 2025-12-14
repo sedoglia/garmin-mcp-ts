@@ -413,7 +413,7 @@ Run tests with real data:
 npm test
 ```
 
-The test script validates all 71 tools with your Garmin account (100% success rate).
+The test script validates all 71 tools with your Garmin account.
 
 ## Architecture
 
