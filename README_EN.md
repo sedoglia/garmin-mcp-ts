@@ -254,19 +254,6 @@ To use the native OS vault (Windows Credential Manager, macOS Keychain, Linux Se
 npm install keytar
 ```
 
-**Platform Prerequisites:**
-
-**Windows:**
-- Visual Studio Build Tools (for compiling native modules)
-- Install with: `npm install --global windows-build-tools` (from admin terminal)
-
-**macOS:**
-- Xcode Command Line Tools: `xcode-select --install`
-
-**Linux:**
-- libsecret-1-dev (Debian/Ubuntu): `sudo apt-get install libsecret-1-dev`
-- libsecret-devel (Fedora): `sudo dnf install libsecret-devel`
-
 > **Note:** If `keytar` cannot be installed, the system will automatically use an encrypted file as fallback.
 
 ### 4. Build the Project
