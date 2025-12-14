@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-3.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-3.1.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,7 +18,15 @@
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
 
-## Novità v3.0.0
+## Novità v3.1.0 - Encryption Sicura
+
+### 🔐 Sistema di Encryption a Riposo
+- **Chiave di encryption nel vault nativo del SO**: Windows Credential Manager, macOS Keychain, Linux Secret Service
+- **Credenziali e token sempre cifrati**: AES-256-GCM encryption
+- **Fallback intelligente**: file protetto se il vault non è disponibile
+- **Cross-platform**: funziona su Windows, macOS e Linux
+
+### Novità v3.0.0
 - **OAuth Token Persistence**: Salvataggio/caricamento token OAuth per riutilizzo sessione
 - **User Summary**: Riepilogo giornaliero completo dell'utente
 - **Steps Avanzati**: Daily steps con range di date, steps data dettagliati
@@ -244,16 +252,35 @@ npm install
 npm run build
 ```
 
-### 4. Configura le Credenziali Garmin
+### 4. Configura le Credenziali Garmin (Metodo Sicuro - Raccomandato)
 
-Crea un file `.env` nella root del progetto:
+Esegui lo script di setup per configurare le credenziali in modo sicuro:
+
+```bash
+npm run setup-encryption
+```
+
+Questo script:
+1. Crea una directory sicura nella home dell'utente
+2. Genera una chiave di encryption e la salva nel vault nativo del SO
+3. Chiede email e password Garmin
+4. Cripta e salva le credenziali in modo sicuro
+
+Per verificare la configurazione:
+```bash
+npm run check-encryption
+```
+
+### 4b. Metodo Alternativo (Legacy)
+
+In alternativa, puoi creare un file `.env` nella root del progetto:
 
 ```env
 GARMIN_EMAIL=tua.email@esempio.com
 GARMIN_PASSWORD=la_tua_password_garmin
 ```
 
-> **Nota sulla Sicurezza:** Non commitare mai il file `.env` nel controllo versione. È già incluso in `.gitignore`.
+> **Nota sulla Sicurezza:** Non commitare mai il file `.env` nel controllo versione. È già incluso in `.gitignore`. Si consiglia di usare il metodo sicuro sopra descritto.
 
 ## Configurazione di Claude Desktop
 
@@ -364,11 +391,44 @@ garmin-mcp-ts/
 │   └── utils/
 │       ├── constants.ts   # Costanti dell'applicazione
 │       ├── errors.ts      # Classi di errore personalizzate
-│       └── logger.ts      # Utility di logging (solo stderr)
+│       ├── logger.ts      # Utility di logging (solo stderr)
+│       └── secure-storage.ts # Modulo di storage sicuro con encryption
+├── scripts/
+│   ├── setup-encryption.ts  # Script interattivo per setup credenziali
+│   └── check-encryption.ts  # Script diagnostico per verificare encryption
 ├── dist/                  # Output JavaScript compilato
 ├── package.json
 └── tsconfig.json
 ```
+
+## 🔐 Architettura di Sicurezza
+
+Il sistema di sicurezza utilizza un'architettura a due livelli per proteggere le credenziali:
+
+### Dove vengono salvati i dati
+
+| Sistema Operativo | Chiave di Encryption | Dati Criptati |
+|-------------------|---------------------|---------------|
+| **Windows** | Windows Credential Manager | `%LOCALAPPDATA%\garmin-mcp\` |
+| **macOS** | Keychain (Face ID/Touch ID) | `~/Library/Application Support/garmin-mcp/` |
+| **Linux** | Secret Service (D-Bus/GNOME) | `~/.config/garmin-mcp/` |
+
+### Come funziona
+
+1. **Chiave di Encryption**: Una chiave AES-256 viene generata alla prima esecuzione e salvata nel vault nativo del SO
+2. **Credenziali**: Email e password vengono cifrate con AES-256-GCM e salvate in `garmin-credentials.enc`
+3. **Token OAuth**: I token vengono cifrati e salvati in `garmin-tokens.enc` per riutilizzo sessione
+
+### Perché è sicuro
+
+- **La chiave non è mai su disco in chiaro**: È nel vault hardware/software del SO
+- **Se il repository viene esposto**: I dati rimangono inutili senza la chiave
+- **Se il PC viene clonato**: I dati sono inaccessibili (la chiave rimane nel vault dell'utente originale)
+- **Encryption forte**: AES-256-GCM con IV casuale per ogni operazione
+
+### Fallback
+
+Se `keytar` non è disponibile (vault nativo), il sistema usa un file `.encryption.key` con permessi ristretti (0o600) nella directory dati.
 
 ## Risoluzione dei Problemi
 

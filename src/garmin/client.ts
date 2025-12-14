@@ -1,28 +1,11 @@
 // src/garmin/client.ts
 
 import GarminConnectModule from 'garmin-connect';
-import * as fs from 'fs';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
 import logger from '../utils/logger.js';
+import { secureStorage, OAuthTokens } from '../utils/secure-storage.js';
 
 // La libreria è CommonJS, quindi l'export default contiene la classe
 const GarminConnect = (GarminConnectModule as any).GarminConnect || GarminConnectModule;
-
-// Get project root directory
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
-
-// Token file paths in project root
-const OAUTH1_TOKEN_PATH = path.join(PROJECT_ROOT, 'oauth1_token.json');
-const OAUTH2_TOKEN_PATH = path.join(PROJECT_ROOT, 'oauth2_token.json');
-
-// Token storage interface
-interface OAuthTokens {
-  oauth1: any;
-  oauth2: any;
-}
 
 export class GarminConnectClient {
   private gc: any;
@@ -35,7 +18,7 @@ export class GarminConnectClient {
 
   /**
    * Initialize with email/password credentials
-   * OAuth tokens are automatically saved/loaded from project root
+   * OAuth tokens are automatically saved/loaded using secure encrypted storage
    */
   async initialize(email: string, password: string): Promise<void> {
     try {
@@ -43,9 +26,9 @@ export class GarminConnectClient {
 
       this.gc = new GarminConnect({ username: email, password: password });
 
-      // Try to load existing tokens first from project root
-      if (this.tryLoadTokens()) {
-        logger.info('✅ Loaded existing OAuth tokens from project root');
+      // Try to load existing encrypted tokens first
+      if (await this.tryLoadTokens()) {
+        logger.info('✅ Loaded existing OAuth tokens from secure storage');
         this.initialized = true;
 
         // Verify tokens are still valid by making a simple request
@@ -63,8 +46,8 @@ export class GarminConnectClient {
       this.initialized = true;
       logger.info('✅ Authentication successful');
 
-      // Always save tokens to project root
-      this.saveTokens();
+      // Always save tokens to secure encrypted storage
+      await this.saveTokens();
 
       // Get display name for user-specific API calls
       try {
@@ -114,34 +97,34 @@ export class GarminConnectClient {
   }
 
   /**
-   * Save OAuth tokens to files in project root
+   * Save OAuth tokens to secure encrypted storage
    */
-  saveTokens(): void {
+  async saveTokens(): Promise<void> {
     try {
       const tokens = this.gc.exportToken();
       if (!tokens) return;
 
-      fs.writeFileSync(OAUTH1_TOKEN_PATH, JSON.stringify(tokens.oauth1, null, 2));
-      fs.writeFileSync(OAUTH2_TOKEN_PATH, JSON.stringify(tokens.oauth2, null, 2));
-      logger.info(`✅ OAuth tokens saved to ${PROJECT_ROOT}`);
+      await secureStorage.saveTokens({
+        oauth1: tokens.oauth1,
+        oauth2: tokens.oauth2
+      });
+      logger.info('✅ OAuth tokens saved to secure encrypted storage');
     } catch (err) {
       logger.warn('Failed to save OAuth tokens:', err);
     }
   }
 
   /**
-   * Try to load OAuth tokens from files in project root
+   * Try to load OAuth tokens from secure encrypted storage
    */
-  private tryLoadTokens(): boolean {
+  private async tryLoadTokens(): Promise<boolean> {
     try {
-      if (!fs.existsSync(OAUTH1_TOKEN_PATH) || !fs.existsSync(OAUTH2_TOKEN_PATH)) {
+      const tokens = await secureStorage.loadTokens();
+      if (!tokens || !tokens.oauth1 || !tokens.oauth2) {
         return false;
       }
 
-      const oauth1 = JSON.parse(fs.readFileSync(OAUTH1_TOKEN_PATH, 'utf-8'));
-      const oauth2 = JSON.parse(fs.readFileSync(OAUTH2_TOKEN_PATH, 'utf-8'));
-
-      this.gc.loadToken(oauth1, oauth2);
+      this.gc.loadToken(tokens.oauth1, tokens.oauth2);
       return true;
     } catch {
       return false;

@@ -1,8 +1,8 @@
 {
   "name": "garmin-mcp-ts",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "type": "module",
-  "description": "Garmin Connect MCP Server in TypeScript",
+  "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -10,6 +10,10 @@
     "login": "node dist/garmin/simple-login.js",
     "dev": "tsx watch src/index.ts",
     "test": "npx tsx src/test-tools.ts",
+    "test-oauth": "npx tsx src/test-oauth.ts",
+    "test-keytar": "npx tsx scripts/test-keytar.ts",
+    "setup-encryption": "npx tsx scripts/setup-encryption.ts",
+    "check-encryption": "npx tsx scripts/check-encryption.ts",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -20,6 +24,9 @@
     "pino": "^9.0.0",
     "pino-pretty": "^10.0.0",
     "zod": "^3.23.0"
+  },
+  "optionalDependencies": {
+    "keytar": "^7.9.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
