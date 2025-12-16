@@ -141,6 +141,8 @@ export class ToolHandler {
           return await this.handleGetActivityGear(safeArgs);
         case 'get_activity_exercise_sets':
           return await this.handleGetActivityExerciseSets(safeArgs);
+        case 'update_activity_exercise_sets':
+          return await this.handleUpdateActivityExerciseSets(safeArgs);
 
         // ═══════════════════════════════════════════════════════════════
         // v2.0 - GOALS, CHALLENGES & RECORDS
@@ -1135,6 +1137,29 @@ export class ToolHandler {
     return {
       success: true,
       data: sets,
+    };
+  }
+
+  private async handleUpdateActivityExerciseSets(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', undefined);
+    const exerciseSets = args['exerciseSets'] as any[] | undefined;
+
+    if (activityId === undefined) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    if (!exerciseSets || !Array.isArray(exerciseSets)) {
+      throw new Error('Parameter "exerciseSets" is required and must be an array');
+    }
+
+    logger.info(`Updating exercise sets for activity: ${activityId}`);
+
+    const result = await this.client.updateActivityExerciseSets(activityId, exerciseSets);
+
+    return {
+      success: true,
+      message: `Successfully updated ${exerciseSets.length} exercise sets for activity ${activityId}`,
+      data: result,
     };
   }
 

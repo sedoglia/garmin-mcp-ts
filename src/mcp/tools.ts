@@ -864,6 +864,28 @@ Example for interval running workout:
       required: ['activityId'],
     },
   },
+  {
+    name: MCP_TOOL_NAMES.UPDATE_ACTIVITY_EXERCISE_SETS,
+    description: `Update exercise sets for a strength training activity. Allows modifying exercise name, category, reps, weight for each set.
+
+Common exercise categories: BENCH_PRESS, SQUAT, DEADLIFT, PULL_UP, ROW, SHOULDER_PRESS, BICEP_CURL, TRICEP_EXTENSION, LAT_PULLDOWN, LEG_PRESS, LEG_CURL, LEG_EXTENSION, CALF_RAISE, PLANK, CRUNCH, LUNGE, PUSH_UP, DIP, SHRUG, HIP_THRUST, etc.
+
+Each set can have: exercises (array with category/name), repetitionCount, weight (in grams), duration, setType (ACTIVE/REST).`,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+        exerciseSets: {
+          type: 'array',
+          description: 'Array of exercise sets. Each set object should have: exercises (array with category/name), repetitionCount (number), weight (in grams), duration (seconds), setType (ACTIVE/REST), startTime (ISO format), messageIndex (number).',
+        },
+      },
+      required: ['activityId', 'exerciseSets'],
+    },
+  },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // v2.0 - GOALS, CHALLENGES & RECORDS

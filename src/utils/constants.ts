@@ -114,6 +114,7 @@ export const MCP_TOOL_NAMES = {
   GET_ACTIVITY_HR_ZONES: 'get_activity_hr_zones',
   GET_ACTIVITY_GEAR: 'get_activity_gear',
   GET_ACTIVITY_EXERCISE_SETS: 'get_activity_exercise_sets',
+  UPDATE_ACTIVITY_EXERCISE_SETS: 'update_activity_exercise_sets',
 
   // ═══════════════════════════════════════════════════════════════
   // NUOVI TOOL v2.0 - Goals, Challenges & Records
