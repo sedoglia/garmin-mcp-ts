@@ -283,7 +283,7 @@ sha256sum -c garmin-mcp-ts.mcpb.sha256
 Apri una **nuova chat su Claude Desktop** e scrivi il seguente prompt:
 
 ```
-Configura le seguente credenziali di accesso per Garmin
+Configura le credenziali di accesso per Garmin
 ```
 
 Rispondi al messaggio fornendo:
