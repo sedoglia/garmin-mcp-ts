@@ -1,0 +1,25 @@
+{
+  "manifest_version": "0.2",
+  "name": "garmin-mcp-ts",
+  "version": "3.1.0",
+  "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
+  "author": {
+    "name": "sedoglia",
+    "email": "sedoglia@gmail.com"
+  },
+  "homepage": "https://github.com/sedoglia/garmin-mcp-ts",
+  "documentation": "https://github.com/sedoglia/garmin-mcp-ts",
+  "support": "https://github.com/sedoglia/garmin-mcp-ts/issues",
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/dist/index.js"
+      ],
+      "env": {}
+    }
+  },
+  "license": "MIT"
+}

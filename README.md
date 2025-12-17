@@ -231,7 +231,97 @@ Questo server MCP fornisce **71 potenti strumenti** per interagire con i tuoi da
 - **Claude Desktop** installato
 - Account **Garmin Connect** con credenziali valide
 
-## Installazione
+# 🚀 Installazione Rapida (Bundle Precompilato)
+
+## Metodo 1: Download Diretto (Consigliato)
+
+### Prerequisiti:
+- Claude Desktop installato
+- macOS, Windows, o Linux
+
+### Passaggi:
+
+#### 1. Scarica il bundle
+
+Usa il browser oppure:
+
+```bash
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb
+```
+
+#### 2. Verifica l'integrità
+
+Verifica l'integrità (opzionale ma consigliato):
+
+```bash
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb.sha256
+sha256sum -c garmin-mcp-ts.mcpb.sha256
+```
+
+### 3. Installa Keytar (Raccomandato per sicurezza massima)
+
+Per utilizzare il vault nativo del sistema operativo (Windows Credential Manager, macOS Keychain, Linux Secret Service), installa `keytar`:
+
+```bash
+npm install keytar
+```
+
+> **Nota:** Se `keytar` non può essere installato, il sistema userà automaticamente un file criptato come fallback.
+
+### 4. Configura le Credenziali Garmin (Metodo Sicuro - Raccomandato)
+
+Esegui lo script di setup per configurare le credenziali in modo sicuro:
+
+```bash
+npm run setup-encryption
+```
+
+Questo script:
+1. Crea una directory sicura nella home dell'utente
+2. Genera una chiave di encryption e la salva nel vault nativo del SO
+3. Chiede email e password Garmin
+4. Cripta e salva le credenziali in modo sicuro
+
+Per verificare la configurazione:
+```bash
+npm run check-encryption
+```
+
+### 4b. Metodo Alternativo (Legacy)
+
+In alternativa, puoi creare un file `.env` nella root del progetto:
+
+```env
+GARMIN_EMAIL=tua.email@esempio.com
+GARMIN_PASSWORD=la_tua_password_garmin
+```
+
+> **Nota sulla Sicurezza:** Non commitare mai il file `.env` nel controllo versione. È già incluso in `.gitignore`. Si consiglia di usare il metodo sicuro sopra descritto.
+
+
+#### 5. Configura Claude Desktop
+
+Modifica `~/.claude_desktop/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "garmin": {
+      "command": "node",
+      "args": ["C:\\percorso\\a\\garmin-mcp-ts\\dist\\index.js"]
+    }
+  }
+}
+```
+
+#### 6. Riavvia Claude Desktop
+
+- Chiudi completamente l'applicazione
+- Riapri Claude Desktop
+- Verifica in Impostazioni → Sviluppatore lo stato della connessione ✅
+
+
+## 🚀 Installazione (clonando il repository con GIT)
 
 ### 1. Clona il Repository
 

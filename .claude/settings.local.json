@@ -23,7 +23,8 @@
       "Bash(npm run test-oauth:*)",
       "Bash(npm install:*)",
       "Bash(npm run test-keytar:*)",
-      "Bash(del scriptsdebug-keytar.ts)"
+      "Bash(del scriptsdebug-keytar.ts)",
+      "Bash(cd:*)"
     ],
     "deny": [],
     "ask": []
