@@ -231,9 +231,7 @@ Questo server MCP fornisce **71 potenti strumenti** per interagire con i tuoi da
 - **Claude Desktop** installato
 - Account **Garmin Connect** con credenziali valide
 
-# 🚀 Installazione Rapida (Bundle Precompilato)
-
-## Metodo 1: Download Diretto (Consigliato)
+## 🚀 Installazione Rapida (Bundle Precompilato)
 
 ### Prerequisiti:
 - Claude Desktop installato
