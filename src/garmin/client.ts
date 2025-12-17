@@ -1310,11 +1310,11 @@ export class GarminConnectClient {
   async addWeighIn(weight: number, date: string, bodyFatPercent?: number, bodyWaterPercent?: number, muscleMassPercent?: number, boneMassPercent?: number): Promise<any> {
     this.checkInitialized();
     try {
-      const url = 'https://connectapi.garmin.com/weight-service/user-weight';
+      const url = 'https://connect.garmin.com/modern/proxy/weight-service/user-weight';
       const payload: any = {
-        dateTimestamp: new Date(date).getTime(),
-        gmtTimestamp: new Date(date).getTime(),
-        weight: weight * 1000, // kg to grams
+        value: weight,
+        unitKey: 'kg',
+        date: date, // format: YYYY-MM-DD
       };
 
       if (bodyFatPercent !== undefined) payload.bodyFat = bodyFatPercent;
