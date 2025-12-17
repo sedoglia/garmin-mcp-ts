@@ -233,30 +233,9 @@ Questo server MCP fornisce **71 potenti strumenti** per interagire con i tuoi da
 
 ## 🚀 Installazione Rapida (Bundle Precompilato)
 
-### Prerequisiti:
-- Claude Desktop installato
-- macOS, Windows, o Linux
-
 ### Passaggi:
 
-#### 1. Scarica il bundle
-
-Usa il browser oppure:
-
-```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb
-```
-
-#### 2. Verifica l'integrità
-
-Verifica l'integrità (opzionale ma consigliato):
-
-```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb.sha256
-sha256sum -c garmin-mcp-ts.mcpb.sha256
-```
-
-### 3. Installa Keytar (Raccomandato per sicurezza massima)
+### 1. Installa Keytar (Raccomandato per sicurezza massima)
 
 Per utilizzare il vault nativo del sistema operativo (Windows Credential Manager, macOS Keychain, Linux Secret Service), installa `keytar`:
 
@@ -266,7 +245,40 @@ npm install keytar
 
 > **Nota:** Se `keytar` non può essere installato, il sistema userà automaticamente un file criptato come fallback.
 
-### 4. Configura le Credenziali Garmin (Metodo Sicuro - Raccomandato)
+### 2. Scarica il bundle
+
+Usa il browser oppure:
+
+```bash
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb
+```
+
+### 3. Verifica l'integrità
+
+Verifica l'integrità (opzionale ma consigliato):
+
+```bash
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb.sha256
+sha256sum -c garmin-mcp-ts.mcpb.sha256
+```
+
+### 4. Installa l'estensione in Claude Desktop (Metodo Consigliato)
+
+**Installazione tramite Custom Desktop Extensions:**
+
+1. Apri **Claude Desktop**
+2. Vai su **Impostazioni** (Settings)
+3. Seleziona la scheda **Estensioni** (Extensions)
+4. Clicca su **Impostazioni Avanzate** (Advanced settings) e trova la sezione **Extension Developer**
+5. Clicca su **"Installa Estensione..."** (Install Extension…)
+6. Seleziona il file `.mcpb` (`garmin-mcp-ts.mcpb` scaricato al passaggio 1)
+7. Segui le indicazioni a schermo per completare l'installazione
+
+> **Nota:** Questo è il metodo più semplice e consigliato. L'estensione sarà automaticamente integrata in Claude Desktop senza necessità di configurazione manuale.
+
+---
+
+### 5. Configura le Credenziali Garmin (Metodo Sicuro - Raccomandato)
 
 Esegui lo script di setup per configurare le credenziali in modo sicuro:
 
@@ -285,7 +297,7 @@ Per verificare la configurazione:
 npm run check-encryption
 ```
 
-### 4b. Metodo Alternativo (Legacy)
+### 5b. Metodo Alternativo (Legacy)
 
 In alternativa, puoi creare un file `.env` nella root del progetto:
 
@@ -297,7 +309,7 @@ GARMIN_PASSWORD=la_tua_password_garmin
 > **Nota sulla Sicurezza:** Non commitare mai il file `.env` nel controllo versione. È già incluso in `.gitignore`. Si consiglia di usare il metodo sicuro sopra descritto.
 
 
-#### 5. Configura Claude Desktop
+### 6. Configura Claude Desktop
 
 Modifica `~/.claude_desktop/claude_desktop_config.json`:
 
@@ -312,7 +324,7 @@ Modifica `~/.claude_desktop/claude_desktop_config.json`:
 }
 ```
 
-#### 6. Riavvia Claude Desktop
+### 7. Riavvia Claude Desktop
 
 - Chiudi completamente l'applicazione
 - Riapri Claude Desktop
