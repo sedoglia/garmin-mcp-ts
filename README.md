@@ -308,23 +308,7 @@ GARMIN_PASSWORD=la_tua_password_garmin
 
 > **Nota sulla Sicurezza:** Non commitare mai il file `.env` nel controllo versione. È già incluso in `.gitignore`. Si consiglia di usare il metodo sicuro sopra descritto.
 
-
-### 6. Configura Claude Desktop
-
-Modifica `~/.claude_desktop/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "garmin": {
-      "command": "node",
-      "args": ["C:\\percorso\\a\\garmin-mcp-ts\\dist\\index.js"]
-    }
-  }
-}
-```
-
-### 7. Riavvia Claude Desktop
+### 6. Riavvia Claude Desktop
 
 - Chiudi completamente l'applicazione
 - Riapri Claude Desktop
