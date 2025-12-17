@@ -1500,46 +1500,6 @@ export class GarminConnectClient {
     }
   }
 
-  /**
-   * Update exercise sets for strength training activities
-   * Allows modifying exercise name, category, reps, weight, etc.
-   *
-   * Common exercise categories: BENCH_PRESS, SQUAT, DEADLIFT, PULL_UP, ROW,
-   * SHOULDER_PRESS, BICEP_CURL, TRICEP_EXTENSION, LAT_PULLDOWN, LEG_PRESS,
-   * LEG_CURL, LEG_EXTENSION, CALF_RAISE, PLANK, CRUNCH, etc.
-   *
-   * @param activityId - The activity ID
-   * @param exerciseSets - Array of exercise sets to update
-   * @returns Updated exercise sets
-   */
-  async updateActivityExerciseSets(activityId: number, exerciseSets: any[]): Promise<any> {
-    this.checkInitialized();
-    try {
-      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/exerciseSets`;
-      const payload = {
-        activityId,
-        exerciseSets
-      };
-
-      await this.gc.put(url, payload);
-
-      logger.info(`Updated exercise sets for activity ${activityId}`);
-
-      // Return the updated sets
-      return await this.getActivityExerciseSets(activityId);
-    } catch (err) {
-      const error = err instanceof Error ? err.message : String(err);
-      if (error.includes('Invalid Category')) {
-        throw new Error(`Invalid exercise category. Common categories: BENCH_PRESS, SQUAT, DEADLIFT, PULL_UP, ROW, SHOULDER_PRESS, BICEP_CURL, TRICEP_EXTENSION, LAT_PULLDOWN, LEG_PRESS, LEG_CURL, LEG_EXTENSION, CALF_RAISE, PLANK, CRUNCH`);
-      }
-      if (error.includes('Invalid Exercise')) {
-        throw new Error(`Invalid exercise name for the given category`);
-      }
-      logger.error('Error updating activity exercise sets:', error);
-      throw err;
-    }
-  }
-
   // ═══════════════════════════════════════════════════════════════════════════
   // v2.0 - GOALS, CHALLENGES & RECORDS
   // ═══════════════════════════════════════════════════════════════════════════
