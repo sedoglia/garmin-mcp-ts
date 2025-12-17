@@ -280,33 +280,20 @@ sha256sum -c garmin-mcp-ts.mcpb.sha256
 
 ### 5. Configura le Credenziali Garmin (Metodo Sicuro - Raccomandato)
 
-Esegui lo script di setup per configurare le credenziali in modo sicuro:
+Apri una **nuova chat su Claude Desktop** e scrivi il seguente prompt:
 
-```bash
-npm run setup-encryption
+```
+Configura le seguente credenziali di accesso per Garmin
 ```
 
-Questo script:
-1. Crea una directory sicura nella home dell'utente
-2. Genera una chiave di encryption e la salva nel vault nativo del SO
-3. Chiede email e password Garmin
-4. Cripta e salva le credenziali in modo sicuro
+Rispondi al messaggio fornendo:
+- **Utente:** la tua email Garmin
+- **Password:** la tua password Garmin
 
-Per verificare la configurazione:
-```bash
-npm run check-encryption
-```
+L'estensione provvederà automaticamente a criptare e salvare le credenziali in modo sicuro nel vault nativo del sistema operativo (Windows Credential Manager, macOS Keychain, Linux Secret Service).
 
-### 5b. Metodo Alternativo (Legacy)
+> **Nota:** Le credenziali NON verranno salvate in file di testo. Saranno sempre crittografate e gestite dal vault nativo del SO.
 
-In alternativa, puoi creare un file `.env` nella root del progetto:
-
-```env
-GARMIN_EMAIL=tua.email@esempio.com
-GARMIN_PASSWORD=la_tua_password_garmin
-```
-
-> **Nota sulla Sicurezza:** Non commitare mai il file `.env` nel controllo versione. È già incluso in `.gitignore`. Si consiglia di usare il metodo sicuro sopra descritto.
 
 ### 6. Riavvia Claude Desktop
 
