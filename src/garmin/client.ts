@@ -1310,7 +1310,7 @@ export class GarminConnectClient {
   async addWeighIn(weight: number, date: string, bodyFatPercent?: number, bodyWaterPercent?: number, muscleMassPercent?: number, boneMassPercent?: number): Promise<any> {
     this.checkInitialized();
     try {
-      const url = 'https://connect.garmin.com/modern/proxy/weight-service/user-weight';
+      const url = 'https://connectapi.garmin.com/weight-service/user-weight';
       const payload: any = {
         value: weight,
         unitKey: 'kg',
@@ -1322,12 +1322,18 @@ export class GarminConnectClient {
       if (muscleMassPercent !== undefined) payload.muscleMass = muscleMassPercent;
       if (boneMassPercent !== undefined) payload.boneMass = boneMassPercent;
 
-      const result = await this.gc.post(url, payload);
+      await this.gc.post(url, payload);
+
+      // Verify the weight was saved by fetching it
+      const verification = await this.getWeighIns(date, date);
+      const savedWeight = verification?.weighIns?.dateWeightList?.[0];
+
       return {
         success: true,
         weight,
         date,
-        ...result,
+        savedWeight: savedWeight ? savedWeight.weight / 1000 : weight,
+        samplePk: savedWeight?.samplePk,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
