@@ -228,10 +228,79 @@ This MCP server provides **71 powerful tools** to interact with your Garmin Conn
 
 - **Node.js** 18.0 or higher
 - **npm** 8.0 or higher
-- **Claude Desktop** application installed
+- **Claude Desktop** installed
 - **Garmin Connect** account with valid credentials
 
-## Installation
+## 🚀 Quick Installation (Precompiled Bundle)
+
+### Steps:
+
+### 1. Install Keytar (Recommended for maximum security)
+
+To use the native operating system vault (Windows Credential Manager, macOS Keychain, Linux Secret Service), install `keytar`:
+
+```bash
+npm install keytar
+```
+
+> **Note:** If `keytar` cannot be installed, the system will automatically use an encrypted file as a fallback.
+
+### 2. Download the bundle
+
+Use your browser or:
+
+```bash
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb
+```
+
+### 3. Verify integrity
+
+Verify the integrity (optional but recommended):
+
+```bash
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb.sha256
+sha256sum -c garmin-mcp-ts.mcpb.sha256
+```
+
+### 4. Install the extension in Claude Desktop (Recommended Method)
+
+**Installation via Custom Desktop Extensions:**
+
+1. Open **Claude Desktop**
+2. Go to **Settings**
+3. Select the **Extensions** tab
+4. Click on **Advanced settings** and find the **Extension Developer** section
+5. Click on **"Install Extension…"**
+6. Select the `.mcpb` file (`garmin-mcp-ts.mcpb` downloaded in step 1)
+7. Follow the on-screen instructions to complete the installation
+
+> **Note:** This is the simplest and most recommended method. The extension will be automatically integrated into Claude Desktop without requiring manual configuration.
+
+---
+
+### 5. Configure Garmin Credentials (Secure Method - Recommended)
+
+Open a **new chat in Claude Desktop** and write the following prompt:
+
+```
+Configure login credentials for Garmin
+```
+
+Respond to the message by providing:
+- **User:** your Garmin email
+- **Password:** your Garmin password
+
+The extension will automatically encrypt and securely save the credentials in the native operating system vault (Windows Credential Manager, macOS Keychain, Linux Secret Service).
+
+> **Note:** Credentials will NOT be saved in text files. They will always be encrypted and managed by the OS native vault.
+
+### 6. Restart Claude Desktop
+
+- Close the application completely
+- Reopen Claude Desktop
+- Verify in Settings → Developer the connection status ✅
+
+## 🚀 Installation (by cloning the repository with GIT)
 
 ### 1. Clone the Repository
 
