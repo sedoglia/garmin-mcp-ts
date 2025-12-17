@@ -24,7 +24,8 @@
       "Bash(npm install:*)",
       "Bash(npm run test-keytar:*)",
       "Bash(del scriptsdebug-keytar.ts)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(del scriptsdebug-weighin.ts)"
     ],
     "deny": [],
     "ask": []
