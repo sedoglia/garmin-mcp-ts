@@ -47,7 +47,7 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 
 ## Features
 
-This MCP server provides **71 powerful tools** to interact with your Garmin Connect data:
+This MCP server provides **68 powerful tools** to interact with your Garmin Connect data:
 
 ### Activity Tools (Base)
 | Tool | Description |
@@ -139,7 +139,6 @@ This MCP server provides **71 powerful tools** to interact with your Garmin Conn
 |------|-------------|
 | `get_activity_weather` | Get weather during an activity |
 | `get_activity_hr_zones` | Get time in HR zones |
-| `get_activity_gear` | Get gear used in an activity |
 | `get_activity_exercise_sets` | Get exercise sets (strength training) |
 
 ### Goals, Challenges & Records
@@ -155,10 +154,10 @@ This MCP server provides **71 powerful tools** to interact with your Garmin Conn
 ### Gear Management
 | Tool | Description |
 |------|-------------|
-| `get_gear` | Get all equipment |
-| `get_gear_defaults` | Get default gear by activity type |
-| `get_gear_stats` | Get gear usage statistics |
-| `link_gear_to_activity` | Link gear to an activity |
+| `get_gear_stats` | Get gear usage statistics (requires UUID from web interface) |
+| `link_gear_to_activity` | Link gear to an activity (requires UUID from web interface) |
+
+> **Note:** Garmin's OAuth API doesn't support listing gear. To use gear tools, you need to get the gear UUID from Garmin Connect web interface (Settings → Gear → click on gear → UUID is in the URL).
 
 ### Reports & Progress
 | Tool | Description |
@@ -198,8 +197,8 @@ This MCP server provides **71 powerful tools** to interact with your Garmin Conn
 ### Advanced Gear
 | Tool | Description |
 |------|-------------|
-| `get_gear_activities` | Get activities associated with gear |
-| `remove_gear_from_activity` | Remove gear from an activity |
+| `get_gear_activities` | Get activities associated with gear (requires UUID) |
+| `remove_gear_from_activity` | Remove gear from an activity (requires UUID) |
 
 ### Training Plans
 | Tool | Description |
@@ -469,7 +468,7 @@ Run tests with real data:
 npm test
 ```
 
-The test script validates all 71 tools with your Garmin account.
+The test script validates all 68 tools with your Garmin account.
 
 ## Architecture
 
@@ -483,7 +482,7 @@ garmin-mcp-ts/
 │   │   └── simple-login.ts # Standalone login test utility
 │   ├── mcp/
 │   │   ├── server.ts      # MCP server setup and request handlers
-│   │   ├── tools.ts       # Tool definitions and schemas (71 tools)
+│   │   ├── tools.ts       # Tool definitions and schemas (68 tools)
 │   │   └── handlers.ts    # Tool implementation logic
 │   └── utils/
 │       ├── constants.ts   # Application constants

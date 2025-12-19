@@ -47,7 +47,7 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 
 ## Funzionalità
 
-Questo server MCP fornisce **71 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
+Questo server MCP fornisce **68 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
 
 ### Strumenti Attività (Base)
 | Strumento | Descrizione |
@@ -139,7 +139,6 @@ Questo server MCP fornisce **71 potenti strumenti** per interagire con i tuoi da
 |-----------|-------------|
 | `get_activity_weather` | Ottiene meteo durante un'attività |
 | `get_activity_hr_zones` | Ottiene tempo nelle zone HR |
-| `get_activity_gear` | Ottiene gear usato in un'attività |
 | `get_activity_exercise_sets` | Ottiene set esercizi (strength training) |
 
 ### Goals, Challenges & Records
@@ -155,10 +154,10 @@ Questo server MCP fornisce **71 potenti strumenti** per interagire con i tuoi da
 ### Gear Management
 | Strumento | Descrizione |
 |-----------|-------------|
-| `get_gear` | Ottiene tutto l'equipaggiamento |
-| `get_gear_defaults` | Ottiene gear predefinito per tipo attività |
-| `get_gear_stats` | Ottiene statistiche uso gear |
-| `link_gear_to_activity` | Collega gear a un'attività |
+| `get_gear_stats` | Ottiene statistiche uso gear (richiede UUID da interfaccia web) |
+| `link_gear_to_activity` | Collega gear a un'attività (richiede UUID da interfaccia web) |
+
+> **Nota:** L'API OAuth di Garmin non supporta la lista dei gear. Per usare gli strumenti gear, è necessario ottenere l'UUID del gear dall'interfaccia web di Garmin Connect (Impostazioni → Attrezzatura → clicca sul gear → l'UUID è nell'URL).
 
 ### Reports & Progress
 | Strumento | Descrizione |
@@ -198,8 +197,8 @@ Questo server MCP fornisce **71 potenti strumenti** per interagire con i tuoi da
 ### Gear Avanzato
 | Strumento | Descrizione |
 |-----------|-------------|
-| `get_gear_activities` | Ottiene attività associate a un gear |
-| `remove_gear_from_activity` | Rimuove gear da un'attività |
+| `get_gear_activities` | Ottiene attività associate a un gear (richiede UUID) |
+| `remove_gear_from_activity` | Rimuove gear da un'attività (richiede UUID) |
 
 ### Training Plans
 | Strumento | Descrizione |
@@ -471,7 +470,7 @@ Esegui i test con dati reali:
 npm test
 ```
 
-Il test script verifica tutti i 71 strumenti con il tuo account Garmin.
+Il test script verifica tutti i 68 strumenti con il tuo account Garmin.
 
 ## Architettura
 
@@ -485,7 +484,7 @@ garmin-mcp-ts/
 │   │   └── simple-login.ts # Utility standalone per test login
 │   ├── mcp/
 │   │   ├── server.ts      # Setup server MCP e gestori richieste
-│   │   ├── tools.ts       # Definizioni strumenti e schemi (71 tools)
+│   │   ├── tools.ts       # Definizioni strumenti e schemi (68 tools)
 │   │   └── handlers.ts    # Logica implementazione strumenti
 │   └── utils/
 │       ├── constants.ts   # Costanti dell'applicazione
