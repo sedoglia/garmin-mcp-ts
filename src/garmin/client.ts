@@ -1402,14 +1402,27 @@ export class GarminConnectClient {
     this.checkInitialized();
     try {
       const url = 'https://connectapi.garmin.com/bloodpressure-service/bloodpressure';
+
+      // Parse and format timestamps correctly
+      const date = new Date(dateTime);
+      const pad = (n: number) => n.toString().padStart(2, '0');
+
+      // Local time format: YYYY-MM-DDTHH:MM:SS.000
+      const localTimestamp = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.000`;
+
+      // GMT format: YYYY-MM-DDTHH:MM:SS.mmm (no Z, use .000)
+      const gmtTimestamp = date.toISOString().replace('Z', '');
+
       const payload = {
         systolic,
         diastolic,
         pulse,
-        measurementTimestampLocal: dateTime,
-        measurementTimestampGMT: new Date(dateTime).toISOString(),
-        notes: notes || '',
+        measurementTimestampLocal: localTimestamp,
+        measurementTimestampGMT: gmtTimestamp,
+        sourceType: 'MANUAL',
+        notes: notes || null,
       };
+
       const result = await this.gc.post(url, payload);
       return {
         success: true,
@@ -1421,6 +1434,26 @@ export class GarminConnectClient {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error setting blood pressure:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Delete a blood pressure reading
+   */
+  async deleteBloodPressure(samplePk: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/bloodpressure-service/bloodpressure/${samplePk}`;
+      await this.gc.client.delete(url);
+      return {
+        success: true,
+        samplePk,
+        message: 'Blood pressure reading deleted successfully',
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error deleting blood pressure:', error);
       throw err;
     }
   }

@@ -803,6 +803,20 @@ Example for interval running workout:
       required: ['systolic', 'diastolic', 'pulse', 'dateTime'],
     },
   },
+  {
+    name: MCP_TOOL_NAMES.DELETE_BLOOD_PRESSURE,
+    description: 'Delete a blood pressure reading by its sample ID.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        samplePk: {
+          type: 'string',
+          description: 'The unique sample ID of the blood pressure reading to delete (required)',
+        },
+      },
+      required: ['samplePk'],
+    },
+  },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // v2.0 - ACTIVITY DETAILS AVANZATI

@@ -129,6 +129,8 @@ export class ToolHandler {
           return await this.handleGetBloodPressure(safeArgs);
         case 'set_blood_pressure':
           return await this.handleSetBloodPressure(safeArgs);
+        case 'delete_blood_pressure':
+          return await this.handleDeleteBloodPressure(safeArgs);
 
         // ═══════════════════════════════════════════════════════════════
         // v2.0 - ACTIVITY DETAILS AVANZATI
@@ -1058,6 +1060,23 @@ export class ToolHandler {
     logger.info(`Recording blood pressure: ${systolic}/${diastolic} mmHg`);
 
     const result = await this.client.setBloodPressure(systolic, diastolic, pulse, dateTime, notes);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleDeleteBloodPressure(args: Record<string, unknown>): Promise<unknown> {
+    const samplePk = this.getStringParam(args, 'samplePk', '');
+
+    if (!samplePk) {
+      throw new Error('Parameter "samplePk" is required');
+    }
+
+    logger.info(`Deleting blood pressure reading: ${samplePk}`);
+
+    const result = await this.client.deleteBloodPressure(samplePk);
 
     return {
       success: true,

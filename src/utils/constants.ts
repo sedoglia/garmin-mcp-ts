@@ -106,6 +106,7 @@ export const MCP_TOOL_NAMES = {
   DELETE_WEIGH_IN: 'delete_weigh_in',
   GET_BLOOD_PRESSURE: 'get_blood_pressure',
   SET_BLOOD_PRESSURE: 'set_blood_pressure',
+  DELETE_BLOOD_PRESSURE: 'delete_blood_pressure',
 
   // ═══════════════════════════════════════════════════════════════
   // NUOVI TOOL v2.0 - Activity Details Avanzati
