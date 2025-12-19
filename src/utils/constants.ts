@@ -113,7 +113,6 @@ export const MCP_TOOL_NAMES = {
   // ═══════════════════════════════════════════════════════════════
   GET_ACTIVITY_WEATHER: 'get_activity_weather',
   GET_ACTIVITY_HR_ZONES: 'get_activity_hr_zones',
-  GET_ACTIVITY_GEAR: 'get_activity_gear',
   GET_ACTIVITY_EXERCISE_SETS: 'get_activity_exercise_sets',
 
   // ═══════════════════════════════════════════════════════════════
@@ -127,10 +126,8 @@ export const MCP_TOOL_NAMES = {
   GET_RACE_PREDICTIONS: 'get_race_predictions',
 
   // ═══════════════════════════════════════════════════════════════
-  // NUOVI TOOL v2.0 - Gear Management
+  // NUOVI TOOL v2.0 - Gear Management (requires UUID from web)
   // ═══════════════════════════════════════════════════════════════
-  GET_GEAR: 'get_gear',
-  GET_GEAR_DEFAULTS: 'get_gear_defaults',
   GET_GEAR_STATS: 'get_gear_stats',
   LINK_GEAR_TO_ACTIVITY: 'link_gear_to_activity',
 

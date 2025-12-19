@@ -190,7 +190,6 @@ async function main() {
     results.push(await testTool(handler, 'download_activity', { activityId, format: 'tcx' }));
     results.push(await testTool(handler, 'get_activity_weather', { activityId }));
     results.push(await testTool(handler, 'get_activity_hr_zones', { activityId }));
-    results.push(await testTool(handler, 'get_activity_gear', { activityId }));
     results.push(await testTool(handler, 'get_activity_exercise_sets', { activityId }));
   }
 
@@ -249,19 +248,11 @@ async function main() {
   console.log('TESTING v2.0 NEW TOOLS - GEAR MANAGEMENT');
   console.log('═══════════════════════════════════════════════════════════════\n');
 
-  results.push(await testTool(handler, 'get_gear'));
-  results.push(await testTool(handler, 'get_gear_defaults'));
-
-  // Get gear UUID for stats test
-  const gearResult = results.find(r => r.tool === 'get_gear');
-  if (gearResult?.success && gearResult.result?.data?.gear?.length > 0) {
-    const gearUUID = gearResult.result.data.gear[0].uuid;
-    console.log(`\n📍 Using gear UUID: ${gearUUID}\n`);
-    results.push(await testTool(handler, 'get_gear_stats', { gearUUID }));
-  }
-
-  // Skip link_gear_to_activity to preserve data
-  console.log('⚠️  Skipping link_gear_to_activity to preserve data');
+  // Note: get_gear and get_gear_defaults were removed - OAuth API doesn't support listing gear
+  // Gear tools require UUID from Garmin Connect web interface
+  console.log('⚠️  Gear listing tools (get_gear, get_gear_defaults) not available via OAuth API');
+  console.log('⚠️  To test gear tools, provide gearUUID from Garmin Connect web interface');
+  console.log('⚠️  Skipping link_gear_to_activity, get_gear_stats, get_gear_activities (require gearUUID)');
 
   console.log('\n═══════════════════════════════════════════════════════════════');
   console.log('TESTING v2.0 NEW TOOLS - REPORTS & PROGRESS');
@@ -303,11 +294,8 @@ async function main() {
   results.push(await testTool(handler, 'get_non_completed_badge_challenges'));
   results.push(await testTool(handler, 'get_in_progress_virtual_challenges'));
 
-  // Gear activities (using gear UUID if available)
-  if (gearResult?.success && gearResult.result?.data?.gear?.length > 0) {
-    const gearUUID = gearResult.result.data.gear[0].uuid;
-    results.push(await testTool(handler, 'get_gear_activities', { gearUUID }));
-  }
+  // Gear activities - skipped (requires gearUUID from web interface)
+  // results.push(await testTool(handler, 'get_gear_activities', { gearUUID }));
 
   // Training plans
   results.push(await testTool(handler, 'get_training_plans', { locale: 'it-IT' }));

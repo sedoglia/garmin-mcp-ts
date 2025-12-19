@@ -139,8 +139,6 @@ export class ToolHandler {
           return await this.handleGetActivityWeather(safeArgs);
         case 'get_activity_hr_zones':
           return await this.handleGetActivityHRZones(safeArgs);
-        case 'get_activity_gear':
-          return await this.handleGetActivityGear(safeArgs);
         case 'get_activity_exercise_sets':
           return await this.handleGetActivityExerciseSets(safeArgs);
         // ═══════════════════════════════════════════════════════════════
@@ -160,12 +158,8 @@ export class ToolHandler {
           return await this.handleGetRacePredictions();
 
         // ═══════════════════════════════════════════════════════════════
-        // v2.0 - GEAR MANAGEMENT
+        // v2.0 - GEAR MANAGEMENT (requires gear UUID from web interface)
         // ═══════════════════════════════════════════════════════════════
-        case 'get_gear':
-          return await this.handleGetGear();
-        case 'get_gear_defaults':
-          return await this.handleGetGearDefaults();
         case 'get_gear_stats':
           return await this.handleGetGearStats(safeArgs);
         case 'link_gear_to_activity':
@@ -1123,23 +1117,6 @@ export class ToolHandler {
     };
   }
 
-  private async handleGetActivityGear(args: Record<string, unknown>): Promise<unknown> {
-    const activityId = this.getNumberParam(args, 'activityId', undefined);
-
-    if (activityId === undefined) {
-      throw new Error('Parameter "activityId" is required');
-    }
-
-    logger.info(`Fetching gear for activity: ${activityId}`);
-
-    const gear = await this.client.getActivityGear(activityId);
-
-    return {
-      success: true,
-      data: gear,
-    };
-  }
-
   private async handleGetActivityExerciseSets(args: Record<string, unknown>): Promise<unknown> {
     const activityId = this.getNumberParam(args, 'activityId', undefined);
 
@@ -1230,30 +1207,8 @@ export class ToolHandler {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // v2.0 - GEAR MANAGEMENT HANDLERS
+  // v2.0 - GEAR MANAGEMENT HANDLERS (requires gear UUID from web interface)
   // ═══════════════════════════════════════════════════════════════════════════
-
-  private async handleGetGear(): Promise<unknown> {
-    logger.info('Fetching all gear');
-
-    const gear = await this.client.getGear();
-
-    return {
-      success: true,
-      data: gear,
-    };
-  }
-
-  private async handleGetGearDefaults(): Promise<unknown> {
-    logger.info('Fetching gear defaults');
-
-    const defaults = await this.client.getGearDefaults();
-
-    return {
-      success: true,
-      data: defaults,
-    };
-  }
 
   private async handleGetGearStats(args: Record<string, unknown>): Promise<unknown> {
     const gearUUID = this.getStringParam(args, 'gearUUID', '');

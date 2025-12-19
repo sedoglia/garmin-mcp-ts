@@ -855,20 +855,6 @@ Example for interval running workout:
     },
   },
   {
-    name: MCP_TOOL_NAMES.GET_ACTIVITY_GEAR,
-    description: 'Get gear/equipment used in an activity.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        activityId: {
-          type: 'number',
-          description: 'The unique activity identifier (required)',
-        },
-      },
-      required: ['activityId'],
-    },
-  },
-  {
     name: MCP_TOOL_NAMES.GET_ACTIVITY_EXERCISE_SETS,
     description: 'Get exercise sets from a strength training activity.',
     inputSchema: {
@@ -941,34 +927,18 @@ Example for interval running workout:
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // v2.0 - GEAR MANAGEMENT
+  // v2.0 - GEAR MANAGEMENT (limited - requires gear UUID from web interface)
   // ═══════════════════════════════════════════════════════════════════════════
 
   {
-    name: MCP_TOOL_NAMES.GET_GEAR,
-    description: 'Get all user gear (shoes, bikes, etc.).',
-    inputSchema: {
-      type: 'object',
-      properties: {},
-    },
-  },
-  {
-    name: MCP_TOOL_NAMES.GET_GEAR_DEFAULTS,
-    description: 'Get default gear settings for different activity types.',
-    inputSchema: {
-      type: 'object',
-      properties: {},
-    },
-  },
-  {
     name: MCP_TOOL_NAMES.GET_GEAR_STATS,
-    description: 'Get usage statistics for a specific piece of gear.',
+    description: 'Get usage statistics for a specific piece of gear. Note: Requires the gear UUID which can be found in Garmin Connect web interface URL.',
     inputSchema: {
       type: 'object',
       properties: {
         gearUUID: {
           type: 'string',
-          description: 'The unique gear identifier (required)',
+          description: 'The unique gear identifier (required). Find it in Garmin Connect web: Settings > Gear > click on gear > UUID is in the URL',
         },
       },
       required: ['gearUUID'],
@@ -976,13 +946,13 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.LINK_GEAR_TO_ACTIVITY,
-    description: 'Link a piece of gear to an activity.',
+    description: 'Link a piece of gear to an activity. Note: Requires the gear UUID which can be found in Garmin Connect web interface URL.',
     inputSchema: {
       type: 'object',
       properties: {
         gearUUID: {
           type: 'string',
-          description: 'The unique gear identifier (required)',
+          description: 'The unique gear identifier (required). Find it in Garmin Connect web: Settings > Gear > click on gear > UUID is in the URL',
         },
         activityId: {
           type: 'number',
@@ -1298,13 +1268,13 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.REMOVE_GEAR_FROM_ACTIVITY,
-    description: 'Remove/unlink a piece of gear from an activity.',
+    description: 'Remove/unlink a piece of gear from an activity. Note: Requires the gear UUID from Garmin Connect web interface.',
     inputSchema: {
       type: 'object',
       properties: {
         gearUUID: {
           type: 'string',
-          description: 'The unique gear identifier (required)',
+          description: 'The unique gear identifier (required). Find it in Garmin Connect web: Settings > Gear > click on gear > UUID is in the URL',
         },
         activityId: {
           type: 'number',
@@ -1316,13 +1286,13 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_GEAR_ACTIVITIES,
-    description: 'Get activities where a specific piece of gear was used.',
+    description: 'Get activities where a specific piece of gear was used. Note: Requires the gear UUID from Garmin Connect web interface.',
     inputSchema: {
       type: 'object',
       properties: {
         gearUUID: {
           type: 'string',
-          description: 'The unique gear identifier (required)',
+          description: 'The unique gear identifier (required). Find it in Garmin Connect web: Settings > Gear > click on gear > UUID is in the URL',
         },
         limit: {
           type: 'number',

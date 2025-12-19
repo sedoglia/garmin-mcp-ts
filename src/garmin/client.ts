@@ -1511,30 +1511,6 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get gear used in an activity
-   */
-  async getActivityGear(activityId: number): Promise<any> {
-    this.checkInitialized();
-    try {
-      // Get activity details which may contain gear info
-      const activity = await this.gc.getActivity({ activityId });
-      const gear = (activity as any)?.gearDTO || (activity as any)?.gear || null;
-      return {
-        activityId,
-        gear: gear ? [gear] : [],
-        message: gear ? undefined : 'No gear linked to this activity',
-      };
-    } catch (err) {
-      const error = err instanceof Error ? err.message : String(err);
-      if (error.includes('404') || error.includes('405')) {
-        return { activityId, gear: [], message: 'No gear linked to this activity' };
-      }
-      logger.error('Error fetching activity gear:', error);
-      throw err;
-    }
-  }
-
-  /**
    * Get exercise sets for strength activities
    */
   async getActivityExerciseSets(activityId: number): Promise<any> {
@@ -1678,62 +1654,13 @@ export class GarminConnectClient {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // v2.0 - GEAR MANAGEMENT
+  // v2.0 - GEAR MANAGEMENT (requires gear UUID from Garmin Connect web interface)
+  // Note: get_gear and get_gear_defaults removed - OAuth API doesn't support listing gear
   // ═══════════════════════════════════════════════════════════════════════════
 
   /**
-   * Get all user gear
-   */
-  async getGear(): Promise<any> {
-    this.checkInitialized();
-    try {
-      // Try the library's gear method if available
-      const gc = this.gc as any;
-      if (typeof gc.getGear === 'function') {
-        const gear = await gc.getGear();
-        return { gear: gear || [] };
-      }
-      // Fallback: gear info may be in user settings
-      const settings = await this.gc.getUserSettings();
-      return {
-        gear: [],
-        message: 'Gear management requires Garmin Connect web interface',
-        settings,
-      };
-    } catch (err) {
-      const error = err instanceof Error ? err.message : String(err);
-      logger.error('Error fetching gear:', error);
-      return {
-        gear: [],
-        message: 'Gear feature not available through API',
-      };
-    }
-  }
-
-  /**
-   * Get default gear for activities
-   */
-  async getGearDefaults(): Promise<any> {
-    this.checkInitialized();
-    try {
-      const gear = await this.getGear();
-      return {
-        defaults: [],
-        message: 'Gear defaults are managed through Garmin Connect web interface',
-        gear: gear.gear,
-      };
-    } catch (err) {
-      const error = err instanceof Error ? err.message : String(err);
-      logger.error('Error fetching gear defaults:', error);
-      return {
-        defaults: [],
-        message: 'Gear defaults feature not available through API',
-      };
-    }
-  }
-
-  /**
    * Get gear stats
+   * Note: Requires gear UUID from Garmin Connect web interface URL
    */
   async getGearStats(gearUUID: string): Promise<any> {
     this.checkInitialized();
