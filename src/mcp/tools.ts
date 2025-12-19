@@ -805,16 +805,20 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.DELETE_BLOOD_PRESSURE,
-    description: 'Delete a blood pressure reading by its sample ID.',
+    description: 'Delete a blood pressure reading. Use get_blood_pressure with the /all endpoint to find the version ID.',
     inputSchema: {
       type: 'object',
       properties: {
-        samplePk: {
+        date: {
           type: 'string',
-          description: 'The unique sample ID of the blood pressure reading to delete (required)',
+          description: 'The date of the reading in YYYY-MM-DD format (required)',
+        },
+        version: {
+          type: 'string',
+          description: 'The version/ID of the reading from the blood pressure data (required)',
         },
       },
-      required: ['samplePk'],
+      required: ['date', 'version'],
     },
   },
 

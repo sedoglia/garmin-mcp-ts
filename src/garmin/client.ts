@@ -1440,15 +1440,19 @@ export class GarminConnectClient {
 
   /**
    * Delete a blood pressure reading
+   * @param date - The date of the reading (YYYY-MM-DD)
+   * @param version - The version/ID of the reading (from the version field)
    */
-  async deleteBloodPressure(samplePk: string): Promise<any> {
+  async deleteBloodPressure(date: string, version: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/bloodpressure-service/bloodpressure/${samplePk}`;
+      // Endpoint format: /bloodpressure/{date}/{version}
+      const url = `https://connectapi.garmin.com/bloodpressure-service/bloodpressure/${date}/${version}`;
       await this.gc.client.delete(url);
       return {
         success: true,
-        samplePk,
+        date,
+        version,
         message: 'Blood pressure reading deleted successfully',
       };
     } catch (err) {

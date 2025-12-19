@@ -1068,15 +1068,16 @@ export class ToolHandler {
   }
 
   private async handleDeleteBloodPressure(args: Record<string, unknown>): Promise<unknown> {
-    const samplePk = this.getStringParam(args, 'samplePk', '');
+    const date = this.getStringParam(args, 'date', '');
+    const version = this.getStringParam(args, 'version', '');
 
-    if (!samplePk) {
-      throw new Error('Parameter "samplePk" is required');
+    if (!date || !version) {
+      throw new Error('Parameters "date" (YYYY-MM-DD) and "version" are required');
     }
 
-    logger.info(`Deleting blood pressure reading: ${samplePk}`);
+    logger.info(`Deleting blood pressure reading: date=${date}, version=${version}`);
 
-    const result = await this.client.deleteBloodPressure(samplePk);
+    const result = await this.client.deleteBloodPressure(date, version);
 
     return {
       success: true,
