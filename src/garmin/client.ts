@@ -1039,8 +1039,8 @@ export class GarminConnectClient {
   async deleteActivity(activityId: number): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}`;
-      await this.gc.delete(url);
+      // Use the native deleteActivity method from garmin-connect
+      await this.gc.deleteActivity({ activityId });
       return {
         success: true,
         activityId,
@@ -1362,7 +1362,7 @@ export class GarminConnectClient {
     this.checkInitialized();
     try {
       const url = `https://connectapi.garmin.com/weight-service/user-weight/${weighInId}`;
-      await this.gc.delete(url);
+      await this.gc.client.delete(url);
       return {
         success: true,
         weighInId,
