@@ -96,6 +96,7 @@ Questo server MCP fornisce **68 potenti strumenti** per interagire con i tuoi da
 | `update_workout` | Modifica un workout esistente |
 | `delete_workout` | Elimina un workout |
 | `schedule_workout` | Schedula un workout su una data specifica |
+| `unschedule_workout` | Rimuove workout dal calendario (⚠️ usare prima di delete_workout) |
 
 ### Gestione Attività
 | Strumento | Descrizione |
@@ -470,7 +471,7 @@ Esegui i test con dati reali:
 npm test
 ```
 
-Il test script verifica tutti i 68 strumenti con il tuo account Garmin.
+Il test script verifica tutti i 69 strumenti con il tuo account Garmin.
 
 ## Architettura
 
@@ -484,7 +485,7 @@ garmin-mcp-ts/
 │   │   └── simple-login.ts # Utility standalone per test login
 │   ├── mcp/
 │   │   ├── server.ts      # Setup server MCP e gestori richieste
-│   │   ├── tools.ts       # Definizioni strumenti e schemi (68 tools)
+│   │   ├── tools.ts       # Definizioni strumenti e schemi (69 tools)
 │   │   └── handlers.ts    # Logica implementazione strumenti
 │   └── utils/
 │       ├── constants.ts   # Costanti dell'applicazione

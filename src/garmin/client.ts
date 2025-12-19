@@ -837,6 +837,27 @@ export class GarminConnectClient {
     }
   }
 
+  /**
+   * Unschedule a workout (remove from calendar)
+   * @param scheduleId The workout schedule ID (returned when scheduling a workout)
+   */
+  async unscheduleWorkout(scheduleId: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/workout-service/schedule/${scheduleId}`;
+      await this.gc.client.delete(url);
+      return {
+        success: true,
+        scheduleId,
+        message: 'Workout unscheduled successfully',
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error unscheduling workout:', error);
+      throw err;
+    }
+  }
+
   // Helper per mappare sport types
   private mapSportType(sport: string): { sportTypeId: number; sportTypeKey: string } {
     const sportMap: Record<string, { sportTypeId: number; sportTypeKey: string }> = {

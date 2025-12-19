@@ -173,10 +173,18 @@ async function main() {
 
     // Schedule for next week
     const nextWeek = new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0];
-    results.push(await testTool(handler, 'schedule_workout', {
+    const scheduleResult = await testTool(handler, 'schedule_workout', {
       workoutId: newWorkoutId,
       date: nextWeek,
-    }));
+    });
+    results.push(scheduleResult);
+
+    // IMPORTANT: Unschedule before deleting to avoid ghost scheduled workouts
+    if (scheduleResult.success && scheduleResult.result?.data?.workoutScheduleId) {
+      const scheduleId = String(scheduleResult.result.data.workoutScheduleId);
+      console.log(`\n📍 Unscheduling workout (scheduleId: ${scheduleId})...\n`);
+      results.push(await testTool(handler, 'unschedule_workout', { scheduleId }));
+    }
 
     // Delete the test workout
     results.push(await testTool(handler, 'delete_workout', { workoutId: newWorkoutId }));

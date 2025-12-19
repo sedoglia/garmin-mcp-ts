@@ -403,7 +403,7 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.SCHEDULE_WORKOUT,
-    description: 'Schedule an existing workout on a specific date.',
+    description: 'Schedule an existing workout on a specific date. Returns a workoutScheduleId that can be used to unschedule.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -418,6 +418,20 @@ Example for interval running workout:
         },
       },
       required: ['workoutId', 'date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.UNSCHEDULE_WORKOUT,
+    description: 'Remove a scheduled workout from the calendar. IMPORTANT: Always unschedule before deleting a workout to avoid ghost entries.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        scheduleId: {
+          type: 'string',
+          description: 'The workout schedule ID (workoutScheduleId returned from schedule_workout)',
+        },
+      },
+      required: ['scheduleId'],
     },
   },
 
