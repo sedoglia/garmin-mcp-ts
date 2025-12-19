@@ -933,13 +933,14 @@ export class GarminConnectClient {
     try {
       const url = 'https://connectapi.garmin.com/activity-service/activity';
 
-      // Normalize startTime to ISO format without Z (local time)
+      // Normalize startTime to local ISO format (YYYY-MM-DDTHH:MM:SS.000)
       let startTimeLocal = params.startTime;
       try {
         const date = new Date(params.startTime);
         if (!isNaN(date.getTime())) {
-          // Format: YYYY-MM-DDTHH:MM:SS.000 (no Z, local time)
-          startTimeLocal = date.toISOString().replace('Z', '');
+          // Format as LOCAL time (not UTC) - Garmin expects local time
+          const pad = (n: number) => n.toString().padStart(2, '0');
+          startTimeLocal = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.000`;
         }
       } catch {
         // Keep original if parsing fails
