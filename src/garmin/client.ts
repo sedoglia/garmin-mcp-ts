@@ -933,13 +933,25 @@ export class GarminConnectClient {
     try {
       const url = 'https://connectapi.garmin.com/activity-service/activity';
 
+      // Normalize startTime to ISO format without Z (local time)
+      let startTimeLocal = params.startTime;
+      try {
+        const date = new Date(params.startTime);
+        if (!isNaN(date.getTime())) {
+          // Format: YYYY-MM-DDTHH:MM:SS.000 (no Z, local time)
+          startTimeLocal = date.toISOString().replace('Z', '');
+        }
+      } catch {
+        // Keep original if parsing fails
+      }
+
       const payload = {
         activityName: params.activityName,
         activityTypeDTO: {
           typeKey: params.activityType,
         },
         summaryDTO: {
-          startTimeLocal: params.startTime,
+          startTimeLocal: startTimeLocal,
           duration: params.duration,
           distance: params.distance || 0,
           calories: params.calories || 0,
