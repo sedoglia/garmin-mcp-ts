@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-3.1.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-3.2.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,13 @@
 ---
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
+
+## What's New in v3.2.0 - Bug Fixes and Cleanup
+
+### 🔧 Fixes
+- **unschedule_workout**: New tool to remove workouts from calendar (prevents ghost entries)
+- **Project cleanup**: Removed unused files and scripts
+- **Improved tests**: Test script updated to unschedule before deleting
 
 ## What's New in v3.1.0 - Secure Encryption
 
@@ -47,7 +54,7 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 
 ## Features
 
-This MCP server provides **68 powerful tools** to interact with your Garmin Connect data:
+This MCP server provides **69 powerful tools** to interact with your Garmin Connect data:
 
 ### Activity Tools (Base)
 | Tool | Description |
@@ -134,6 +141,7 @@ This MCP server provides **68 powerful tools** to interact with your Garmin Conn
 | `delete_weigh_in` | Delete a weigh-in |
 | `get_blood_pressure` | Get blood pressure readings |
 | `set_blood_pressure` | Record blood pressure measurement |
+| `delete_blood_pressure` | Delete blood pressure measurement |
 
 ### Advanced Activity Details
 | Tool | Description |
@@ -250,7 +258,7 @@ npm install keytar
 Use your browser or:
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.2.0-bundle/garmin-mcp-ts.mcpb
 ```
 
 ### 3. Verify integrity
@@ -258,7 +266,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/g
 Verify the integrity (optional but recommended):
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb.sha256
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.2.0-bundle/garmin-mcp-ts.mcpb.sha256
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 

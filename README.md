@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-3.1.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-3.2.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,13 @@
 ---
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
+
+## Novità v3.2.0 - Bug Fix e Pulizia
+
+### 🔧 Correzioni
+- **unschedule_workout**: Nuovo tool per rimuovere workout dal calendario (evita ghost entries)
+- **Pulizia progetto**: Rimossi file e script non utilizzati
+- **Test migliorati**: Script test aggiornato per unschedulare prima di eliminare
 
 ## Novità v3.1.0 - Encryption Sicura
 
@@ -47,7 +54,7 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 
 ## Funzionalità
 
-Questo server MCP fornisce **68 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
+Questo server MCP fornisce **69 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
 
 ### Strumenti Attività (Base)
 | Strumento | Descrizione |
@@ -134,6 +141,7 @@ Questo server MCP fornisce **68 potenti strumenti** per interagire con i tuoi da
 | `delete_weigh_in` | Elimina una pesata |
 | `get_blood_pressure` | Ottiene misurazioni pressione sanguigna |
 | `set_blood_pressure` | Registra misurazione pressione |
+| `delete_blood_pressure` | Elimina misurazione pressione |
 
 ### Activity Details Avanzati
 | Strumento | Descrizione |
@@ -250,7 +258,7 @@ npm install keytar
 Usa il browser oppure:
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.2.0-bundle/garmin-mcp-ts.mcpb
 ```
 
 ### 3. Verifica l'integrità
@@ -258,7 +266,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/g
 Verifica l'integrità (opzionale ma consigliato):
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.1.0-bundle/garmin-mcp-ts.mcpb.sha256
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.2.0-bundle/garmin-mcp-ts.mcpb.sha256
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 

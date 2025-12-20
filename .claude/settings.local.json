@@ -38,7 +38,8 @@
       "Bash(del \"C:\\garmin-mcp-ts\\test-all-tools.ts\")",
       "Bash(rm:*)",
       "Bash(cat:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(tar:*)"
     ],
     "deny": [],
     "ask": []
