@@ -598,6 +598,18 @@ I contributi sono benvenuti! Sentiti libero di inviare una Pull Request.
 
 Questo progetto è rilasciato sotto Licenza MIT - vedi il file [LICENSE](LICENSE) per i dettagli.
 
+## Privacy Policy
+
+Questo progetto rispetta la tua privacy. Per informazioni complete su come vengono gestiti i tuoi dati, consulta la nostra [Privacy Policy](https://github.com/sedoglia/garmin-mcp-ts/blob/main/PRIVACY.md).
+
+### Riepilogo
+
+- **Dati raccolti**: Credenziali Garmin (email e password) e token OAuth
+- **Archiviazione**: Tutti i dati sono crittografati localmente con AES-256-GCM e salvati nel vault nativo del sistema operativo
+- **Trasmissione**: I dati vengono trasmessi solo ai server Garmin Connect per l'autenticazione e il recupero dei dati
+- **Nessun server di terze parti**: Non raccogliamo, non memorizziamo e non trasmettiamo i tuoi dati a server di terze parti
+- **Controllo locale**: Tutti i dati rimangono sul tuo dispositivo sotto il tuo controllo
+
 ## Disclaimer
 
 Questo progetto non è affiliato, approvato o connesso a Garmin Ltd. o alle sue sussidiarie. Garmin e Garmin Connect sono marchi registrati di Garmin Ltd.
