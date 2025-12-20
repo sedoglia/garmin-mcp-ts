@@ -32,7 +32,13 @@
       "Bash(Remove-Item -Path \"C:\\garmin-mcp-ts\\scripts\\check-activity-gear.ts\", \"C:\\garmin-mcp-ts\\scripts\\check-gear-direct.ts\", \"C:\\garmin-mcp-ts\\scripts\\test-link-gear.ts\", \"C:\\garmin-mcp-ts\\scripts\\explore-gear-endpoints.ts\", \"C:\\garmin-mcp-ts\\scripts\\check-test-activity.ts\", \"C:\\garmin-mcp-ts\\scripts\\check-activity-full.ts\", \"C:\\garmin-mcp-ts\\scripts\\test-gear-complete.ts\", \"C:\\garmin-mcp-ts\\nul\" -Force -ErrorAction SilentlyContinue)",
       "Bash(Write-Host \"Done\")",
       "Bash(node -e:*)",
-      "Bash(del /f \"C:\\garmin-mcp-ts\\scripts\\cleanup-workouts.ts\")"
+      "Bash(del /f \"C:\\garmin-mcp-ts\\scripts\\cleanup-workouts.ts\")",
+      "Bash(del C:garmin-mcp-tsscriptscleanup-orphan-schedules.ts C:garmin-mcp-tsscriptsfind-scheduled-workouts.ts)",
+      "Bash(Remove-Item -Path \"C:\\garmin-mcp-ts\\scripts\\cleanup-orphan-schedules.ts\", \"C:\\garmin-mcp-ts\\scripts\\find-scheduled-workouts.ts\" -Force -ErrorAction SilentlyContinue)",
+      "Bash(del \"C:\\garmin-mcp-ts\\test-all-tools.ts\")",
+      "Bash(rm:*)",
+      "Bash(cat:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

@@ -449,12 +449,6 @@ Add the Garmin MCP server to your `claude_desktop_config.json`:
 
 > "Show me my all-day events for stress and body battery"
 
-### Advanced Gear Tools (NEW v3.0)
-
-> "What activities have I done with my favorite running shoes?"
-
-> "Show me the gear I've used for running this month"
-
 ### Women's Health Tools (NEW v3.0)
 
 > "How does my menstrual cycle affect my training performance?"
