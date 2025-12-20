@@ -302,13 +302,11 @@ L'estensione provvederà automaticamente a criptare e salvare le credenziali in 
 
 > **Nota:** Le credenziali NON verranno salvate in file di testo. Saranno sempre crittografate e gestite dal vault nativo del SO.
 
-
 ### 6. Riavvia Claude Desktop
 
 - Chiudi completamente l'applicazione
 - Riapri Claude Desktop
 - Verifica in Impostazioni → Sviluppatore lo stato della connessione ✅
-
 
 ## 🚀 Installazione (clonando il repository con GIT)
 

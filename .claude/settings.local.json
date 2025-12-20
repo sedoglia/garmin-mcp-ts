@@ -39,7 +39,12 @@
       "Bash(rm:*)",
       "Bash(cat:*)",
       "Bash(git rm:*)",
-      "Bash(tar:*)"
+      "Bash(tar:*)",
+      "Bash(gh release create:*)",
+      "Bash(releases/garmin-mcp-ts.mcpb )",
+      "Bash(releases/garmin-mcp-ts.mcpb.sha256)",
+      "Bash(where:*)",
+      "Bash(git tag:*)"
     ],
     "deny": [],
     "ask": []
