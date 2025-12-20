@@ -5,9 +5,25 @@ import { MCP_TOOL_NAMES } from '../utils/constants.js';
 // Definizioni JSON Schema per i tool MCP
 // Usiamo oggetti JSON puri invece di Zod per evitare problemi di serializzazione
 
+// MCP Tool Annotations as per Anthropic MCP Directory Policy
+export interface ToolAnnotations {
+  // Tool only reads data, does not modify anything
+  readOnlyHint?: boolean;
+  // Tool modifies data or causes side effects
+  destructiveHint?: boolean;
+  // Tool may take a long time to complete
+  longRunningHint?: boolean;
+  // Tool requires user confirmation before execution
+  confirmationRequiredHint?: boolean;
+}
+
 export interface ToolDefinition {
   name: string;
+  // Human-readable title for the tool
+  title: string;
   description: string;
+  // MCP annotations for safety and security
+  annotations: ToolAnnotations;
   inputSchema: {
     type: 'object';
     properties: Record<string, {
@@ -24,7 +40,9 @@ export interface ToolDefinition {
 export const toolDefinitions: ToolDefinition[] = [
   {
     name: MCP_TOOL_NAMES.LIST_RECENT_ACTIVITIES,
+    title: 'List Recent Activities',
     description: 'Get a list of recent activities from Garmin Connect. Returns activity summaries including name, type, distance, duration, and date.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -44,7 +62,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_ACTIVITY_DETAILS,
+    title: 'Get Activity Details',
     description: 'Get detailed information about a specific activity including splits, heart rate zones, and GPS data.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -58,7 +78,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_HEALTH_METRICS,
+    title: 'Get Health Metrics',
     description: 'Get daily health metrics including heart rate data and step count for a specific date.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -72,7 +94,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_SLEEP_DATA,
+    title: 'Get Sleep Data',
     description: 'Get detailed sleep information including duration, sleep stages, and quality score.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -86,7 +110,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_BODY_COMPOSITION,
+    title: 'Get Body Composition',
     description: 'Get body composition data including weight measurements.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -101,7 +127,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_DEVICES,
+    title: 'Get Devices',
     description: 'Get information about connected Garmin devices and user settings.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -109,7 +137,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_USER_PROFILE,
+    title: 'Get User Profile',
     description: 'Get user profile information including display name and account details.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -117,7 +147,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_TRAINING_STATUS,
+    title: 'Get Training Status',
     description: 'Get training status including activity count and user fitness settings.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -133,7 +165,9 @@ export const toolDefinitions: ToolDefinition[] = [
   // Nuovi tool
   {
     name: MCP_TOOL_NAMES.GET_STEPS,
+    title: 'Get Steps',
     description: 'Get step count for a specific date. Returns the total number of steps recorded.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -147,7 +181,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_HEART_RATE,
+    title: 'Get Heart Rate',
     description: 'Get detailed heart rate data for a specific date including resting HR, max HR, and HR zones.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -161,7 +197,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_HYDRATION,
+    title: 'Get Hydration',
     description: 'Get daily hydration/water intake data for a specific date.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -175,7 +213,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_WORKOUTS,
+    title: 'Get Workouts',
     description: 'Get list of scheduled/planned workouts from Garmin Connect.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -195,7 +235,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_ACTIVITY_SPLITS,
+    title: 'Get Activity Splits',
     description: 'Get split/lap data for a specific activity including pace, distance, and time for each split.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -212,7 +254,9 @@ export const toolDefinitions: ToolDefinition[] = [
   // ═══════════════════════════════════════════════════════════════
   {
     name: MCP_TOOL_NAMES.GET_STRESS_DATA,
+    title: 'Get Stress Data',
     description: 'Get stress level data for a specific date. Returns stress levels throughout the day (0-100 scale), with 0-25 resting, 26-50 low, 51-75 medium, 76-100 high stress. Includes overall stress level, durations by category, and detailed timestamp values.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -226,7 +270,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_BODY_BATTERY,
+    title: 'Get Body Battery',
     description: 'Get Body Battery energy level data for a date range. Body Battery tracks energy levels (0-100) throughout the day based on sleep, stress, and activity. Shows charged/drained periods and sleep quality impact.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -245,7 +291,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_HRV_DATA,
+    title: 'Get HRV Data',
     description: 'Get Heart Rate Variability (HRV) data for a specific date. HRV measures the variation in time between heartbeats, indicating recovery and stress levels.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -259,7 +307,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_RESPIRATION_DATA,
+    title: 'Get Respiration Data',
     description: 'Get respiration/breathing rate data for a specific date. Shows breaths per minute throughout the day and during sleep.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -273,7 +323,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.GET_SPO2_DATA,
+    title: 'Get SpO2 Data',
     description: 'Get SpO2 (blood oxygen saturation) data for a specific date. Shows pulse oximetry readings as percentage (typically 95-100% is normal).',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -292,7 +344,9 @@ export const toolDefinitions: ToolDefinition[] = [
 
   {
     name: MCP_TOOL_NAMES.GET_WORKOUT_BY_ID,
+    title: 'Get Workout by ID',
     description: 'Get detailed information about a specific workout by its ID.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -306,7 +360,9 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.DOWNLOAD_WORKOUT,
+    title: 'Download Workout',
     description: 'Download a workout in FIT format for syncing to a Garmin device.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -320,6 +376,7 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     name: MCP_TOOL_NAMES.CREATE_WORKOUT,
+    title: 'Create Workout',
     description: `Create a new structured workout in Garmin Connect. Supports complex interval workouts with warmup, cooldown, and repeat blocks.
 
 Example for interval running workout:
@@ -338,6 +395,7 @@ Example for interval running workout:
     ]
   }]
 }`,
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -363,7 +421,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.UPDATE_WORKOUT,
+    title: 'Update Workout',
     description: 'Update an existing workout (name, description, or structure).',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -389,7 +449,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.DELETE_WORKOUT,
+    title: 'Delete Workout',
     description: 'Delete a workout from Garmin Connect.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -403,7 +465,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.SCHEDULE_WORKOUT,
+    title: 'Schedule Workout',
     description: 'Schedule an existing workout on a specific date. Returns a workoutScheduleId that can be used to unschedule.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -422,7 +486,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.UNSCHEDULE_WORKOUT,
+    title: 'Unschedule Workout',
     description: 'Remove a scheduled workout from the calendar. IMPORTANT: Always unschedule before deleting a workout to avoid ghost entries.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -441,7 +507,9 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.UPLOAD_ACTIVITY,
+    title: 'Upload Activity',
     description: 'Upload an activity file (FIT, GPX, TCX format) to Garmin Connect.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -455,7 +523,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.CREATE_MANUAL_ACTIVITY,
+    title: 'Create Manual Activity',
     description: 'Create a manual activity entry in Garmin Connect.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -493,7 +563,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.SET_ACTIVITY_NAME,
+    title: 'Set Activity Name',
     description: 'Change the name of an existing activity.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -511,7 +583,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.SET_ACTIVITY_TYPE,
+    title: 'Set Activity Type',
     description: 'Change the type/category of an existing activity.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -533,7 +607,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.DELETE_ACTIVITY,
+    title: 'Delete Activity',
     description: 'Delete an activity from Garmin Connect. WARNING: This action cannot be undone.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -547,7 +623,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.DOWNLOAD_ACTIVITY,
+    title: 'Download Activity',
     description: 'Download an activity in various formats (FIT, TCX, GPX, KML, CSV).',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -570,7 +648,9 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.GET_DEVICE_LAST_USED,
+    title: 'Get Device Last Used',
     description: 'Get information about the last used Garmin device.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -578,7 +658,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_DEVICE_SETTINGS,
+    title: 'Get Device Settings',
     description: 'Get settings for a specific Garmin device.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -597,7 +679,9 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.GET_ALL_DAY_STRESS,
+    title: 'Get All Day Stress',
     description: 'Get detailed all-day stress data with full breakdown.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -611,7 +695,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_FLOORS,
+    title: 'Get Floors',
     description: 'Get floors climbed data for a specific date.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -625,7 +711,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_INTENSITY_MINUTES,
+    title: 'Get Intensity Minutes',
     description: 'Get intensity minutes (moderate and vigorous) for a specific date.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -639,7 +727,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_MAX_METRICS,
+    title: 'Get Max Metrics',
     description: 'Get max metrics including VO2 max and related fitness data.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -653,7 +743,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_TRAINING_READINESS,
+    title: 'Get Training Readiness',
     description: 'Get training readiness score indicating how prepared your body is for training.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -667,7 +759,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_ENDURANCE_SCORE,
+    title: 'Get Endurance Score',
     description: 'Get endurance score based on recent training load.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -681,7 +775,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_FITNESS_AGE,
+    title: 'Get Fitness Age',
     description: 'Get fitness age estimation based on VO2 max and other metrics.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -700,7 +796,9 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.GET_WEIGH_INS,
+    title: 'Get Weigh-Ins',
     description: 'Get weigh-in records for a date range.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -720,7 +818,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.ADD_WEIGH_IN,
+    title: 'Add Weigh-In',
     description: 'Add a new weigh-in record with optional body composition data.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -755,7 +855,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.DELETE_WEIGH_IN,
+    title: 'Delete Weigh-In',
     description: 'Delete a weigh-in record.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -769,7 +871,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_BLOOD_PRESSURE,
+    title: 'Get Blood Pressure',
     description: 'Get blood pressure readings for a date range.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -789,7 +893,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.SET_BLOOD_PRESSURE,
+    title: 'Set Blood Pressure',
     description: 'Record a blood pressure reading.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -819,7 +925,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.DELETE_BLOOD_PRESSURE,
+    title: 'Delete Blood Pressure',
     description: 'Delete a blood pressure reading. Use get_blood_pressure with the /all endpoint to find the version ID.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -842,7 +950,9 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.GET_ACTIVITY_WEATHER,
+    title: 'Get Activity Weather',
     description: 'Get weather conditions during an activity.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -856,7 +966,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_ACTIVITY_HR_ZONES,
+    title: 'Get Activity HR Zones',
     description: 'Get time spent in each heart rate zone during an activity.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -870,7 +982,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_ACTIVITY_EXERCISE_SETS,
+    title: 'Get Activity Exercise Sets',
     description: 'Get exercise sets from a strength training activity.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -888,7 +1002,9 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.GET_GOALS,
+    title: 'Get Goals',
     description: 'Get user goals (active, future, or past).',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -901,7 +1017,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_ADHOC_CHALLENGES,
+    title: 'Get Ad-hoc Challenges',
     description: 'Get ad-hoc challenges history.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -909,7 +1027,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_BADGE_CHALLENGES,
+    title: 'Get Badge Challenges',
     description: 'Get available badge challenges.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -917,7 +1037,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_EARNED_BADGES,
+    title: 'Get Earned Badges',
     description: 'Get all badges earned by the user.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -925,7 +1047,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_PERSONAL_RECORDS,
+    title: 'Get Personal Records',
     description: 'Get all personal records (PRs) across activities.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -933,7 +1057,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_RACE_PREDICTIONS,
+    title: 'Get Race Predictions',
     description: 'Get predicted race times for 5K, 10K, half marathon, and marathon based on current fitness.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -946,7 +1072,9 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.GET_GEAR_STATS,
+    title: 'Get Gear Stats',
     description: 'Get usage statistics for a specific piece of gear. Note: Requires the gear UUID which can be found in Garmin Connect web interface URL.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -960,7 +1088,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.LINK_GEAR_TO_ACTIVITY,
+    title: 'Link Gear to Activity',
     description: 'Link a piece of gear to an activity. Note: Requires the gear UUID which can be found in Garmin Connect web interface URL.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -983,7 +1113,9 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.GET_PROGRESS_SUMMARY,
+    title: 'Get Progress Summary',
     description: 'Get aggregated progress summary between two dates.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1007,7 +1139,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_DAILY_SUMMARY,
+    title: 'Get Daily Summary',
     description: 'Get comprehensive daily summary including steps, calories, distance, floors, and more.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1026,7 +1160,9 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.GET_USER_SUMMARY,
+    title: 'Get User Summary',
     description: 'Get comprehensive user activity summary for a specific date including steps, calories, distance, active minutes, and more.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1041,7 +1177,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_STEPS_DATA,
+    title: 'Get Steps Data',
     description: 'Get detailed step data chart for a specific date with timestamps.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1056,7 +1194,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_DAILY_STEPS,
+    title: 'Get Daily Steps',
     description: 'Get daily step counts for a date range (max 28 days per request, auto-chunked for longer ranges).',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1076,7 +1216,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_ACTIVITIES_BY_DATE,
+    title: 'Get Activities by Date',
     description: 'Get all activities within a date range with optional filtering by type.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1104,7 +1246,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_ACTIVITY_TYPED_SPLITS,
+    title: 'Get Activity Typed Splits',
     description: 'Get typed splits for an activity (more detailed than regular splits, useful for bouldering, strength training, etc.).',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1118,7 +1262,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_RHR_DAY,
+    title: 'Get Resting Heart Rate',
     description: 'Get resting heart rate for a specific day.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1133,7 +1279,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_HILL_SCORE,
+    title: 'Get Hill Score',
     description: 'Get hill score data indicating climbing/vertical performance.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1153,7 +1301,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_ALL_DAY_EVENTS,
+    title: 'Get All Day Events',
     description: 'Get all daily events including auto-detected activities that may not have been recorded.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1168,7 +1318,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_BODY_BATTERY_EVENTS,
+    title: 'Get Body Battery Events',
     description: 'Get Body Battery events for a date (sleep, activities, naps that affected energy levels).',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1183,7 +1335,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.ADD_HYDRATION_DATA,
+    title: 'Add Hydration Data',
     description: 'Add hydration/water intake data in milliliters.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1206,7 +1360,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_AVAILABLE_BADGES,
+    title: 'Get Available Badges',
     description: 'Get all badges available to earn.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -1214,7 +1370,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_IN_PROGRESS_BADGES,
+    title: 'Get In-Progress Badges',
     description: 'Get badges that are currently in progress (started but not completed).',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -1222,7 +1380,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_AVAILABLE_BADGE_CHALLENGES,
+    title: 'Get Available Badge Challenges',
     description: 'Get available badge challenges to join.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1242,7 +1402,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_NON_COMPLETED_BADGE_CHALLENGES,
+    title: 'Get Non-Completed Badge Challenges',
     description: 'Get badge challenges that have not been completed yet.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1262,7 +1424,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_IN_PROGRESS_VIRTUAL_CHALLENGES,
+    title: 'Get In-Progress Virtual Challenges',
     description: 'Get virtual challenges that are currently in progress.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1282,7 +1446,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.REMOVE_GEAR_FROM_ACTIVITY,
+    title: 'Remove Gear from Activity',
     description: 'Remove/unlink a piece of gear from an activity. Note: Requires the gear UUID from Garmin Connect web interface.',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1300,7 +1466,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_GEAR_ACTIVITIES,
+    title: 'Get Gear Activities',
     description: 'Get activities where a specific piece of gear was used. Note: Requires the gear UUID from Garmin Connect web interface.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1320,7 +1488,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_TRAINING_PLANS,
+    title: 'Get Training Plans',
     description: 'Get all available training plans.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -1328,7 +1498,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_TRAINING_PLAN_BY_ID,
+    title: 'Get Training Plan by ID',
     description: 'Get detailed information about a specific training plan.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1342,7 +1514,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_MENSTRUAL_DATA,
+    title: 'Get Menstrual Data',
     description: 'Get menstrual cycle data for a specific date.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1357,7 +1531,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_PREGNANCY_SUMMARY,
+    title: 'Get Pregnancy Summary',
     description: 'Get pregnancy tracking summary/snapshot data.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -1365,7 +1541,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.REQUEST_RELOAD,
+    title: 'Request Data Reload',
     description: 'Request reload of data for a specific date (useful for older data that was offloaded by Garmin).',
+    annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -1380,7 +1558,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_ACTIVITY_TYPES,
+    title: 'Get Activity Types',
     description: 'Get all activity types available in Garmin Connect.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -1388,7 +1568,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_PRIMARY_TRAINING_DEVICE,
+    title: 'Get Primary Training Device',
     description: 'Get information about the primary training device and device priorities.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -1396,7 +1578,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.COUNT_ACTIVITIES,
+    title: 'Count Activities',
     description: 'Get the total count of activities in Garmin Connect.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {},
@@ -1404,7 +1588,9 @@ Example for interval running workout:
   },
   {
     name: MCP_TOOL_NAMES.GET_FITNESS_STATS,
+    title: 'Get Fitness Stats',
     description: 'Get aggregated fitness statistics between two dates.',
+    annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
