@@ -42,3 +42,9 @@ coverage/
 # Misc
 .cache/
 *.tmp
+
+# Releases (MCPB packages)
+releases/
+
+# Log folder
+log/
