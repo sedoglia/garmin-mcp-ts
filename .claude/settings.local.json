@@ -44,7 +44,11 @@
       "Bash(releases/garmin-mcp-ts.mcpb )",
       "Bash(releases/garmin-mcp-ts.mcpb.sha256)",
       "Bash(where:*)",
-      "Bash(git tag:*)"
+      "Bash(git tag:*)",
+      "Bash(echo.)",
+      "Bash(powershell -Command \"'''' | Out-File -FilePath ''C:\\garmin-mcp-ts\\LICENSE'' -Encoding utf8\")",
+      "Bash(powershell -Command \"'''' | Out-File -FilePath ''C:\\garmin-mcp-ts\\PRIVACY.md'' -Encoding utf8\")",
+      "Bash(git -C C:garmin-mcp-ts status)"
     ],
     "deny": [],
     "ask": []
