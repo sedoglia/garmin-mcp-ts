@@ -279,7 +279,7 @@ sha256sum -c garmin-mcp-ts.mcpb.sha256
 3. Select the **Extensions** tab
 4. Click on **Advanced settings** and find the **Extension Developer** section
 5. Click on **"Install Extension…"**
-6. Select the `.mcpb` file (`garmin-mcp-ts.mcpb` downloaded in step 1)
+6. Select the `.mcpb` file (`garmin-mcp-ts.mcpb` downloaded in step 2)
 7. Follow the on-screen instructions to complete the installation
 
 > **Note:** This is the simplest and most recommended method. The extension will be automatically integrated into Claude Desktop without requiring manual configuration.
