@@ -260,7 +260,7 @@ npm install keytar
 Usa il browser oppure:
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.2.0-bundle/garmin-mcp-ts.mcpb
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.0.0/diabetes-m-mcp.mcpb
 ```
 
 ### 3. Verifica l'integrità
@@ -268,7 +268,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.2.0-bundle/g
 Verifica l'integrità (opzionale ma consigliato):
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v3.2.0-bundle/garmin-mcp-ts.mcpb.sha256
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.0.0/diabetes-m-mcp.mcpb.sha256
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 
