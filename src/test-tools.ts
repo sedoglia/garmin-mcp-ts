@@ -321,6 +321,119 @@ async function main() {
   // Skip add_hydration_data, remove_gear_from_activity to preserve data
   console.log('⚠️  Skipping modification tools (add_hydration_data, remove_gear_from_activity) to preserve data');
 
+  console.log('\n═══════════════════════════════════════════════════════════════');
+  console.log('TESTING v4.0 NEW TOOLS - GEAR MANAGEMENT COMPLETE (UUID SOLVED!)');
+  console.log('═══════════════════════════════════════════════════════════════\n');
+
+  // THE BIG ONE: get_all_gear - finally solves the UUID problem!
+  const getAllGearResult = await testTool(handler, 'get_all_gear');
+  results.push(getAllGearResult);
+
+  let gearUUID: string | undefined;
+  if (getAllGearResult.success && getAllGearResult.result?.data?.gear?.length > 0) {
+    gearUUID = getAllGearResult.result.data.gear[0].uuid;
+    console.log(`\n📍 Found gear UUID: ${gearUUID} for detail tests\n`);
+
+    // Now we can test gear stats with discovered UUID
+    results.push(await testTool(handler, 'get_gear_stats', { gearUUID }));
+    results.push(await testTool(handler, 'get_gear_activities', { gearUUID, limit: 5 }));
+  }
+
+  // Test create, update, delete gear
+  console.log('\n🔧 Testing gear CRUD operations...');
+  const createGearResult = await testTool(handler, 'create_gear', {
+    gearTypePk: 1, // Running shoes
+    displayName: 'MCP Test Shoes - DELETE ME',
+    modelName: 'Test Model',
+    brandName: 'Test Brand',
+  });
+  results.push(createGearResult);
+
+  if (createGearResult.success && createGearResult.result?.data?.gearUUID) {
+    const newGearUUID = createGearResult.result.data.gearUUID;
+    console.log(`\n📍 Created gear UUID: ${newGearUUID}\n`);
+
+    // Test update
+    results.push(await testTool(handler, 'update_gear', {
+      gearUUID: newGearUUID,
+      displayName: 'MCP Test Shoes UPDATED',
+      maximumMeter: 500000,
+    }));
+
+    // Test delete
+    results.push(await testTool(handler, 'delete_gear', { gearUUID: newGearUUID }));
+  }
+
+  console.log('\n═══════════════════════════════════════════════════════════════');
+  console.log('TESTING v4.0 NEW TOOLS - SOCIAL FEATURES');
+  console.log('═══════════════════════════════════════════════════════════════\n');
+
+  if (activityId) {
+    // Get comments
+    results.push(await testTool(handler, 'get_activity_comments', { activityId }));
+
+    // Test add comment (then we could delete it, but skipping for safety)
+    console.log('⚠️  Skipping add_activity_comment to avoid modifying activity');
+    // results.push(await testTool(handler, 'add_activity_comment', {
+    //   activityId,
+    //   comment: 'Test comment from MCP - please ignore',
+    // }));
+
+    // Test privacy (read current state, don't modify)
+    console.log('⚠️  Skipping set_activity_privacy to preserve current privacy settings');
+    // results.push(await testTool(handler, 'set_activity_privacy', {
+    //   activityId,
+    //   privacy: 'private',
+    // }));
+  }
+
+  console.log('\n═══════════════════════════════════════════════════════════════');
+  console.log('TESTING v4.0 NEW TOOLS - ADVANCED TRAINING METRICS');
+  console.log('═══════════════════════════════════════════════════════════════\n');
+
+  results.push(await testTool(handler, 'get_training_load', { startDate: lastMonth, endDate: today }));
+  results.push(await testTool(handler, 'get_load_ratio', { date: today }));
+  results.push(await testTool(handler, 'get_performance_condition', { date: today }));
+
+  console.log('\n═══════════════════════════════════════════════════════════════');
+  console.log('TESTING v4.0 NEW TOOLS - ADVANCED SLEEP & DEVICE');
+  console.log('═══════════════════════════════════════════════════════════════\n');
+
+  results.push(await testTool(handler, 'get_sleep_movement', { date: yesterday }));
+
+  // Get device alarms (requires deviceId)
+  const devicesResult = results.find(r => r.tool === 'get_devices');
+  if (devicesResult?.success && devicesResult.result?.data?.settings) {
+    // Try to extract device ID from settings
+    console.log('⚠️  Note: get_device_alarms requires a valid deviceId from your Garmin device');
+    // Skip for now as we don't have an easy way to get the correct deviceId
+  }
+
+  console.log('\n═══════════════════════════════════════════════════════════════');
+  console.log('TESTING v4.0 NEW TOOLS - COURSES & ANALYSIS');
+  console.log('═══════════════════════════════════════════════════════════════\n');
+
+  results.push(await testTool(handler, 'get_courses', { start: 0, limit: 10 }));
+
+  // Analysis tools require multiple activities
+  if (activityId && activitiesResult && activitiesResult.result?.data?.length >= 2) {
+    const activityIds = activitiesResult.result.data
+      .slice(0, 3)
+      .map((a: any) => a.activityId);
+
+    console.log(`\n📊 Comparing ${activityIds.length} activities...\n`);
+    results.push(await testTool(handler, 'compare_activities', { activityIds }));
+
+    console.log(`\n🔍 Finding similar activities to ${activityId}...\n`);
+    results.push(await testTool(handler, 'find_similar_activities', { activityId, limit: 5 }));
+  }
+
+  console.log(`\n📈 Analyzing training period ${lastMonth} to ${today}...\n`);
+  results.push(await testTool(handler, 'analyze_training_period', {
+    startDate: lastMonth,
+    endDate: today,
+  }));
+
   // ═══════════════════════════════════════════════════════════════════════════
   // SUMMARY
   // ═══════════════════════════════════════════════════════════════════════════

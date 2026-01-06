@@ -167,4 +167,24 @@ export const MCP_TOOL_NAMES = {
   GET_PRIMARY_TRAINING_DEVICE: 'get_primary_training_device',
   COUNT_ACTIVITIES: 'count_activities',
   GET_FITNESS_STATS: 'get_fitness_stats',
+
+  // ═══════════════════════════════════════════════════════════════
+  // NUOVI TOOL v4.0 - SOCIAL, GEAR, TRAINING LOAD, ANALYSIS
+  // ═══════════════════════════════════════════════════════════════
+  GET_ALL_GEAR: 'get_all_gear',
+  CREATE_GEAR: 'create_gear',
+  UPDATE_GEAR: 'update_gear',
+  DELETE_GEAR: 'delete_gear',
+  GET_ACTIVITY_COMMENTS: 'get_activity_comments',
+  ADD_ACTIVITY_COMMENT: 'add_activity_comment',
+  SET_ACTIVITY_PRIVACY: 'set_activity_privacy',
+  GET_TRAINING_LOAD: 'get_training_load',
+  GET_LOAD_RATIO: 'get_load_ratio',
+  GET_PERFORMANCE_CONDITION: 'get_performance_condition',
+  GET_SLEEP_MOVEMENT: 'get_sleep_movement',
+  GET_DEVICE_ALARMS: 'get_device_alarms',
+  GET_COURSES: 'get_courses',
+  COMPARE_ACTIVITIES: 'compare_activities',
+  FIND_SIMILAR_ACTIVITIES: 'find_similar_activities',
+  ANALYZE_TRAINING_PERIOD: 'analyze_training_period',
 } as const;

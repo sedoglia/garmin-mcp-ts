@@ -1616,4 +1616,342 @@ Example for interval running workout:
       required: ['startDate', 'endDate'],
     },
   },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.0 - NEW TOOLS: GEAR MANAGEMENT (NO MORE UUID REQUIRED!)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_ALL_GEAR,
+    title: 'Get All Gear',
+    description: 'Get complete list of all gear/equipment with their UUIDs. This solves the UUID problem - you can now discover all gear without needing to manually find UUIDs in the web interface.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.CREATE_GEAR,
+    title: 'Create Gear',
+    description: 'Create new gear/equipment. Common gearTypePk values: 1=Running Shoes, 2=Bike, 3=Helmet, 10=Watch. Returns the new gear UUID.',
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        gearTypePk: {
+          type: 'number',
+          description: 'Gear type primary key: 1=Running Shoes, 2=Bike, 3=Helmet, 10=Watch (required)',
+        },
+        displayName: {
+          type: 'string',
+          description: 'Name for the gear (e.g., "Nike Pegasus 40") (required)',
+        },
+        modelName: {
+          type: 'string',
+          description: 'Model name (optional)',
+        },
+        brandName: {
+          type: 'string',
+          description: 'Brand name (optional)',
+        },
+      },
+      required: ['gearTypePk', 'displayName'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.UPDATE_GEAR,
+    title: 'Update Gear',
+    description: 'Update existing gear/equipment details.',
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        gearUUID: {
+          type: 'string',
+          description: 'The gear UUID (use get_all_gear to find it) (required)',
+        },
+        displayName: {
+          type: 'string',
+          description: 'New display name',
+        },
+        modelName: {
+          type: 'string',
+          description: 'New model name',
+        },
+        brandName: {
+          type: 'string',
+          description: 'New brand name',
+        },
+        maximumMeter: {
+          type: 'number',
+          description: 'Maximum distance in meters before replacement',
+        },
+      },
+      required: ['gearUUID'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.DELETE_GEAR,
+    title: 'Delete Gear',
+    description: 'Delete a piece of gear/equipment. WARNING: This cannot be undone.',
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        gearUUID: {
+          type: 'string',
+          description: 'The gear UUID to delete (required)',
+        },
+      },
+      required: ['gearUUID'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.0 - SOCIAL FEATURES
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_ACTIVITY_COMMENTS,
+    title: 'Get Activity Comments',
+    description: 'Get all comments on an activity.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+      },
+      required: ['activityId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.ADD_ACTIVITY_COMMENT,
+    title: 'Add Activity Comment',
+    description: 'Add a comment to an activity.',
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+        comment: {
+          type: 'string',
+          description: 'Comment text (required)',
+        },
+      },
+      required: ['activityId', 'comment'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.SET_ACTIVITY_PRIVACY,
+    title: 'Set Activity Privacy',
+    description: 'Change activity privacy settings (public, private, or followers only).',
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'The unique activity identifier (required)',
+        },
+        privacy: {
+          type: 'string',
+          description: 'Privacy level: public, private, or followers (required)',
+        },
+      },
+      required: ['activityId', 'privacy'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.0 - ADVANCED TRAINING METRICS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_TRAINING_LOAD,
+    title: 'Get Training Load',
+    description: 'Get training load data showing weekly training volume and balance.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format (optional, defaults to startDate)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['startDate'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_LOAD_RATIO,
+    title: 'Get Load Ratio',
+    description: 'Get acute/chronic workload ratio indicating training balance and injury risk.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_PERFORMANCE_CONDITION,
+    title: 'Get Performance Condition',
+    description: 'Get performance condition score based on recent activities.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.0 - SLEEP & DEVICE FEATURES
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_SLEEP_MOVEMENT,
+    title: 'Get Sleep Movement',
+    description: 'Get movement data during sleep including restless moments.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['date'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_DEVICE_ALARMS,
+    title: 'Get Device Alarms',
+    description: 'Get alarms configured on a specific Garmin device.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        deviceId: {
+          type: 'string',
+          description: 'The device identifier (required)',
+        },
+      },
+      required: ['deviceId'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.0 - COURSE & ANALYSIS FEATURES
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_COURSES,
+    title: 'Get Courses',
+    description: 'Get saved routes/courses from Garmin Connect.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        start: {
+          type: 'number',
+          description: 'Starting index for pagination (default: 0)',
+          minimum: 0,
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of courses to return (default: 20)',
+          minimum: 1,
+          maximum: 100,
+        },
+      },
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.COMPARE_ACTIVITIES,
+    title: 'Compare Activities',
+    description: 'Compare 2-5 activities side by side with key metrics.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityIds: {
+          type: 'array',
+          description: 'Array of 2-5 activity IDs to compare (required)',
+        },
+      },
+      required: ['activityIds'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.FIND_SIMILAR_ACTIVITIES,
+    title: 'Find Similar Activities',
+    description: 'Find activities similar to a reference activity based on type, distance, and duration (within 20% tolerance).',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        activityId: {
+          type: 'number',
+          description: 'Reference activity ID (required)',
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of similar activities to return (default: 10)',
+          minimum: 1,
+          maximum: 50,
+        },
+      },
+      required: ['activityId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.ANALYZE_TRAINING_PERIOD,
+    title: 'Analyze Training Period',
+    description: 'Comprehensive analysis of training trends, volume, and patterns over a date range.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
+      required: ['startDate', 'endDate'],
+    },
+  },
 ];

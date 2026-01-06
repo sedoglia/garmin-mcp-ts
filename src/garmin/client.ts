@@ -2424,4 +2424,486 @@ export class GarminConnectClient {
       throw err;
     }
   }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.0 - NEW FEATURES: SOCIAL, GEAR MANAGEMENT, TRAINING LOAD, SLEEP ANALYSIS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get all gear (equipment) available for the user
+   * NOTE: The Garmin OAuth API doesn't support listing all gear directly.
+   * This returns a helpful message directing users to the web interface.
+   */
+  async getAllGear(): Promise<any> {
+    this.checkInitialized();
+    return {
+      success: false,
+      message: 'Garmin OAuth API limitation: Cannot list all gear automatically. To use gear tools, please:',
+      instructions: [
+        '1. Visit https://connect.garmin.com/modern/gear',
+        '2. Click on any gear item',
+        '3. Copy the UUID from the URL (e.g., abc123-def456-...)',
+        '4. Use that UUID with get_gear_stats, link_gear_to_activity, etc.',
+      ],
+      availableGearTools: [
+        'get_gear_stats(gearUUID) - Get statistics for specific gear',
+        'get_gear_activities(gearUUID) - Get activities using specific gear',
+        'link_gear_to_activity(activityId, gearUUID) - Link gear to activity',
+        'remove_gear_from_activity(activityId) - Remove gear from activity',
+      ],
+      gear: [],
+      count: 0,
+    };
+  }
+
+  /**
+   * Create new gear/equipment
+   * NOTE: The Garmin OAuth API doesn't support gear creation.
+   * Users must create gear via the Garmin Connect web interface.
+   */
+  async createGear(gear: {
+    gearTypePk: number;
+    displayName: string;
+    modelName?: string;
+    brandName?: string;
+    notified?: boolean;
+  }): Promise<any> {
+    this.checkInitialized();
+    return {
+      success: false,
+      message: 'Garmin OAuth API limitation: Cannot create gear via API. Please create gear manually:',
+      instructions: [
+        '1. Visit https://connect.garmin.com/modern/gear',
+        '2. Click "Add Gear" button',
+        `3. Create gear: ${gear.displayName}`,
+        '4. Copy the UUID from the gear page URL',
+        '5. Use the UUID with other gear tools',
+      ],
+      requestedGear: {
+        name: gear.displayName,
+        type: gear.gearTypePk,
+        model: gear.modelName,
+        brand: gear.brandName,
+      },
+    };
+  }
+
+  /**
+   * Update existing gear
+   */
+  async updateGear(gearUUID: string, updates: {
+    displayName?: string;
+    modelName?: string;
+    brandName?: string;
+    maximumMeter?: number;
+  }): Promise<any> {
+    this.checkInitialized();
+    try {
+      // Get existing gear first
+      const existing = await this.getGearStats(gearUUID);
+
+      const url = `https://connectapi.garmin.com/gear-service/gear/${gearUUID}`;
+      const payload = {
+        ...existing,
+        ...updates,
+      };
+
+      const result = await this.gc.put(url, payload);
+      return {
+        success: true,
+        gearUUID,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error updating gear:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Delete gear
+   */
+  async deleteGear(gearUUID: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/gear-service/gear/${gearUUID}`;
+      await this.gc.client.delete(url);
+      return {
+        success: true,
+        gearUUID,
+        message: 'Gear deleted successfully',
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error deleting gear:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get activity comments
+   */
+  async getActivityComments(activityId: number): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/comments`;
+      const comments = await this.gc.get(url);
+      return {
+        activityId,
+        comments: comments || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { activityId, comments: [] };
+      }
+      logger.error('Error fetching activity comments:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Add comment to activity
+   */
+  async addActivityComment(activityId: number, comment: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/comment`;
+      const payload = { commentText: comment };
+      const result = await this.gc.post(url, payload);
+      return {
+        success: true,
+        activityId,
+        comment,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error adding activity comment:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Set activity privacy (public, private, followers)
+   */
+  async setActivityPrivacy(activityId: number, privacy: 'public' | 'private' | 'followers'): Promise<any> {
+    this.checkInitialized();
+    try {
+      const privacyMap = {
+        public: { typeId: 1, typeKey: 'public' },
+        private: { typeId: 2, typeKey: 'private' },
+        followers: { typeId: 3, typeKey: 'followers' },
+      };
+
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}`;
+      const payload = {
+        activityId,
+        accessControlRuleDTO: privacyMap[privacy],
+      };
+
+      const result = await this.gc.put(url, payload);
+      return {
+        success: true,
+        activityId,
+        privacy,
+        ...result,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error setting activity privacy:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get training load (weekly load balance)
+   */
+  async getTrainingLoad(startDate: string, endDate?: string): Promise<any> {
+    this.checkInitialized();
+    const end = endDate || startDate;
+    try {
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/trainingload/${startDate}/${end}`;
+      const load = await this.gc.get(url);
+      return {
+        startDate,
+        endDate: end,
+        ...load,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { startDate, endDate: end, message: 'No training load data' };
+      }
+      logger.error('Error fetching training load:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get acute/chronic load ratio
+   */
+  async getLoadRatio(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/acutechronicworkloadratio/${date}`;
+      const ratio = await this.gc.get(url);
+      return {
+        date,
+        ...ratio,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No load ratio data' };
+      }
+      logger.error('Error fetching load ratio:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get performance condition
+   */
+  async getPerformanceCondition(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/performancecondition/${date}`;
+      const condition = await this.gc.get(url);
+      return {
+        date,
+        ...condition,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date, message: 'No performance condition data' };
+      }
+      logger.error('Error fetching performance condition:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get sleep movement data
+   */
+  async getSleepMovement(date: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const sleepData = await this.gc.getSleepData(new Date(date));
+      return {
+        date,
+        movement: sleepData?.sleepMovement || [],
+        restlessMoments: sleepData?.restlessMomentsCount || 0,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching sleep movement:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get device alarms
+   */
+  async getDeviceAlarms(deviceId: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/device-service/deviceservice/alarms/${deviceId}`;
+      const alarms = await this.gc.get(url);
+      return {
+        deviceId,
+        alarms: alarms || [],
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { deviceId, alarms: [] };
+      }
+      logger.error('Error fetching device alarms:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get activity courses (saved routes)
+   */
+  async getCourses(start: number = 0, limit: number = 20): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/course-service/course';
+      const params = { start: String(start), limit: String(limit) };
+      const courses = await this.gc.get(url, { params });
+      return {
+        courses: courses || [],
+        count: courses?.length || 0,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching courses:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Compare multiple activities side by side
+   */
+  async compareActivities(activityIds: number[]): Promise<any> {
+    this.checkInitialized();
+    try {
+      if (activityIds.length < 2 || activityIds.length > 5) {
+        throw new Error('Can compare between 2 and 5 activities');
+      }
+
+      const activities = await Promise.all(
+        activityIds.map(id => this.getActivityDetails(id))
+      );
+
+      // Extract key metrics for comparison
+      const comparison = activities.map((act: any, idx: number) => ({
+        activityId: activityIds[idx],
+        name: act.activityName,
+        type: act.activityType?.typeKey,
+        date: act.startTimeLocal,
+        distance: act.distance,
+        duration: act.duration,
+        avgSpeed: act.averageSpeed,
+        avgHR: act.averageHR,
+        maxHR: act.maxHR,
+        calories: act.calories,
+        elevationGain: act.elevationGain,
+      }));
+
+      return {
+        activityCount: activityIds.length,
+        activities: comparison,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error comparing activities:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Find similar activities based on type, distance, duration
+   */
+  async findSimilarActivities(
+    activityId: number,
+    limit: number = 10
+  ): Promise<any> {
+    this.checkInitialized();
+    try {
+      // Get reference activity
+      const reference: any = await this.getActivityDetails(activityId);
+
+      // Get recent activities of same type
+      const allActivities = await this.gc.getActivities(0, 100);
+
+      const similar = (allActivities as any[])
+        .filter((act: any) => {
+          if (act.activityId === activityId) return false;
+          if (act.activityType?.typeKey !== reference.activityType?.typeKey) return false;
+
+          // Distance within 20%
+          const distanceDiff = Math.abs(act.distance - reference.distance) / reference.distance;
+          if (distanceDiff > 0.2) return false;
+
+          // Duration within 20%
+          const durationDiff = Math.abs(act.duration - reference.duration) / reference.duration;
+          if (durationDiff > 0.2) return false;
+
+          return true;
+        })
+        .slice(0, limit)
+        .map((act: any) => ({
+          activityId: act.activityId,
+          name: act.activityName,
+          date: act.startTimeLocal,
+          distance: act.distance,
+          duration: act.duration,
+          avgSpeed: act.averageSpeed,
+          similarity: 'high',
+        }));
+
+      return {
+        referenceActivityId: activityId,
+        referenceActivity: {
+          name: reference.activityName,
+          type: reference.activityType?.typeKey,
+          distance: reference.distance,
+          duration: reference.duration,
+        },
+        similarActivities: similar,
+        count: similar.length,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error finding similar activities:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Analyze training period trends
+   */
+  async analyzeTrainingPeriod(startDate: string, endDate: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      // Get activities in period
+      const activities = await this.getActivitiesByDate(startDate, endDate);
+
+      // Calculate statistics
+      let totalDistance = 0;
+      let totalDuration = 0;
+      let totalElevation = 0;
+      let totalCalories = 0;
+      const activityTypes: Record<string, number> = {};
+
+      for (const act of activities) {
+        totalDistance += act.distance || 0;
+        totalDuration += act.duration || 0;
+        totalElevation += act.elevationGain || 0;
+        totalCalories += act.calories || 0;
+
+        const type = act.activityType?.typeKey || 'unknown';
+        activityTypes[type] = (activityTypes[type] || 0) + 1;
+      }
+
+      const avgDistance = activities.length > 0 ? totalDistance / activities.length : 0;
+      const avgDuration = activities.length > 0 ? totalDuration / activities.length : 0;
+
+      // Weekly breakdown
+      const weeks: Record<string, number> = {};
+      for (const act of activities) {
+        const date = new Date(act.startTimeLocal);
+        const weekStart = new Date(date);
+        weekStart.setDate(date.getDate() - date.getDay());
+        const weekKey = weekStart.toISOString().split('T')[0];
+        weeks[weekKey] = (weeks[weekKey] || 0) + 1;
+      }
+
+      return {
+        period: { startDate, endDate },
+        summary: {
+          totalActivities: activities.length,
+          totalDistance: Math.round(totalDistance),
+          totalDistanceKm: (totalDistance / 1000).toFixed(2),
+          totalDuration: Math.round(totalDuration),
+          totalDurationHours: (totalDuration / 3600).toFixed(2),
+          totalElevationGain: Math.round(totalElevation),
+          totalCalories: Math.round(totalCalories),
+          avgDistance: Math.round(avgDistance),
+          avgDuration: Math.round(avgDuration),
+        },
+        activityTypes,
+        weeklyActivities: weeks,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error analyzing training period:', error);
+      throw err;
+    }
+  }
 }

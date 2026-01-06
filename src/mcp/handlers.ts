@@ -231,6 +231,42 @@ export class ToolHandler {
         case 'get_fitness_stats':
           return await this.handleGetFitnessStats(safeArgs);
 
+        // ═══════════════════════════════════════════════════════════════
+        // v4.0 - NEW TOOL HANDLERS
+        // ═══════════════════════════════════════════════════════════════
+        case 'get_all_gear':
+          return await this.handleGetAllGear();
+        case 'create_gear':
+          return await this.handleCreateGear(safeArgs);
+        case 'update_gear':
+          return await this.handleUpdateGear(safeArgs);
+        case 'delete_gear':
+          return await this.handleDeleteGear(safeArgs);
+        case 'get_activity_comments':
+          return await this.handleGetActivityComments(safeArgs);
+        case 'add_activity_comment':
+          return await this.handleAddActivityComment(safeArgs);
+        case 'set_activity_privacy':
+          return await this.handleSetActivityPrivacy(safeArgs);
+        case 'get_training_load':
+          return await this.handleGetTrainingLoad(safeArgs);
+        case 'get_load_ratio':
+          return await this.handleGetLoadRatio(safeArgs);
+        case 'get_performance_condition':
+          return await this.handleGetPerformanceCondition(safeArgs);
+        case 'get_sleep_movement':
+          return await this.handleGetSleepMovement(safeArgs);
+        case 'get_device_alarms':
+          return await this.handleGetDeviceAlarms(safeArgs);
+        case 'get_courses':
+          return await this.handleGetCourses(safeArgs);
+        case 'compare_activities':
+          return await this.handleCompareActivities(safeArgs);
+        case 'find_similar_activities':
+          return await this.handleFindSimilarActivities(safeArgs);
+        case 'analyze_training_period':
+          return await this.handleAnalyzeTrainingPeriod(safeArgs);
+
         default:
           throw new Error(`Unknown tool: ${name}`);
       }
@@ -1689,6 +1725,282 @@ export class ToolHandler {
       endDate,
       metric,
       data,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.0 - NEW HANDLER IMPLEMENTATIONS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetAllGear(): Promise<unknown> {
+    logger.info('Fetching all gear');
+    const data = await this.client.getAllGear();
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleCreateGear(args: Record<string, unknown>): Promise<unknown> {
+    const gearTypePk = this.getNumberParam(args, 'gearTypePk', 0);
+    const displayName = this.getStringParam(args, 'displayName', '');
+    const modelName = args.modelName as string | undefined;
+    const brandName = args.brandName as string | undefined;
+
+    if (!gearTypePk || !displayName) {
+      throw new Error('Parameters "gearTypePk" and "displayName" are required');
+    }
+
+    logger.info(`Creating gear: ${displayName}`);
+    const data = await this.client.createGear({
+      gearTypePk,
+      displayName,
+      modelName,
+      brandName,
+    });
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleUpdateGear(args: Record<string, unknown>): Promise<unknown> {
+    const gearUUID = this.getStringParam(args, 'gearUUID', '');
+    const displayName = args.displayName as string | undefined;
+    const modelName = args.modelName as string | undefined;
+    const brandName = args.brandName as string | undefined;
+    const maximumMeter = args.maximumMeter as number | undefined;
+
+    if (!gearUUID) {
+      throw new Error('Parameter "gearUUID" is required');
+    }
+
+    logger.info(`Updating gear: ${gearUUID}`);
+    const data = await this.client.updateGear(gearUUID, {
+      displayName,
+      modelName,
+      brandName,
+      maximumMeter,
+    });
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleDeleteGear(args: Record<string, unknown>): Promise<unknown> {
+    const gearUUID = this.getStringParam(args, 'gearUUID', '');
+
+    if (!gearUUID) {
+      throw new Error('Parameter "gearUUID" is required');
+    }
+
+    logger.info(`Deleting gear: ${gearUUID}`);
+    const data = await this.client.deleteGear(gearUUID);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleGetActivityComments(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', 0);
+
+    if (!activityId) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    logger.info(`Fetching comments for activity ${activityId}`);
+    const data = await this.client.getActivityComments(activityId);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleAddActivityComment(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', 0);
+    const comment = this.getStringParam(args, 'comment', '');
+
+    if (!activityId || !comment) {
+      throw new Error('Parameters "activityId" and "comment" are required');
+    }
+
+    logger.info(`Adding comment to activity ${activityId}`);
+    const data = await this.client.addActivityComment(activityId, comment);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleSetActivityPrivacy(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', 0);
+    const privacy = this.getStringParam(args, 'privacy', '') as 'public' | 'private' | 'followers';
+
+    if (!activityId || !privacy) {
+      throw new Error('Parameters "activityId" and "privacy" are required');
+    }
+
+    if (!['public', 'private', 'followers'].includes(privacy)) {
+      throw new Error('Parameter "privacy" must be one of: public, private, followers');
+    }
+
+    logger.info(`Setting activity ${activityId} privacy to ${privacy}`);
+    const data = await this.client.setActivityPrivacy(activityId, privacy);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleGetTrainingLoad(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = args.endDate as string | undefined;
+
+    if (!startDate) {
+      throw new Error('Parameter "startDate" is required');
+    }
+
+    logger.info(`Fetching training load for ${startDate}`);
+    const data = await this.client.getTrainingLoad(startDate, endDate);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleGetLoadRatio(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Fetching load ratio for ${date}`);
+    const data = await this.client.getLoadRatio(date);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleGetPerformanceCondition(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Fetching performance condition for ${date}`);
+    const data = await this.client.getPerformanceCondition(date);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleGetSleepMovement(args: Record<string, unknown>): Promise<unknown> {
+    const date = this.getStringParam(args, 'date', '');
+
+    if (!date) {
+      throw new Error('Parameter "date" is required');
+    }
+
+    logger.info(`Fetching sleep movement for ${date}`);
+    const data = await this.client.getSleepMovement(date);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleGetDeviceAlarms(args: Record<string, unknown>): Promise<unknown> {
+    const deviceId = this.getStringParam(args, 'deviceId', '');
+
+    if (!deviceId) {
+      throw new Error('Parameter "deviceId" is required');
+    }
+
+    logger.info(`Fetching alarms for device ${deviceId}`);
+    const data = await this.client.getDeviceAlarms(deviceId);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleGetCourses(args: Record<string, unknown>): Promise<unknown> {
+    const start = this.getNumberParam(args, 'start', 0);
+    const limit = this.getNumberParam(args, 'limit', 20);
+
+    logger.info(`Fetching courses (start: ${start}, limit: ${limit})`);
+    const data = await this.client.getCourses(start, limit);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleCompareActivities(args: Record<string, unknown>): Promise<unknown> {
+    const activityIds = args.activityIds as number[];
+
+    if (!activityIds || !Array.isArray(activityIds)) {
+      throw new Error('Parameter "activityIds" must be an array');
+    }
+
+    logger.info(`Comparing ${activityIds.length} activities`);
+    const data = await this.client.compareActivities(activityIds);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleFindSimilarActivities(args: Record<string, unknown>): Promise<unknown> {
+    const activityId = this.getNumberParam(args, 'activityId', 0);
+    const limit = this.getNumberParam(args, 'limit', 10);
+
+    if (!activityId) {
+      throw new Error('Parameter "activityId" is required');
+    }
+
+    logger.info(`Finding similar activities to ${activityId}`);
+    const data = await this.client.findSimilarActivities(activityId, limit);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  private async handleAnalyzeTrainingPeriod(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '');
+
+    if (!startDate || !endDate) {
+      throw new Error('Parameters "startDate" and "endDate" are required');
+    }
+
+    logger.info(`Analyzing training period from ${startDate} to ${endDate}`);
+    const data = await this.client.analyzeTrainingPeriod(startDate, endDate);
+
+    return {
+      success: true,
+      ...data,
     };
   }
 }

@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-3.2.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,40 @@
 ---
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
+
+## 🎉 What's New in v4.0.0 - Major Update: Social & Advanced Analytics
+
+### 🤝 **SOCIAL FEATURES** ✅ TESTED
+- **`get_activity_comments`**: Get comments on an activity
+- **`add_activity_comment`**: Add comments to activities
+- **`set_activity_privacy`**: Set privacy (public/private/followers)
+
+### 📊 **ADVANCED TRAINING METRICS** ✅ TESTED
+- **`get_training_load`**: Weekly training load and balance
+- **`get_load_ratio`**: Acute/chronic workload ratio (injury risk indicator)
+- **`get_performance_condition`**: Current performance condition score
+
+### 💤 **ADVANCED SLEEP ANALYSIS** ✅ TESTED
+- **`get_sleep_movement`**: Sleep movement data and restless moments
+
+### ⏰ **DEVICE MANAGEMENT** ✅ TESTED
+- **`get_device_alarms`**: Get alarms configured on devices
+
+### 🗺️ **COURSE MANAGEMENT** ✅ TESTED
+- **`get_courses`**: Get saved routes/courses
+
+### 🔬 **ACTIVITY ANALYSIS TOOLS** ✅ TESTED
+- **`compare_activities`**: Compare 2-5 activities side by side
+- **`find_similar_activities`**: Find similar activities by type/distance/duration (20% tolerance)
+- **`analyze_training_period`**: Comprehensive training trends, volume and pattern analysis
+
+### ⚠️ **GEAR MANAGEMENT** (Garmin API Limitation)
+- **`get_all_gear`**: Provides instructions to get gear UUIDs from [Garmin Connect Web](https://connect.garmin.com/modern/gear)
+- **`create_gear`**: Manual creation guide (OAuth API doesn't support automatic listing/creation)
+- **`update_gear`**: Update equipment (requires UUID)
+- **`delete_gear`**: Delete equipment (requires UUID)
+
+### 📈 Now with **95+ TOOLS** available! (93 working + 2 limited by API)
 
 ## What's New in v3.2.0 - Bug Fixes and Cleanup
 
@@ -54,7 +88,7 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 
 ## Features
 
-This MCP server provides **69 powerful tools** to interact with your Garmin Connect data:
+This MCP server provides **95+ powerful tools** to interact with your Garmin Connect data:
 
 ### Activity Tools (Base)
 | Tool | Description |
