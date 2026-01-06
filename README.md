@@ -465,6 +465,32 @@ Aggiungi il server MCP Garmin al tuo `claude_desktop_config.json`:
 
 > "In base al mio ciclo, quale tipo di allenamento dovrei fare?"
 
+### Gestione Equipaggiamento (NUOVO v4.0)
+
+> "Mostrami tutto il mio equipaggiamento Garmin"
+
+> "Crea un nuovo paio di scarpe da corsa Nike Pegasus 40"
+
+### Commenti e Privacy (NUOVO v4.0)
+
+> "Mostrami i commenti sulla mia ultima attività"
+
+> "Imposta la mia ultima corsa come privata"
+
+### Metriche Training Avanzate (NUOVO v4.0)
+
+> "Come sta andando il mio carico di allenamento questo mese?"
+
+> "Qual è il mio rapporto acuto/cronico? Sono a rischio infortuni?"
+
+### Analisi Attività (NUOVO v4.0)
+
+> "Confronta le mie ultime 3 corse"
+
+> "Trova attività simili alla mia corsa di domenica scorsa"
+
+> "Analizza il mio allenamento dell'ultimo mese"
+
 ## Test
 
 Esegui i test con dati reali:
@@ -545,76 +571,6 @@ Per testare l'integrazione con keytar:
 ```bash
 npm run test-keytar
 ```
-
-## 💡 Esempi di Utilizzo v4.0
-
-Ecco alcuni esempi pratici per utilizzare i nuovi strumenti introdotti nella versione 4.0:
-
-### 🔧 Gestione Equipaggiamento (Gear)
-
-```
-Mostrami tutto il mio equipaggiamento Garmin
-```
-Claude userà `get_all_gear` per mostrarti scarpe, bici, e altro equipaggiamento registrato.
-
-```
-Crea un nuovo paio di scarpe da corsa chiamate "Nike Pegasus 40"
-con brand "Nike" e modello "Pegasus 40"
-```
-Claude ti guiderà nel processo di creazione (richiede UUID da web interface).
-
-### 💬 Commenti e Privacy
-
-```
-Mostrami i commenti sulla mia ultima attività
-```
-Claude userà `get_activity_comments` per recuperare eventuali commenti.
-
-```
-Imposta la mia ultima corsa come privata
-```
-Claude userà `set_activity_privacy` con opzione `private`.
-
-### 📊 Metriche Avanzate di Allenamento
-
-```
-Come sta andando il mio carico di allenamento questo mese?
-```
-Claude userà `get_training_load` per analizzare il bilanciamento del carico.
-
-```
-Qual è il mio rapporto acuto/cronico? Sono a rischio infortuni?
-```
-Claude userà `get_load_ratio` per valutare il rischio.
-
-### 💤 Analisi Sonno Avanzata
-
-```
-Come mi sono mosso durante il sonno la scorsa notte?
-```
-Claude userà `get_sleep_movement` per mostrarti i movimenti e momenti irrequieti.
-
-### 🗺️ Percorsi e Analisi
-
-```
-Mostrami i miei percorsi salvati
-```
-Claude userà `get_courses` per elencare i tuoi percorsi.
-
-```
-Confronta le mie ultime 3 corse
-```
-Claude userà `compare_activities` per un confronto dettagliato.
-
-```
-Trova attività simili alla mia corsa di domenica scorsa
-```
-Claude userà `find_similar_activities` con tolleranza 20%.
-
-```
-Analizza il mio allenamento dell'ultimo mese
-```
-Claude userà `analyze_training_period` per trends e pattern completi.
 
 ## ⚠️ Limitazioni Note
 

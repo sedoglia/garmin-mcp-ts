@@ -465,6 +465,32 @@ Add the Garmin MCP server to your `claude_desktop_config.json`:
 
 > "Based on my cycle, what type of workout should I do?"
 
+### Gear Management (NEW v4.0)
+
+> "Show me all my Garmin gear"
+
+> "Create new running shoes Nike Pegasus 40"
+
+### Comments and Privacy (NEW v4.0)
+
+> "Show me comments on my latest activity"
+
+> "Set my last run as private"
+
+### Advanced Training Metrics (NEW v4.0)
+
+> "How is my training load this month?"
+
+> "What's my acute/chronic ratio? Am I at injury risk?"
+
+### Activity Analysis (NEW v4.0)
+
+> "Compare my last 3 runs"
+
+> "Find activities similar to my Sunday run"
+
+> "Analyze my training for the last month"
+
 ## Testing
 
 Run tests with real data:
@@ -545,76 +571,6 @@ To test keytar integration:
 ```bash
 npm run test-keytar
 ```
-
-## 💡 Usage Examples v4.0
-
-Here are practical examples for using the new tools introduced in version 4.0:
-
-### 🔧 Gear Management
-
-```
-Show me all my Garmin gear
-```
-Claude will use `get_all_gear` to display your shoes, bikes, and other registered equipment.
-
-```
-Create new running shoes called "Nike Pegasus 40"
-with brand "Nike" and model "Pegasus 40"
-```
-Claude will guide you through the creation process (requires UUID from web interface).
-
-### 💬 Comments and Privacy
-
-```
-Show me comments on my latest activity
-```
-Claude will use `get_activity_comments` to retrieve any comments.
-
-```
-Set my last run as private
-```
-Claude will use `set_activity_privacy` with `private` option.
-
-### 📊 Advanced Training Metrics
-
-```
-How is my training load this month?
-```
-Claude will use `get_training_load` to analyze load balance.
-
-```
-What's my acute/chronic ratio? Am I at injury risk?
-```
-Claude will use `get_load_ratio` to assess risk.
-
-### 💤 Advanced Sleep Analysis
-
-```
-How did I move during sleep last night?
-```
-Claude will use `get_sleep_movement` to show movements and restless moments.
-
-### 🗺️ Routes and Analysis
-
-```
-Show me my saved routes
-```
-Claude will use `get_courses` to list your routes.
-
-```
-Compare my last 3 runs
-```
-Claude will use `compare_activities` for detailed comparison.
-
-```
-Find activities similar to my Sunday run
-```
-Claude will use `find_similar_activities` with 20% tolerance.
-
-```
-Analyze my training for the last month
-```
-Claude will use `analyze_training_period` for complete trends and patterns.
 
 ## ⚠️ Known Limitations
 
