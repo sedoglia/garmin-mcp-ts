@@ -499,7 +499,7 @@ Run tests with real data:
 npm test
 ```
 
-The test script validates all 69 tools with your Garmin account.
+The test script validates all the tools with your Garmin account.
 
 ## Architecture
 
