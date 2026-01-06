@@ -52,39 +52,7 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 
 ### 📈 Ora con **95+ TOOLS** disponibili! (93 funzionanti + 2 limitati da API)
 
-## Novità v3.2.0 - Bug Fix e Pulizia
-
-### 🔧 Correzioni
-- **unschedule_workout**: Nuovo tool per rimuovere workout dal calendario (evita ghost entries)
-- **Pulizia progetto**: Rimossi file e script non utilizzati
-- **Test migliorati**: Script test aggiornato per unschedulare prima di eliminare
-
-## Novità v3.1.0 - Encryption Sicura
-
-### 🔐 Sistema di Encryption a Riposo
-- **Chiave di encryption nel vault nativo del SO**: Windows Credential Manager, macOS Keychain, Linux Secret Service
-- **Credenziali e token sempre cifrati**: AES-256-GCM encryption
-- **Fallback intelligente**: file protetto se il vault non è disponibile
-- **Cross-platform**: funziona su Windows, macOS e Linux
-
-### Novità v3.0.0
-- **OAuth Token Persistence**: Salvataggio/caricamento token OAuth per riutilizzo sessione
-- **User Summary**: Riepilogo giornaliero completo dell'utente
-- **Steps Avanzati**: Daily steps con range di date, steps data dettagliati
-- **Attività per Data**: Ricerca attività in un range di date
-- **Activity Typed Splits**: Split dettagliati per tipo di attività
-- **Resting Heart Rate**: Frequenza cardiaca a riposo giornaliera
-- **Hill Score**: Punteggio prestazioni in salita
-- **All Day Events**: Eventi di tutto il giorno (stress, body battery)
-- **Badges Avanzati**: Badge disponibili, in progress, challenges
-- **Virtual Challenges**: Sfide virtuali in corso
-- **Gear Activities**: Attività associate a equipaggiamento
-- **Training Plans**: Piani di allenamento disponibili
-- **Salute Femminile**: Dati mestruali e gravidanza
-- **Activity Types**: Tutti i tipi di attività disponibili
-- **Primary Device**: Dispositivo di allenamento primario
-- **Activity Count**: Conteggio totale attività
-- **Fitness Stats**: Statistiche fitness in range di date
+---
 
 ## Funzionalità
 

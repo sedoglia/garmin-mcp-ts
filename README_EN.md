@@ -52,39 +52,7 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 
 ### 📈 Now with **95+ TOOLS** available! (93 working + 2 limited by API)
 
-## What's New in v3.2.0 - Bug Fixes and Cleanup
-
-### 🔧 Fixes
-- **unschedule_workout**: New tool to remove workouts from calendar (prevents ghost entries)
-- **Project cleanup**: Removed unused files and scripts
-- **Improved tests**: Test script updated to unschedule before deleting
-
-## What's New in v3.1.0 - Secure Encryption
-
-### 🔐 At-Rest Encryption System
-- **Encryption key in native OS vault**: Windows Credential Manager, macOS Keychain, Linux Secret Service
-- **Credentials and tokens always encrypted**: AES-256-GCM encryption
-- **Smart fallback**: Protected file if vault is not available
-- **Cross-platform**: Works on Windows, macOS and Linux
-
-### What's New in v3.0.0
-- **OAuth Token Persistence**: Save/load OAuth tokens for session reuse
-- **User Summary**: Complete daily user summary
-- **Advanced Steps**: Daily steps with date ranges, detailed steps data
-- **Activities by Date**: Search activities in a date range
-- **Activity Typed Splits**: Detailed splits by activity type
-- **Resting Heart Rate**: Daily resting heart rate
-- **Hill Score**: Hill performance score
-- **All Day Events**: Full day events (stress, body battery)
-- **Advanced Badges**: Available badges, in progress, challenges
-- **Virtual Challenges**: In-progress virtual challenges
-- **Gear Activities**: Activities associated with equipment
-- **Training Plans**: Available training plans
-- **Women's Health**: Menstrual and pregnancy data
-- **Activity Types**: All available activity types
-- **Primary Device**: Primary training device
-- **Activity Count**: Total activity count
-- **Fitness Stats**: Fitness statistics over date ranges
+---
 
 ## Features
 
