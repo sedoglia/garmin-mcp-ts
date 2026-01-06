@@ -372,19 +372,24 @@ async function main() {
     // Get comments
     results.push(await testTool(handler, 'get_activity_comments', { activityId }));
 
-    // Test add comment (then we could delete it, but skipping for safety)
-    console.log('⚠️  Skipping add_activity_comment to avoid modifying activity');
-    // results.push(await testTool(handler, 'add_activity_comment', {
-    //   activityId,
-    //   comment: 'Test comment from MCP - please ignore',
-    // }));
+    // REMOVED: add_activity_comment - Not supported by Garmin OAuth API
+    console.log('⚠️  add_activity_comment removed - not supported by Garmin OAuth API');
 
-    // Test privacy (read current state, don't modify)
-    console.log('⚠️  Skipping set_activity_privacy to preserve current privacy settings');
-    // results.push(await testTool(handler, 'set_activity_privacy', {
-    //   activityId,
-    //   privacy: 'private',
-    // }));
+    // Test privacy - cycle through public/private to verify it works
+    console.log('🔒 Testing set_activity_privacy (public/private only)...');
+    const privacyTest1 = await testTool(handler, 'set_activity_privacy', {
+      activityId,
+      privacy: 'private',
+    });
+    results.push(privacyTest1);
+
+    // Wait a moment then set back to public to restore original state
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const privacyTest2 = await testTool(handler, 'set_activity_privacy', {
+      activityId,
+      privacy: 'public',
+    });
+    results.push(privacyTest2);
   }
 
   console.log('\n═══════════════════════════════════════════════════════════════');

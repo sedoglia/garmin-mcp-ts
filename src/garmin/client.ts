@@ -2565,36 +2565,43 @@ export class GarminConnectClient {
 
   /**
    * Add comment to activity
+   *
+   * @deprecated NOT SUPPORTED by Garmin OAuth API
+   * The endpoint POST /activity-service/activity/{id}/comment returns 404
+   * Comments can only be read via OAuth API, not written
+   * Use Garmin Connect web/mobile app to add comments
    */
-  async addActivityComment(activityId: number, comment: string): Promise<any> {
-    this.checkInitialized();
-    try {
-      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/comment`;
-      const payload = { commentText: comment };
-      const result = await this.gc.post(url, payload);
-      return {
-        success: true,
-        activityId,
-        comment,
-        ...result,
-      };
-    } catch (err) {
-      const error = err instanceof Error ? err.message : String(err);
-      logger.error('Error adding activity comment:', error);
-      throw err;
-    }
-  }
+  // async addActivityComment(activityId: number, comment: string): Promise<any> {
+  //   this.checkInitialized();
+  //   try {
+  //     const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/comment`;
+  //     const payload = { commentText: comment };
+  //     const result = await this.gc.post(url, payload);
+  //     return {
+  //       success: true,
+  //       activityId,
+  //       comment,
+  //       ...result,
+  //     };
+  //   } catch (err) {
+  //     const error = err instanceof Error ? err.message : String(err);
+  //     logger.error('Error adding activity comment:', error);
+  //     throw err;
+  //   }
+  // }
 
   /**
-   * Set activity privacy (public, private, followers)
+   * Set activity privacy (public or private)
+   *
+   * Note: The 'followers' option returns 400 Bad Request error from Garmin API
+   * Only 'public' and 'private' are supported
    */
-  async setActivityPrivacy(activityId: number, privacy: 'public' | 'private' | 'followers'): Promise<any> {
+  async setActivityPrivacy(activityId: number, privacy: 'public' | 'private'): Promise<any> {
     this.checkInitialized();
     try {
       const privacyMap = {
         public: { typeId: 1, typeKey: 'public' },
         private: { typeId: 2, typeKey: 'private' },
-        followers: { typeId: 3, typeKey: 'followers' },
       };
 
       const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}`;

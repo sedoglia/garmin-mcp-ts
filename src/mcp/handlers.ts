@@ -244,8 +244,9 @@ export class ToolHandler {
           return await this.handleDeleteGear(safeArgs);
         case 'get_activity_comments':
           return await this.handleGetActivityComments(safeArgs);
-        case 'add_activity_comment':
-          return await this.handleAddActivityComment(safeArgs);
+        // REMOVED: add_activity_comment - Not supported by Garmin OAuth API
+        // case 'add_activity_comment':
+        //   return await this.handleAddActivityComment(safeArgs);
         case 'set_activity_privacy':
           return await this.handleSetActivityPrivacy(safeArgs);
         case 'get_training_load':
@@ -1822,33 +1823,37 @@ export class ToolHandler {
     };
   }
 
-  private async handleAddActivityComment(args: Record<string, unknown>): Promise<unknown> {
-    const activityId = this.getNumberParam(args, 'activityId', 0);
-    const comment = this.getStringParam(args, 'comment', '');
-
-    if (!activityId || !comment) {
-      throw new Error('Parameters "activityId" and "comment" are required');
-    }
-
-    logger.info(`Adding comment to activity ${activityId}`);
-    const data = await this.client.addActivityComment(activityId, comment);
-
-    return {
-      success: true,
-      ...data,
-    };
-  }
+  // REMOVED: handleAddActivityComment - Not supported by Garmin OAuth API
+  // The endpoint POST /activity-service/activity/{id}/comment returns 404
+  // Comments can only be read, not written via OAuth API
+  //
+  // private async handleAddActivityComment(args: Record<string, unknown>): Promise<unknown> {
+  //   const activityId = this.getNumberParam(args, 'activityId', 0);
+  //   const comment = this.getStringParam(args, 'comment', '');
+  //
+  //   if (!activityId || !comment) {
+  //     throw new Error('Parameters "activityId" and "comment" are required');
+  //   }
+  //
+  //   logger.info(`Adding comment to activity ${activityId}`);
+  //   const data = await this.client.addActivityComment(activityId, comment);
+  //
+  //   return {
+  //     success: true,
+  //     ...data,
+  //   };
+  // }
 
   private async handleSetActivityPrivacy(args: Record<string, unknown>): Promise<unknown> {
     const activityId = this.getNumberParam(args, 'activityId', 0);
-    const privacy = this.getStringParam(args, 'privacy', '') as 'public' | 'private' | 'followers';
+    const privacy = this.getStringParam(args, 'privacy', '') as 'public' | 'private';
 
     if (!activityId || !privacy) {
       throw new Error('Parameters "activityId" and "privacy" are required');
     }
 
-    if (!['public', 'private', 'followers'].includes(privacy)) {
-      throw new Error('Parameter "privacy" must be one of: public, private, followers');
+    if (!['public', 'private'].includes(privacy)) {
+      throw new Error('Parameter "privacy" must be one of: public, private');
     }
 
     logger.info(`Setting activity ${activityId} privacy to ${privacy}`);

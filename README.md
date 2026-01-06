@@ -20,10 +20,10 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 
 ## 🎉 Novità v4.0.0 - Major Update: Social & Advanced Analytics
 
-### 🤝 **SOCIAL FEATURES** ✅ TESTATO
-- **`get_activity_comments`**: Ottieni commenti su un'attività
-- **`add_activity_comment`**: Aggiungi commenti alle attività
-- **`set_activity_privacy`**: Imposta privacy (public/private/followers)
+### 🤝 **SOCIAL FEATURES** ⚠️ PARZIALE
+- **`get_activity_comments`**: Ottieni commenti su un'attività ✅ FUNZIONANTE
+- ~~**`add_activity_comment`**: Aggiungi commenti alle attività~~ ❌ **RIMOSSO** (Non supportato da API OAuth Garmin)
+- **`set_activity_privacy`**: Imposta privacy (**public** o **private** solo) ⚠️ PARZIALE (opzione "followers" non supportata)
 
 ### 📊 **ADVANCED TRAINING METRICS** ✅ TESTATO
 - **`get_training_load`**: Carico di allenamento settimanale e bilanciamento
@@ -50,13 +50,13 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 - **`update_gear`**: Aggiorna equipaggiamento (richiede UUID)
 - **`delete_gear`**: Elimina equipaggiamento (richiede UUID)
 
-### 📈 Ora con **95+ TOOLS** disponibili! (93 funzionanti + 2 limitati da API)
+### 📈 Ora con **94 TOOLS** disponibili! (92 funzionanti + 2 limitati da API)
 
 ---
 
 ## Funzionalità
 
-Questo server MCP fornisce **95+ potenti strumenti** per interagire con i tuoi dati Garmin Connect:
+Questo server MCP fornisce **94 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
 
 ### Strumenti Attività (Base)
 | Strumento | Descrizione |
@@ -545,6 +545,112 @@ Per testare l'integrazione con keytar:
 ```bash
 npm run test-keytar
 ```
+
+## 💡 Esempi di Utilizzo v4.0
+
+Ecco alcuni esempi pratici per utilizzare i nuovi strumenti introdotti nella versione 4.0:
+
+### 🔧 Gestione Equipaggiamento (Gear)
+
+```
+Mostrami tutto il mio equipaggiamento Garmin
+```
+Claude userà `get_all_gear` per mostrarti scarpe, bici, e altro equipaggiamento registrato.
+
+```
+Crea un nuovo paio di scarpe da corsa chiamate "Nike Pegasus 40"
+con brand "Nike" e modello "Pegasus 40"
+```
+Claude ti guiderà nel processo di creazione (richiede UUID da web interface).
+
+### 💬 Commenti e Privacy
+
+```
+Mostrami i commenti sulla mia ultima attività
+```
+Claude userà `get_activity_comments` per recuperare eventuali commenti.
+
+```
+Imposta la mia ultima corsa come privata
+```
+Claude userà `set_activity_privacy` con opzione `private`.
+
+### 📊 Metriche Avanzate di Allenamento
+
+```
+Come sta andando il mio carico di allenamento questo mese?
+```
+Claude userà `get_training_load` per analizzare il bilanciamento del carico.
+
+```
+Qual è il mio rapporto acuto/cronico? Sono a rischio infortuni?
+```
+Claude userà `get_load_ratio` per valutare il rischio.
+
+### 💤 Analisi Sonno Avanzata
+
+```
+Come mi sono mosso durante il sonno la scorsa notte?
+```
+Claude userà `get_sleep_movement` per mostrarti i movimenti e momenti irrequieti.
+
+### 🗺️ Percorsi e Analisi
+
+```
+Mostrami i miei percorsi salvati
+```
+Claude userà `get_courses` per elencare i tuoi percorsi.
+
+```
+Confronta le mie ultime 3 corse
+```
+Claude userà `compare_activities` per un confronto dettagliato.
+
+```
+Trova attività simili alla mia corsa di domenica scorsa
+```
+Claude userà `find_similar_activities` con tolleranza 20%.
+
+```
+Analizza il mio allenamento dell'ultimo mese
+```
+Claude userà `analyze_training_period` per trends e pattern completi.
+
+## ⚠️ Limitazioni Note
+
+### Limitazioni API Garmin OAuth
+
+Alcuni endpoint e funzionalità non sono disponibili tramite l'API OAuth pubblica di Garmin:
+
+#### Commenti alle Attività
+- ✅ **Lettura commenti** (`get_activity_comments`): Funzionante
+- ❌ **Scrittura commenti** (`add_activity_comment`): **NON SUPPORTATO** dall'API OAuth
+  - I commenti possono essere aggiunti solo tramite:
+    - Web interface di [Garmin Connect](https://connect.garmin.com)
+    - App mobile Garmin Connect
+    - NON disponibile via API OAuth
+
+#### Privacy Attività
+- ✅ **Impostare privacy** (`set_activity_privacy`): Parzialmente funzionante
+  - ✅ `public`: Funziona correttamente
+  - ✅ `private`: Funziona correttamente
+  - ❌ `followers`: **NON SUPPORTATO** - restituisce errore 400 "PRIVACY_INVALID"
+
+#### Metriche Avanzate (Dipende dal Dispositivo)
+
+Alcune metriche potrebbero non essere disponibili a seconda del modello di smartwatch:
+
+| Metrica | Dispositivi Supportati | Note |
+|---------|------------------------|------|
+| `get_endurance_score` | Solo dispositivi premium (Fenix 7+, Forerunner 955+) | Non disponibile su Instinct 2 Solar |
+| `get_training_readiness` | Solo Instinct 2**X** | Non su Instinct 2 Solar standard |
+| `get_floors` | Richiede barometro | Potrebbe non sincronizzarsi via API |
+| `get_intensity_minutes` | Tutti i dispositivi | Potrebbe non sincronizzarsi via API |
+| `get_training_load` | Richiede 7+ giorni di dati | Usa Firstbeat Analytics |
+| `get_load_ratio` | Richiede 4+ settimane consecutive | Calcolato su storico esteso |
+| `get_performance_condition` | Durante attività | Visibile sul watch, non sempre via API |
+
+**Nota**: Alcune metriche sono visibili nell'app Garmin Connect ma potrebbero non essere esposte tramite API OAuth.
 
 ## Risoluzione dei Problemi
 

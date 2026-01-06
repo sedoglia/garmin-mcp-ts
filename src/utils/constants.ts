@@ -176,7 +176,8 @@ export const MCP_TOOL_NAMES = {
   UPDATE_GEAR: 'update_gear',
   DELETE_GEAR: 'delete_gear',
   GET_ACTIVITY_COMMENTS: 'get_activity_comments',
-  ADD_ACTIVITY_COMMENT: 'add_activity_comment',
+  // REMOVED: ADD_ACTIVITY_COMMENT - Not supported by Garmin OAuth API
+  // ADD_ACTIVITY_COMMENT: 'add_activity_comment',
   SET_ACTIVITY_PRIVACY: 'set_activity_privacy',
   GET_TRAINING_LOAD: 'get_training_load',
   GET_LOAD_RATIO: 'get_load_ratio',

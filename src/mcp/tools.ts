@@ -1728,30 +1728,33 @@ Example for interval running workout:
       required: ['activityId'],
     },
   },
-  {
-    name: MCP_TOOL_NAMES.ADD_ACTIVITY_COMMENT,
-    title: 'Add Activity Comment',
-    description: 'Add a comment to an activity.',
-    annotations: { destructiveHint: true },
-    inputSchema: {
-      type: 'object',
-      properties: {
-        activityId: {
-          type: 'number',
-          description: 'The unique activity identifier (required)',
-        },
-        comment: {
-          type: 'string',
-          description: 'Comment text (required)',
-        },
-      },
-      required: ['activityId', 'comment'],
-    },
-  },
+  // REMOVED: ADD_ACTIVITY_COMMENT - Not supported by Garmin OAuth API
+  // The endpoint POST /activity-service/activity/{id}/comment returns 404
+  // Comments can only be read, not written via OAuth API
+  // {
+  //   name: MCP_TOOL_NAMES.ADD_ACTIVITY_COMMENT,
+  //   title: 'Add Activity Comment',
+  //   description: 'Add a comment to an activity.',
+  //   annotations: { destructiveHint: true },
+  //   inputSchema: {
+  //     type: 'object',
+  //     properties: {
+  //       activityId: {
+  //         type: 'number',
+  //         description: 'The unique activity identifier (required)',
+  //       },
+  //       comment: {
+  //         type: 'string',
+  //         description: 'Comment text (required)',
+  //       },
+  //     },
+  //     required: ['activityId', 'comment'],
+  //   },
+  // },
   {
     name: MCP_TOOL_NAMES.SET_ACTIVITY_PRIVACY,
     title: 'Set Activity Privacy',
-    description: 'Change activity privacy settings (public, private, or followers only).',
+    description: 'Change activity privacy settings (public or private only). Note: The "followers" option is not supported by Garmin API and returns 400 error.',
     annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
@@ -1762,7 +1765,7 @@ Example for interval running workout:
         },
         privacy: {
           type: 'string',
-          description: 'Privacy level: public, private, or followers (required)',
+          description: 'Privacy level: "public" or "private" (required). Note: "followers" is not supported.',
         },
       },
       required: ['activityId', 'privacy'],
