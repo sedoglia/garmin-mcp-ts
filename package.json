@@ -17,7 +17,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.25.2",
     "axios": "^1.7.0",
     "dotenv": "^16.3.0",
     "garmin-connect": "^1.6.2",
