@@ -236,12 +236,28 @@ export class ToolHandler {
         // ═══════════════════════════════════════════════════════════════
         case 'get_all_gear':
           return await this.handleGetAllGear();
-        case 'create_gear':
-          return await this.handleCreateGear(safeArgs);
+        // REMOVED: create_gear - Garmin OAuth API returns 403 Forbidden
         case 'update_gear':
           return await this.handleUpdateGear(safeArgs);
         case 'delete_gear':
           return await this.handleDeleteGear(safeArgs);
+
+        // v4.1 - Gear Collections & Metadata
+        case 'get_gear_types':
+          return await this.handleGetGearTypes();
+        case 'get_gear_makes':
+          return await this.handleGetGearMakes();
+        case 'get_gear_collections':
+          return await this.handleGetGearCollections();
+        case 'get_gear_collection':
+          return await this.handleGetGearCollection(safeArgs);
+        case 'create_gear_collection':
+          return await this.handleCreateGearCollection(safeArgs);
+        case 'update_gear_collection':
+          return await this.handleUpdateGearCollection(safeArgs);
+        case 'delete_gear_collection':
+          return await this.handleDeleteGearCollection(safeArgs);
+
         case 'get_activity_comments':
           return await this.handleGetActivityComments(safeArgs);
         // REMOVED: add_activity_comment - Not supported by Garmin OAuth API
@@ -1742,29 +1758,7 @@ export class ToolHandler {
     };
   }
 
-  private async handleCreateGear(args: Record<string, unknown>): Promise<unknown> {
-    const gearTypePk = this.getNumberParam(args, 'gearTypePk', 0);
-    const displayName = this.getStringParam(args, 'displayName', '');
-    const modelName = args.modelName as string | undefined;
-    const brandName = args.brandName as string | undefined;
-
-    if (!gearTypePk || !displayName) {
-      throw new Error('Parameters "gearTypePk" and "displayName" are required');
-    }
-
-    logger.info(`Creating gear: ${displayName}`);
-    const data = await this.client.createGear({
-      gearTypePk,
-      displayName,
-      modelName,
-      brandName,
-    });
-
-    return {
-      success: true,
-      ...data,
-    };
-  }
+  // REMOVED: handleCreateGear - Garmin OAuth API returns 403 Forbidden for gear creation
 
   private async handleUpdateGear(args: Record<string, unknown>): Promise<unknown> {
     const gearUUID = this.getStringParam(args, 'gearUUID', '');
@@ -2002,6 +1996,121 @@ export class ToolHandler {
 
     logger.info(`Analyzing training period from ${startDate} to ${endDate}`);
     const data = await this.client.analyzeTrainingPeriod(startDate, endDate);
+
+    return {
+      success: true,
+      ...data,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.1 - GEAR COLLECTIONS & METADATA HANDLERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  private async handleGetGearTypes(): Promise<unknown> {
+    logger.info('Fetching gear types');
+    const data = await this.client.getGearTypes();
+    return {
+      success: true,
+      count: data.length,
+      data,
+    };
+  }
+
+  private async handleGetGearMakes(): Promise<unknown> {
+    logger.info('Fetching gear makes/brands');
+    const data = await this.client.getGearMakes();
+    return {
+      success: true,
+      count: data.length,
+      data,
+    };
+  }
+
+  private async handleGetGearCollections(): Promise<unknown> {
+    logger.info('Fetching gear collections');
+    const data = await this.client.getGearCollections();
+    return {
+      success: true,
+      count: data.length,
+      data,
+    };
+  }
+
+  private async handleGetGearCollection(args: Record<string, unknown>): Promise<unknown> {
+    const collectionUUID = this.getStringParam(args, 'collectionUUID', '');
+
+    if (!collectionUUID) {
+      throw new Error('Parameter "collectionUUID" is required');
+    }
+
+    logger.info(`Fetching gear collection: ${collectionUUID}`);
+    const data = await this.client.getGearCollection(collectionUUID);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleCreateGearCollection(args: Record<string, unknown>): Promise<unknown> {
+    const name = this.getStringParam(args, 'name', '');
+    const firstUseDate = this.getStringParam(args, 'firstUseDate', '');
+    const activityTypes = args.activityTypes as string[] | undefined;
+
+    if (!name || !firstUseDate) {
+      throw new Error('Parameters "name" and "firstUseDate" are required');
+    }
+
+    logger.info(`Creating gear collection: ${name}`);
+    const payload: any = { name, firstUseDate };
+    if (activityTypes && activityTypes.length > 0) {
+      payload.associatedActivityTypes = activityTypes.map((t: string) => ({ activityTypeKey: t, defaultGear: true }));
+    }
+
+    const data = await this.client.createGearCollection(payload);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleUpdateGearCollection(args: Record<string, unknown>): Promise<unknown> {
+    const collectionUUID = this.getStringParam(args, 'collectionUUID', '');
+    const name = args.name as string | undefined;
+    const firstUseDate = args.firstUseDate as string | undefined;
+    const gearUUIDs = args.gearUUIDs as string[] | undefined;
+    const activityTypes = args.activityTypes as string[] | undefined;
+
+    if (!collectionUUID) {
+      throw new Error('Parameter "collectionUUID" is required');
+    }
+
+    logger.info(`Updating gear collection: ${collectionUUID}`);
+    const updates: any = {};
+    if (name !== undefined) updates.name = name;
+    if (firstUseDate !== undefined) updates.firstUseDate = firstUseDate;
+    if (gearUUIDs !== undefined) updates.gearInCollection = gearUUIDs.map((uuid: string) => ({ uuid }));
+    if (activityTypes !== undefined) updates.associatedActivityTypes = activityTypes.map((t: string) => ({ activityTypeKey: t, defaultGear: true }));
+
+    const data = await this.client.updateGearCollection(collectionUUID, updates);
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private async handleDeleteGearCollection(args: Record<string, unknown>): Promise<unknown> {
+    const collectionUUID = this.getStringParam(args, 'collectionUUID', '');
+
+    if (!collectionUUID) {
+      throw new Error('Parameter "collectionUUID" is required');
+    }
+
+    logger.info(`Deleting gear collection: ${collectionUUID}`);
+    const data = await this.client.deleteGearCollection(collectionUUID);
 
     return {
       success: true,

@@ -1,6 +1,6 @@
 {
   "name": "garmin-mcp-ts",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "type": "module",
   "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
   "main": "dist/index.js",

@@ -172,9 +172,21 @@ export const MCP_TOOL_NAMES = {
   // NUOVI TOOL v4.0 - SOCIAL, GEAR, TRAINING LOAD, ANALYSIS
   // ═══════════════════════════════════════════════════════════════
   GET_ALL_GEAR: 'get_all_gear',
-  CREATE_GEAR: 'create_gear',
+  // REMOVED: CREATE_GEAR - Garmin OAuth API returns 403 Forbidden for gear creation
   UPDATE_GEAR: 'update_gear',
   DELETE_GEAR: 'delete_gear',
+
+  // ═══════════════════════════════════════════════════════════════
+  // NUOVI TOOL v4.1 - GEAR COLLECTIONS & METADATA
+  // ═══════════════════════════════════════════════════════════════
+  GET_GEAR_TYPES: 'get_gear_types',
+  GET_GEAR_MAKES: 'get_gear_makes',
+  GET_GEAR_COLLECTIONS: 'get_gear_collections',
+  GET_GEAR_COLLECTION: 'get_gear_collection',
+  CREATE_GEAR_COLLECTION: 'create_gear_collection',
+  UPDATE_GEAR_COLLECTION: 'update_gear_collection',
+  DELETE_GEAR_COLLECTION: 'delete_gear_collection',
+
   GET_ACTIVITY_COMMENTS: 'get_activity_comments',
   // REMOVED: ADD_ACTIVITY_COMMENT - Not supported by Garmin OAuth API
   // ADD_ACTIVITY_COMMENT: 'add_activity_comment',

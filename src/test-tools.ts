@@ -322,46 +322,64 @@ async function main() {
   console.log('⚠️  Skipping modification tools (add_hydration_data, remove_gear_from_activity) to preserve data');
 
   console.log('\n═══════════════════════════════════════════════════════════════');
-  console.log('TESTING v4.0 NEW TOOLS - GEAR MANAGEMENT COMPLETE (UUID SOLVED!)');
+  console.log('TESTING v4.0 NEW TOOLS - GEAR MANAGEMENT (UUID SOLVED!)');
   console.log('═══════════════════════════════════════════════════════════════\n');
 
-  // THE BIG ONE: get_all_gear - finally solves the UUID problem!
+  // get_all_gear - uses filterGear endpoint to list all gear
   const getAllGearResult = await testTool(handler, 'get_all_gear');
   results.push(getAllGearResult);
 
   let gearUUID: string | undefined;
-  if (getAllGearResult.success && getAllGearResult.result?.data?.gear?.length > 0) {
-    gearUUID = getAllGearResult.result.data.gear[0].uuid;
+  if (getAllGearResult.success && getAllGearResult.result?.gear?.length > 0) {
+    gearUUID = getAllGearResult.result.gear[0].uuid;
     console.log(`\n📍 Found gear UUID: ${gearUUID} for detail tests\n`);
 
     // Now we can test gear stats with discovered UUID
     results.push(await testTool(handler, 'get_gear_stats', { gearUUID }));
     results.push(await testTool(handler, 'get_gear_activities', { gearUUID, limit: 5 }));
+  } else {
+    console.log('⚠️  No gear found - skipping gear stats/activities tests (create gear via Garmin Connect web)');
   }
 
-  // Test create, update, delete gear
-  console.log('\n🔧 Testing gear CRUD operations...');
-  const createGearResult = await testTool(handler, 'create_gear', {
-    gearTypePk: 1, // Running shoes
-    displayName: 'MCP Test Shoes - DELETE ME',
-    modelName: 'Test Model',
-    brandName: 'Test Brand',
+  // REMOVED: create_gear - Garmin OAuth API returns 403 Forbidden
+  console.log('⚠️  create_gear removed - Garmin OAuth API returns 403 Forbidden for gear creation');
+  console.log('⚠️  Skipping update_gear, delete_gear (no gear available to test with)');
+
+  console.log('\n═══════════════════════════════════════════════════════════════');
+  console.log('TESTING v4.1 NEW TOOLS - GEAR TYPES, MAKES & COLLECTIONS');
+  console.log('═══════════════════════════════════════════════════════════════\n');
+
+  // Gear metadata
+  results.push(await testTool(handler, 'get_gear_types'));
+  results.push(await testTool(handler, 'get_gear_makes'));
+
+  // Gear collections - full CRUD test
+  results.push(await testTool(handler, 'get_gear_collections'));
+
+  console.log('\n🔧 Testing gear collection CRUD operations...');
+  const createCollResult = await testTool(handler, 'create_gear_collection', {
+    name: 'MCP Test Collection - DELETE ME',
+    firstUseDate: today,
+    activityTypes: ['running'],
   });
-  results.push(createGearResult);
+  results.push(createCollResult);
 
-  if (createGearResult.success && createGearResult.result?.data?.gearUUID) {
-    const newGearUUID = createGearResult.result.data.gearUUID;
-    console.log(`\n📍 Created gear UUID: ${newGearUUID}\n`);
+  if (createCollResult.success && createCollResult.result?.data?.uuid) {
+    const collUUID = createCollResult.result.data.uuid;
+    console.log(`\n📍 Created collection UUID: ${collUUID}\n`);
 
-    // Test update
-    results.push(await testTool(handler, 'update_gear', {
-      gearUUID: newGearUUID,
-      displayName: 'MCP Test Shoes UPDATED',
-      maximumMeter: 500000,
+    // Get collection details
+    results.push(await testTool(handler, 'get_gear_collection', { collectionUUID: collUUID }));
+
+    // Update collection
+    results.push(await testTool(handler, 'update_gear_collection', {
+      collectionUUID: collUUID,
+      name: 'MCP Test Collection UPDATED',
+      activityTypes: ['running', 'trail_running'],
     }));
 
-    // Test delete
-    results.push(await testTool(handler, 'delete_gear', { gearUUID: newGearUUID }));
+    // Delete collection (cleanup)
+    results.push(await testTool(handler, 'delete_gear_collection', { collectionUUID: collUUID }));
   }
 
   console.log('\n═══════════════════════════════════════════════════════════════');

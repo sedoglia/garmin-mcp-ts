@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.1.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,7 +18,28 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
 
-## 🎉 What's New in v4.0.0 - Major Update: Social & Advanced Analytics
+## 🎉 What's New in v4.1.0 - Gear Management & Collections
+
+### 🔧 **GEAR MANAGEMENT** ✅ IMPROVED
+- **`get_all_gear`**: ✅ **NOW WORKING** - Automatic listing of all equipment (no more manual UUID needed!)
+- ~~**`create_gear`**~~: ❌ **REMOVED** (Garmin OAuth API returns 403 Forbidden for gear creation)
+- **`update_gear`**: Update equipment (UUID now obtainable via `get_all_gear`)
+- **`delete_gear`**: Delete equipment (UUID now obtainable via `get_all_gear`)
+
+### 🆕 **GEAR METADATA & COLLECTIONS** ✅ NEW
+- **`get_gear_types`**: Get available equipment types (shoes, bike, helmet, etc.)
+- **`get_gear_makes`**: Get available brands/manufacturers
+- **`get_gear_collections`**: List all equipment collections
+- **`get_gear_collection`**: Collection details (associated gear, activity types)
+- **`create_gear_collection`**: Create a new equipment collection
+- **`update_gear_collection`**: Update a collection (name, gear, activity types)
+- **`delete_gear_collection`**: Delete a collection
+
+### 📈 Now with **106 TOOLS** available! (all tested and working)
+
+---
+
+## What's New in v4.1.0 - Social & Advanced Analytics
 
 ### 🤝 **SOCIAL FEATURES** ⚠️ PARTIAL
 - **`get_activity_comments`**: Get comments on an activity ✅ WORKING
@@ -44,19 +65,11 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 - **`find_similar_activities`**: Find similar activities by type/distance/duration (20% tolerance)
 - **`analyze_training_period`**: Comprehensive training trends, volume and pattern analysis
 
-### ⚠️ **GEAR MANAGEMENT** (Garmin API Limitation)
-- **`get_all_gear`**: Provides instructions to get gear UUIDs from [Garmin Connect Web](https://connect.garmin.com/modern/gear)
-- **`create_gear`**: Manual creation guide (OAuth API doesn't support automatic listing/creation)
-- **`update_gear`**: Update equipment (requires UUID)
-- **`delete_gear`**: Delete equipment (requires UUID)
-
-### 📈 Now with **94 TOOLS** available! (92 working + 2 limited by API)
-
 ---
 
 ## Features
 
-This MCP server provides **94 powerful tools** to interact with your Garmin Connect data:
+This MCP server provides **106 powerful tools** to interact with your Garmin Connect data:
 
 ### Activity Tools (Base)
 | Tool | Description |
@@ -165,10 +178,13 @@ This MCP server provides **94 powerful tools** to interact with your Garmin Conn
 ### Gear Management
 | Tool | Description |
 |------|-------------|
-| `get_gear_stats` | Get gear usage statistics (requires UUID from web interface) |
-| `link_gear_to_activity` | Link gear to an activity (requires UUID from web interface) |
+| `get_all_gear` | Complete list of all equipment with UUIDs |
+| `update_gear` | Update existing equipment |
+| `delete_gear` | Delete equipment |
+| `get_gear_stats` | Get gear usage statistics |
+| `link_gear_to_activity` | Link gear to an activity |
 
-> **Note:** Garmin's OAuth API doesn't support listing gear. To use gear tools, you need to get the gear UUID from Garmin Connect web interface (Settings → Gear → click on gear → UUID is in the URL).
+> **Note:** Since v4.1, `get_all_gear` works automatically and provides the UUIDs needed for other gear tools. New gear creation is not supported by Garmin's OAuth API.
 
 ### Reports & Progress
 | Tool | Description |
@@ -208,8 +224,8 @@ This MCP server provides **94 powerful tools** to interact with your Garmin Conn
 ### Advanced Gear
 | Tool | Description |
 |------|-------------|
-| `get_gear_activities` | Get activities associated with gear (requires UUID) |
-| `remove_gear_from_activity` | Remove gear from an activity (requires UUID) |
+| `get_gear_activities` | Get activities associated with gear |
+| `remove_gear_from_activity` | Remove gear from an activity |
 
 ### Training Plans
 | Tool | Description |
@@ -231,6 +247,56 @@ This MCP server provides **94 powerful tools** to interact with your Garmin Conn
 | `count_activities` | Count total number of activities |
 | `get_fitness_stats` | Get fitness statistics over a date range |
 | `add_hydration_data` | Add hydration data |
+
+---
+
+## 🆕 New Tools in v4.0
+
+### Social Features
+| Tool | Description |
+|------|-------------|
+| `get_activity_comments` | Get comments on an activity |
+| `set_activity_privacy` | Set activity privacy (public/private) |
+
+### Advanced Training Metrics
+| Tool | Description |
+|------|-------------|
+| `get_training_load` | Weekly training load and balance |
+| `get_load_ratio` | Acute/chronic workload ratio (injury risk indicator) |
+| `get_performance_condition` | Current performance condition score |
+
+### Advanced Sleep & Device
+| Tool | Description |
+|------|-------------|
+| `get_sleep_movement` | Sleep movement data and restless moments |
+| `get_device_alarms` | Alarms configured on devices |
+| `get_courses` | Saved routes/courses |
+
+### Activity Analysis
+| Tool | Description |
+|------|-------------|
+| `compare_activities` | Compare 2-5 activities side by side |
+| `find_similar_activities` | Find similar activities by type/distance/duration |
+| `analyze_training_period` | Comprehensive training trends, volume and patterns |
+
+---
+
+## 🆕 New Tools in v4.1
+
+### Gear Metadata
+| Tool | Description |
+|------|-------------|
+| `get_gear_types` | Available equipment types (shoes, bike, etc.) |
+| `get_gear_makes` | Available brands/manufacturers |
+
+### Gear Collections (Full CRUD)
+| Tool | Description |
+|------|-------------|
+| `get_gear_collections` | List all equipment collections |
+| `get_gear_collection` | Collection details (associated gear, activity types) |
+| `create_gear_collection` | Create new collection with activity association |
+| `update_gear_collection` | Update collection (name, gear, activity types) |
+| `delete_gear_collection` | Delete a collection |
 
 ---
 
@@ -260,7 +326,7 @@ npm install keytar
 Use your browser or:
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.0.0/diabetes-m-mcp.mcpb
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.1.0/diabetes-m-mcp.mcpb
 ```
 
 ### 3. Verify integrity
@@ -268,7 +334,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.0.0/diabetes
 Verify the integrity (optional but recommended):
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.0.0/diabetes-m-mcp.mcpb.sha256
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.1.0/diabetes-m-mcp.mcpb.sha256
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 
@@ -465,11 +531,15 @@ Add the Garmin MCP server to your `claude_desktop_config.json`:
 
 > "Based on my cycle, what type of workout should I do?"
 
-### Gear Management (NEW v4.0)
+### Gear Management (NEW v4.0/v4.1)
 
 > "Show me all my Garmin gear"
 
-> "Create new running shoes Nike Pegasus 40"
+> "What types of equipment can I manage?"
+
+> "Create a 'Running Shoes' collection and associate it with running activities"
+
+> "Show me my gear collections"
 
 ### Comments and Privacy (NEW v4.0)
 
@@ -513,7 +583,7 @@ garmin-mcp-ts/
 │   │   └── simple-login.ts # Standalone login test utility
 │   ├── mcp/
 │   │   ├── server.ts      # MCP server setup and request handlers
-│   │   ├── tools.ts       # Tool definitions and schemas (69 tools)
+│   │   ├── tools.ts       # Tool definitions and schemas (106 tools)
 │   │   └── handlers.ts    # Tool implementation logic
 │   └── utils/
 │       ├── constants.ts   # Application constants
@@ -591,6 +661,15 @@ Some endpoints and features are not available through Garmin's public OAuth API:
   - ✅ `public`: Works correctly
   - ✅ `private`: Works correctly
   - ❌ `followers`: **NOT SUPPORTED** - returns 400 error "PRIVACY_INVALID"
+
+#### Gear Management
+- ✅ **List gear** (`get_all_gear`): Working (via `filterGear` endpoint)
+- ✅ **Update/delete gear** (`update_gear`, `delete_gear`): Working
+- ❌ **Create gear** (`create_gear`): **REMOVED** - OAuth API returns 403 Forbidden
+  - Gear can only be created through:
+    - [Garmin Connect](https://connect.garmin.com/modern/gear) web interface
+    - Garmin Connect mobile app
+- ✅ **Gear collections** (full CRUD): Working
 
 #### Advanced Metrics (Device-Dependent)
 

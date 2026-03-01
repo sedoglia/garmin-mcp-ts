@@ -32,6 +32,8 @@ export interface ToolDefinition {
       minimum?: number;
       maximum?: number;
       pattern?: string;
+      items?: { type: string };
+      enum?: string[];
     }>;
     required?: string[];
   };
@@ -1631,34 +1633,8 @@ Example for interval running workout:
       properties: {},
     },
   },
-  {
-    name: MCP_TOOL_NAMES.CREATE_GEAR,
-    title: 'Create Gear',
-    description: 'Create new gear/equipment. Common gearTypePk values: 1=Running Shoes, 2=Bike, 3=Helmet, 10=Watch. Returns the new gear UUID.',
-    annotations: { destructiveHint: true },
-    inputSchema: {
-      type: 'object',
-      properties: {
-        gearTypePk: {
-          type: 'number',
-          description: 'Gear type primary key: 1=Running Shoes, 2=Bike, 3=Helmet, 10=Watch (required)',
-        },
-        displayName: {
-          type: 'string',
-          description: 'Name for the gear (e.g., "Nike Pegasus 40") (required)',
-        },
-        modelName: {
-          type: 'string',
-          description: 'Model name (optional)',
-        },
-        brandName: {
-          type: 'string',
-          description: 'Brand name (optional)',
-        },
-      },
-      required: ['gearTypePk', 'displayName'],
-    },
-  },
+  // REMOVED: CREATE_GEAR - Garmin OAuth API returns 403 Forbidden for gear creation
+  // Gear must be created manually via https://connect.garmin.com/modern/gear
   {
     name: MCP_TOOL_NAMES.UPDATE_GEAR,
     title: 'Update Gear',
@@ -1705,6 +1681,134 @@ Example for interval running workout:
         },
       },
       required: ['gearUUID'],
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.1 - GEAR COLLECTIONS & METADATA
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    name: MCP_TOOL_NAMES.GET_GEAR_TYPES,
+    title: 'Get Gear Types',
+    description: 'Get all available gear/equipment types (e.g., Shoes, Bike, Golf Clubs, Other). Returns type names and primary keys used when creating gear.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_GEAR_MAKES,
+    title: 'Get Gear Makes',
+    description: 'Get all available gear brands/makes (e.g., Nike, Adidas, ASICS, Brooks). Returns make names and primary keys.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_GEAR_COLLECTIONS,
+    title: 'Get Gear Collections',
+    description: 'Get all gear collections. Collections group gear items that are used together (e.g., running kit, bike components).',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_GEAR_COLLECTION,
+    title: 'Get Gear Collection Details',
+    description: 'Get detailed information about a specific gear collection, including the gear items in the collection and associated activity types.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        collectionUUID: {
+          type: 'string',
+          description: 'The collection UUID (use get_gear_collections to find it) (required)',
+        },
+      },
+      required: ['collectionUUID'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.CREATE_GEAR_COLLECTION,
+    title: 'Create Gear Collection',
+    description: 'Create a new gear collection to group equipment used together (e.g., running kit, bike components). Requires a name and first use date.',
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description: 'Name for the collection (e.g., "Running Kit", "Road Bike Setup") (required)',
+        },
+        firstUseDate: {
+          type: 'string',
+          description: 'First use date in YYYY-MM-DD format (required)',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        activityTypes: {
+          type: 'array',
+          description: 'Activity types to associate with this collection (e.g., ["running", "trail_running"])',
+          items: { type: 'string' },
+        },
+      },
+      required: ['name', 'firstUseDate'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.UPDATE_GEAR_COLLECTION,
+    title: 'Update Gear Collection',
+    description: 'Update an existing gear collection. Can change name, add/remove gear items, or change associated activity types.',
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        collectionUUID: {
+          type: 'string',
+          description: 'The collection UUID (use get_gear_collections to find it) (required)',
+        },
+        name: {
+          type: 'string',
+          description: 'New name for the collection',
+        },
+        firstUseDate: {
+          type: 'string',
+          description: 'New first use date in YYYY-MM-DD format',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        gearUUIDs: {
+          type: 'array',
+          description: 'Array of gear UUIDs to include in the collection (replaces existing gear list)',
+          items: { type: 'string' },
+        },
+        activityTypes: {
+          type: 'array',
+          description: 'Activity types to associate (e.g., ["running", "trail_running"]). Replaces existing list.',
+          items: { type: 'string' },
+        },
+      },
+      required: ['collectionUUID'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.DELETE_GEAR_COLLECTION,
+    title: 'Delete Gear Collection',
+    description: 'Delete a gear collection. WARNING: This cannot be undone. The gear items in the collection will NOT be deleted.',
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        collectionUUID: {
+          type: 'string',
+          description: 'The collection UUID to delete (required)',
+        },
+      },
+      required: ['collectionUUID'],
     },
   },
 

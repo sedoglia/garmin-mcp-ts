@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.0.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.1.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,7 +18,28 @@
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
 
-## 🎉 Novità v4.0.0 - Major Update: Social & Advanced Analytics
+## 🎉 Novità v4.1.0 - Gear Management & Collections
+
+### 🔧 **GEAR MANAGEMENT** ✅ MIGLIORATO
+- **`get_all_gear`**: ✅ **ORA FUNZIONANTE** - Lista automatica di tutto l'equipaggiamento (non richiede più UUID manuale!)
+- ~~**`create_gear`**~~: ❌ **RIMOSSO** (l'API OAuth Garmin restituisce 403 Forbidden per la creazione gear)
+- **`update_gear`**: Aggiorna equipaggiamento (UUID ora ottenibile via `get_all_gear`)
+- **`delete_gear`**: Elimina equipaggiamento (UUID ora ottenibile via `get_all_gear`)
+
+### 🆕 **GEAR METADATA & COLLECTIONS** ✅ NUOVO
+- **`get_gear_types`**: Ottieni i tipi di equipaggiamento disponibili (scarpe, bici, casco, etc.)
+- **`get_gear_makes`**: Ottieni le marche/brand disponibili
+- **`get_gear_collections`**: Lista tutte le collezioni di equipaggiamento
+- **`get_gear_collection`**: Dettagli di una collezione specifica (gear associati, tipi attività)
+- **`create_gear_collection`**: Crea una nuova collezione di equipaggiamento
+- **`update_gear_collection`**: Aggiorna una collezione (nome, gear, tipi attività)
+- **`delete_gear_collection`**: Elimina una collezione
+
+### 📈 Ora con **106 TOOLS** disponibili! (tutti testati e funzionanti)
+
+---
+
+## Novità v4.1.0 - Social & Advanced Analytics
 
 ### 🤝 **SOCIAL FEATURES** ⚠️ PARZIALE
 - **`get_activity_comments`**: Ottieni commenti su un'attività ✅ FUNZIONANTE
@@ -44,19 +65,11 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 - **`find_similar_activities`**: Trova attività simili per tipo/distanza/durata (20% tolerance)
 - **`analyze_training_period`**: Analisi completa trends, volumi e pattern di allenamento
 
-### ⚠️ **GEAR MANAGEMENT** (Limitazione API Garmin)
-- **`get_all_gear`**: Fornisce istruzioni per ottenere UUID gear da [Garmin Connect Web](https://connect.garmin.com/modern/gear)
-- **`create_gear`**: Guida alla creazione manuale (l'API OAuth non supporta listing/creazione automatica)
-- **`update_gear`**: Aggiorna equipaggiamento (richiede UUID)
-- **`delete_gear`**: Elimina equipaggiamento (richiede UUID)
-
-### 📈 Ora con **94 TOOLS** disponibili! (92 funzionanti + 2 limitati da API)
-
 ---
 
 ## Funzionalità
 
-Questo server MCP fornisce **94 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
+Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
 
 ### Strumenti Attività (Base)
 | Strumento | Descrizione |
@@ -165,10 +178,13 @@ Questo server MCP fornisce **94 potenti strumenti** per interagire con i tuoi da
 ### Gear Management
 | Strumento | Descrizione |
 |-----------|-------------|
-| `get_gear_stats` | Ottiene statistiche uso gear (richiede UUID da interfaccia web) |
-| `link_gear_to_activity` | Collega gear a un'attività (richiede UUID da interfaccia web) |
+| `get_all_gear` | Lista completa di tutto l'equipaggiamento con UUID |
+| `update_gear` | Aggiorna equipaggiamento esistente |
+| `delete_gear` | Elimina equipaggiamento |
+| `get_gear_stats` | Ottiene statistiche uso gear |
+| `link_gear_to_activity` | Collega gear a un'attività |
 
-> **Nota:** L'API OAuth di Garmin non supporta la lista dei gear. Per usare gli strumenti gear, è necessario ottenere l'UUID del gear dall'interfaccia web di Garmin Connect (Impostazioni → Attrezzatura → clicca sul gear → l'UUID è nell'URL).
+> **Nota:** A partire dalla v4.1, `get_all_gear` funziona automaticamente e fornisce gli UUID necessari per gli altri strumenti gear. La creazione di nuovo gear non è supportata dall'API OAuth di Garmin.
 
 ### Reports & Progress
 | Strumento | Descrizione |
@@ -208,8 +224,8 @@ Questo server MCP fornisce **94 potenti strumenti** per interagire con i tuoi da
 ### Gear Avanzato
 | Strumento | Descrizione |
 |-----------|-------------|
-| `get_gear_activities` | Ottiene attività associate a un gear (richiede UUID) |
-| `remove_gear_from_activity` | Rimuove gear da un'attività (richiede UUID) |
+| `get_gear_activities` | Ottiene attività associate a un gear |
+| `remove_gear_from_activity` | Rimuove gear da un'attività |
 
 ### Training Plans
 | Strumento | Descrizione |
@@ -231,6 +247,56 @@ Questo server MCP fornisce **94 potenti strumenti** per interagire con i tuoi da
 | `count_activities` | Conta il numero totale di attività |
 | `get_fitness_stats` | Ottiene statistiche fitness in un range di date |
 | `add_hydration_data` | Aggiunge dati idratazione |
+
+---
+
+## 🆕 Nuovi Strumenti v4.0
+
+### Social Features
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_activity_comments` | Ottiene commenti su un'attività |
+| `set_activity_privacy` | Imposta privacy attività (public/private) |
+
+### Advanced Training Metrics
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_training_load` | Carico di allenamento settimanale e bilanciamento |
+| `get_load_ratio` | Rapporto acuto/cronico (injury risk indicator) |
+| `get_performance_condition` | Condizione di performance attuale |
+
+### Advanced Sleep & Device
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_sleep_movement` | Movimenti durante il sonno e momenti irrequieti |
+| `get_device_alarms` | Sveglie configurate sui dispositivi |
+| `get_courses` | Percorsi/route salvati |
+
+### Activity Analysis
+| Strumento | Descrizione |
+|-----------|-------------|
+| `compare_activities` | Confronta 2-5 attività fianco a fianco |
+| `find_similar_activities` | Trova attività simili per tipo/distanza/durata |
+| `analyze_training_period` | Analisi completa trends, volumi e pattern |
+
+---
+
+## 🆕 Nuovi Strumenti v4.1
+
+### Gear Metadata
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_gear_types` | Tipi di equipaggiamento disponibili (scarpe, bici, etc.) |
+| `get_gear_makes` | Marche/brand disponibili |
+
+### Gear Collections (CRUD completo)
+| Strumento | Descrizione |
+|-----------|-------------|
+| `get_gear_collections` | Lista tutte le collezioni di equipaggiamento |
+| `get_gear_collection` | Dettagli collezione (gear associati, tipi attività) |
+| `create_gear_collection` | Crea nuova collezione con associazione attività |
+| `update_gear_collection` | Aggiorna collezione (nome, gear, tipi attività) |
+| `delete_gear_collection` | Elimina una collezione |
 
 ---
 
@@ -260,7 +326,7 @@ npm install keytar
 Usa il browser oppure:
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.0.0/diabetes-m-mcp.mcpb
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.1.0/diabetes-m-mcp.mcpb
 ```
 
 ### 3. Verifica l'integrità
@@ -268,7 +334,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.0.0/diabetes
 Verifica l'integrità (opzionale ma consigliato):
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.0.0/diabetes-m-mcp.mcpb.sha256
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.1.0/diabetes-m-mcp.mcpb.sha256
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 
@@ -465,11 +531,15 @@ Aggiungi il server MCP Garmin al tuo `claude_desktop_config.json`:
 
 > "In base al mio ciclo, quale tipo di allenamento dovrei fare?"
 
-### Gestione Equipaggiamento (NUOVO v4.0)
+### Gestione Equipaggiamento (NUOVO v4.0/v4.1)
 
 > "Mostrami tutto il mio equipaggiamento Garmin"
 
-> "Crea un nuovo paio di scarpe da corsa Nike Pegasus 40"
+> "Quali tipi di equipaggiamento posso gestire?"
+
+> "Crea una collezione 'Scarpe Running' e associala alle attività di corsa"
+
+> "Mostrami le mie collezioni di equipaggiamento"
 
 ### Commenti e Privacy (NUOVO v4.0)
 
@@ -513,7 +583,7 @@ garmin-mcp-ts/
 │   │   └── simple-login.ts # Utility standalone per test login
 │   ├── mcp/
 │   │   ├── server.ts      # Setup server MCP e gestori richieste
-│   │   ├── tools.ts       # Definizioni strumenti e schemi (69 tools)
+│   │   ├── tools.ts       # Definizioni strumenti e schemi (106 tools)
 │   │   └── handlers.ts    # Logica implementazione strumenti
 │   └── utils/
 │       ├── constants.ts   # Costanti dell'applicazione
@@ -591,6 +661,15 @@ Alcuni endpoint e funzionalità non sono disponibili tramite l'API OAuth pubblic
   - ✅ `public`: Funziona correttamente
   - ✅ `private`: Funziona correttamente
   - ❌ `followers`: **NON SUPPORTATO** - restituisce errore 400 "PRIVACY_INVALID"
+
+#### Gear Management
+- ✅ **Lista gear** (`get_all_gear`): Funzionante (via endpoint `filterGear`)
+- ✅ **Aggiorna/elimina gear** (`update_gear`, `delete_gear`): Funzionante
+- ❌ **Creazione gear** (`create_gear`): **RIMOSSO** - l'API OAuth restituisce 403 Forbidden
+  - I gear possono essere creati solo tramite:
+    - Web interface di [Garmin Connect](https://connect.garmin.com/modern/gear)
+    - App mobile Garmin Connect
+- ✅ **Collezioni gear** (CRUD completo): Funzionante
 
 #### Metriche Avanzate (Dipende dal Dispositivo)
 

@@ -11,6 +11,7 @@ export class GarminConnectClient {
   private gc: any;
   private initialized: boolean = false;
   private displayName: string | null = null;
+  private userProfilePk: number | null = null;
 
   constructor() {
     // Non inizializzare qui, lo faremo in initialize()
@@ -49,10 +50,11 @@ export class GarminConnectClient {
       // Always save tokens to secure encrypted storage
       await this.saveTokens();
 
-      // Get display name for user-specific API calls
+      // Get display name and profilePk for user-specific API calls
       try {
         const profile = await this.gc.getUserProfile();
         this.displayName = profile?.displayName || profile?.userName || null;
+        this.userProfilePk = profile?.profileId || profile?.userProfilePk || null;
       } catch {
         // Non-critical, some endpoints may not need it
       }
@@ -76,6 +78,7 @@ export class GarminConnectClient {
       // Verify tokens are valid
       const profile = await this.gc.getUserProfile();
       this.displayName = profile?.displayName || profile?.userName || null;
+      this.userProfilePk = profile?.profileId || profile?.userProfilePk || null;
       logger.info('✅ OAuth token authentication successful');
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -142,6 +145,21 @@ export class GarminConnectClient {
    */
   getDisplayName(): string | null {
     return this.displayName;
+  }
+
+  /**
+   * Get the userProfilePk (lazy loading if not cached)
+   */
+  private async getUserProfilePk(): Promise<number> {
+    if (this.userProfilePk) return this.userProfilePk;
+    try {
+      const profile = await this.gc.getUserProfile();
+      this.userProfilePk = profile?.profileId || profile?.userProfilePk || null;
+      if (this.userProfilePk) return this.userProfilePk;
+    } catch {
+      // fall through
+    }
+    throw new Error('Could not determine userProfilePk');
   }
 
   async getRecentActivities(limit: number = 10, start: number = 0): Promise<any> {
@@ -2431,62 +2449,27 @@ export class GarminConnectClient {
 
   /**
    * Get all gear (equipment) available for the user
-   * NOTE: The Garmin OAuth API doesn't support listing all gear directly.
-   * This returns a helpful message directing users to the web interface.
+   * Uses the filterGear endpoint with userProfilePk to list all gear
    */
   async getAllGear(): Promise<any> {
     this.checkInitialized();
-    return {
-      success: false,
-      message: 'Garmin OAuth API limitation: Cannot list all gear automatically. To use gear tools, please:',
-      instructions: [
-        '1. Visit https://connect.garmin.com/modern/gear',
-        '2. Click on any gear item',
-        '3. Copy the UUID from the URL (e.g., abc123-def456-...)',
-        '4. Use that UUID with get_gear_stats, link_gear_to_activity, etc.',
-      ],
-      availableGearTools: [
-        'get_gear_stats(gearUUID) - Get statistics for specific gear',
-        'get_gear_activities(gearUUID) - Get activities using specific gear',
-        'link_gear_to_activity(activityId, gearUUID) - Link gear to activity',
-        'remove_gear_from_activity(activityId) - Remove gear from activity',
-      ],
-      gear: [],
-      count: 0,
-    };
+    try {
+      const userProfilePk = await this.getUserProfilePk();
+      const url = 'https://connectapi.garmin.com/gear-service/gear/filterGear';
+      const gear = await this.gc.get(url, { params: { userProfilePk } });
+      return {
+        gear: gear || [],
+        count: (gear || []).length,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching all gear:', error);
+      throw err;
+    }
   }
 
-  /**
-   * Create new gear/equipment
-   * NOTE: The Garmin OAuth API doesn't support gear creation.
-   * Users must create gear via the Garmin Connect web interface.
-   */
-  async createGear(gear: {
-    gearTypePk: number;
-    displayName: string;
-    modelName?: string;
-    brandName?: string;
-    notified?: boolean;
-  }): Promise<any> {
-    this.checkInitialized();
-    return {
-      success: false,
-      message: 'Garmin OAuth API limitation: Cannot create gear via API. Please create gear manually:',
-      instructions: [
-        '1. Visit https://connect.garmin.com/modern/gear',
-        '2. Click "Add Gear" button',
-        `3. Create gear: ${gear.displayName}`,
-        '4. Copy the UUID from the gear page URL',
-        '5. Use the UUID with other gear tools',
-      ],
-      requestedGear: {
-        name: gear.displayName,
-        type: gear.gearTypePk,
-        model: gear.modelName,
-        brand: gear.brandName,
-      },
-    };
-  }
+  // REMOVED: createGear - Garmin OAuth API returns 403 Forbidden for gear creation
+  // Gear must be created manually via https://connect.garmin.com/modern/gear
 
   /**
    * Update existing gear
@@ -2910,6 +2893,140 @@ export class GarminConnectClient {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error analyzing training period:', error);
+      throw err;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v4.1 - GEAR COLLECTIONS & METADATA
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get all available gear types
+   */
+  async getGearTypes(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/gear-service/gear/types';
+      const types = await this.gc.get(url);
+      return types || [];
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching gear types:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get available gear makes/brands
+   */
+  async getGearMakes(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/gear-service/gear/makes';
+      const makes = await this.gc.get(url);
+      return makes || [];
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching gear makes:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get all gear collections
+   */
+  async getGearCollections(): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/gear-service/collection';
+      const collections = await this.gc.get(url);
+      return collections || [];
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching gear collections:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Get details for a specific gear collection
+   */
+  async getGearCollection(collectionUUID: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/gear-service/collection/${collectionUUID}`;
+      const collection = await this.gc.get(url);
+      return collection;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching gear collection:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Create a new gear collection
+   */
+  async createGearCollection(data: {
+    name: string;
+    firstUseDate: string;
+    associatedActivityTypes?: Array<{ activityTypeKey: string; defaultGear?: boolean }>;
+  }): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = 'https://connectapi.garmin.com/gear-service/collection';
+      const result = await this.gc.post(url, data);
+      return result;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error creating gear collection:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Update an existing gear collection
+   */
+  async updateGearCollection(collectionUUID: string, updates: {
+    name?: string;
+    firstUseDate?: string;
+    gearInCollection?: Array<{ uuid: string }>;
+    associatedActivityTypes?: Array<{ activityTypeKey: string; defaultGear?: boolean }>;
+  }): Promise<any> {
+    this.checkInitialized();
+    try {
+      // Get existing collection first
+      const existing = await this.getGearCollection(collectionUUID);
+      const url = `https://connectapi.garmin.com/gear-service/collection/${collectionUUID}`;
+      const payload = {
+        ...existing,
+        ...updates,
+      };
+      const result = await this.gc.put(url, payload);
+      return result;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error updating gear collection:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Delete a gear collection
+   */
+  async deleteGearCollection(collectionUUID: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const url = `https://connectapi.garmin.com/gear-service/collection/${collectionUUID}`;
+      await this.gc.client.delete(url);
+      return {
+        collectionUUID,
+        message: 'Gear collection deleted successfully',
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error deleting gear collection:', error);
       throw err;
     }
   }
