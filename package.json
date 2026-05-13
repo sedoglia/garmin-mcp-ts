@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "axios": "^1.15.0",
+    "axios": "^1.15.2",
     "dotenv": "^16.3.0",
     "garmin-connect": "^1.6.2",
     "pino": "^9.0.0",
@@ -27,10 +27,13 @@
   },
   "overrides": {
     "ajv": ">=8.18.0",
-    "hono": ">=4.12.12",
+    "hono": ">=4.12.18",
     "@hono/node-server": ">=1.19.13",
     "lodash": ">=4.18.1",
-    "path-to-regexp": ">=8.4.2"
+    "path-to-regexp": ">=8.4.2",
+    "fast-uri": ">=3.1.2",
+    "ip-address": ">=10.1.1",
+    "follow-redirects": ">=1.16.0"
   },
   "optionalDependencies": {
     "keytar": "^7.9.0"
