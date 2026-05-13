@@ -48,7 +48,18 @@
       "Bash(echo.)",
       "Bash(powershell -Command \"'''' | Out-File -FilePath ''C:\\garmin-mcp-ts\\LICENSE'' -Encoding utf8\")",
       "Bash(powershell -Command \"'''' | Out-File -FilePath ''C:\\garmin-mcp-ts\\PRIVACY.md'' -Encoding utf8\")",
-      "Bash(git -C C:garmin-mcp-ts status)"
+      "Bash(git -C C:garmin-mcp-ts status)",
+      "Bash(npm audit:*)",
+      "Bash(git fetch:*)",
+      "Bash(timeout 5 node:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm show:*)",
+      "Bash(GARMIN_EMAIL=\"sedoglia@gmail.com\" GARMIN_PASSWORD=\"mQpK9_WRLEv7\" npx tsx src/test-gear-api.ts)",
+      "Bash(GARMIN_EMAIL=\"sedoglia@gmail.com\" GARMIN_PASSWORD=\"mQpK9_WRLEv7\" npx tsx src/test-gear-api2.ts)",
+      "Bash(GARMIN_EMAIL=\"sedoglia@gmail.com\" GARMIN_PASSWORD=\"mQpK9_WRLEv7\" npx tsx src/test-gear-api3.ts)",
+      "Bash(GARMIN_EMAIL=\"sedoglia@gmail.com\" GARMIN_PASSWORD=\"mQpK9_WRLEv7\" npx tsx src/test-gear-api4.ts)",
+      "Bash(GARMIN_EMAIL=\"sedoglia@gmail.com\" GARMIN_PASSWORD=\"mQpK9_WRLEv7\" npx tsx src/test-gear-api5.ts)"
     ],
     "deny": [],
     "ask": []
