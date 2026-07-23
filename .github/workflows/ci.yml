@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      # keytar is an optional native dependency, loaded via dynamic import
+      # and typed as any, so omitting it does not affect the build.
+      - name: Install dependencies
+        run: npm ci --omit=optional
+
+      - name: Build
+        run: npm run build
+
+      # Reported, not enforced: a fresh advisory should not turn unrelated
+      # pull requests red.
+      - name: Audit
+        run: npm audit --audit-level=high
+        continue-on-error: true

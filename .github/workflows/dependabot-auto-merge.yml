@@ -1,0 +1,58 @@
+name: Dependabot auto-merge
+
+# Merges Dependabot security patches without review, but only after the
+# project has been built from the pull request's own head commit.
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  metadata:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    outputs:
+      is-security: ${{ steps.meta.outputs.dependency-group == 'security-patches' || steps.meta.outputs.ghsa-id != '' }}
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # Version updates fall through this job and stay open for manual review.
+  verify-and-merge:
+    needs: metadata
+    if: needs.metadata.outputs.is-security == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      # --ignore-scripts matters here: this job holds a write token, and the
+      # packages being installed are exactly the ones that just changed.
+      - name: Install dependencies
+        run: npm ci --omit=optional --ignore-scripts
+
+      - name: Build
+        run: npm run build
+
+      - name: Audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Approve and merge
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --squash --delete-branch "$PR_URL"
