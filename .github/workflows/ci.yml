@@ -21,10 +21,12 @@ jobs:
           node-version: "22"
           cache: npm
 
-      # keytar is an optional native dependency, loaded via dynamic import
-      # and typed as any, so omitting it does not affect the build.
+      # Optional dependencies must stay in: TypeScript ships its native
+      # compiler binary as one (@typescript/typescript-<platform>), so
+      # --omit=optional breaks tsc outright. keytar is optional too and is
+      # allowed to fail here; npm treats that as non-fatal by design.
       - name: Install dependencies
-        run: npm ci --omit=optional
+        run: npm ci
 
       - name: Build
         run: npm run build

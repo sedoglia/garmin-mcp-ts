@@ -39,8 +39,9 @@ jobs:
 
       # --ignore-scripts matters here: this job holds a write token, and the
       # packages being installed are exactly the ones that just changed.
+      # Optional dependencies stay in, though: tsc is shipped as one.
       - name: Install dependencies
-        run: npm ci --omit=optional --ignore-scripts
+        run: npm ci --ignore-scripts
 
       - name: Build
         run: npm run build
