@@ -1,0 +1,18 @@
+# Files excluded from the packed .mcpb bundle.
+#
+# mcpb pack archives the working directory, so anything present on disk
+# ships to users even when git ignores it. .git/, .github/ and .env are
+# already excluded by default; everything below is not.
+
+# Claude Code local settings. Permission rules record literal command
+# lines, which is how a plaintext credential reached the v4.1.0 bundle.
+.claude/
+
+# Previously packed bundles: without this, each release nests the last one.
+releases/
+
+# Defence in depth for the credential files this project can produce.
+.env.*
+config.json
+oauth1_token.json
+oauth2_token.json

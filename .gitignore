@@ -4,6 +4,11 @@
 .env.*.local
 config.json
 
+# Claude Code local settings: personal to each machine, and permission
+# rules routinely capture literal command lines, secrets included.
+.claude/settings.local.json
+.claude/worktrees/
+
 # OAuth tokens (automatically saved by the app)
 oauth1_token.json
 oauth2_token.json
