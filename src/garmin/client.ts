@@ -1423,7 +1423,7 @@ export class GarminConnectClient {
    * The daily/floors path answers 404; the floors chart is the endpoint that
    * actually serves this data, as 15-minute buckets that are summed here.
    */
-  async getFloors(date: string): Promise<any> {
+  async getFloors(date: string, includeBreakdown: boolean = false): Promise<any> {
     this.checkInitialized();
     try {
       const url = `https://connectapi.garmin.com/wellness-service/wellness/floorsChartData/daily/${date}`;
@@ -1438,13 +1438,21 @@ export class GarminConnectClient {
         floorsDescended += bucket[3] || 0;
       }
 
-      return {
+      const summary = {
         date,
         floorsAscended,
         floorsDescended,
         startTimestampLocal: data?.startTimestampLocal,
         endTimestampLocal: data?.endTimestampLocal,
         intervalCount: buckets.length,
+      };
+
+      // 96 quarter-hour buckets is a lot of tokens for a figure that is
+      // usually read as two numbers, so the breakdown is opt-in.
+      if (!includeBreakdown) return summary;
+
+      return {
+        ...summary,
         // [startTimeGMT, endTimeGMT, floorsAscended, floorsDescended]
         valueDescriptors: data?.floorsValueDescriptorDTOList || [],
         floorValuesArray: buckets,

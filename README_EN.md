@@ -18,6 +18,11 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
 
+## 🚧 Unreleased
+
+- **`get_floors`**: returns the daily totals only; the 15-minute breakdown is available
+  with `includeBreakdown: true`. The normal response drops from ~5600 to ~210 characters.
+
 ## 🆕 What's New in v4.3.3 - Icon
 
 - The bundle icon was the official Garmin Connect app artwork. It has been replaced with
@@ -276,7 +281,7 @@ This MCP server provides **109 powerful tools** to interact with your Garmin Con
 | Tool | Description |
 |------|-------------|
 | `get_all_day_stress` | Get detailed all-day stress data |
-| `get_floors` | Get floors climbed and descended, with the 15-minute breakdown |
+| `get_floors` | Get floors climbed and descended; `includeBreakdown` adds the 15-minute intervals |
 | `get_intensity_minutes` | Get intensity minutes (moderate and vigorous) for a date or range, with weekly totals and goal |
 | `get_max_metrics` | Get max metrics (VO2 max, etc.) |
 | `get_training_readiness` | **Get Training Readiness score** |

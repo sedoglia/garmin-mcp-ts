@@ -1062,10 +1062,11 @@ export class ToolHandler {
 
   private async handleGetFloors(args: Record<string, unknown>): Promise<unknown> {
     const date = this.getStringParam(args, 'date', this.getTodayDate());
+    const includeBreakdown = args.includeBreakdown === true;
 
     logger.info(`Fetching floors for: ${date}`);
 
-    const floors = await this.client.getFloors(date);
+    const floors = await this.client.getFloors(date, includeBreakdown);
 
     return {
       success: true,
