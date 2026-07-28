@@ -114,7 +114,7 @@ export const UserProfileSchema = z.object({
     id: z.number(),
     displayName: z.string(),
   }).optional(),
-  preferences: z.record(z.any()).optional(),
+  preferences: z.record(z.string(), z.any()).optional(),
 });
 
 export type UserProfile = z.infer<typeof UserProfileSchema>;
