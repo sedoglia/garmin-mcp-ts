@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.1.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.2.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,30 @@
 ---
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
+
+## 🆕 Novità v4.2.0 - Prima installazione e credenziali
+
+### 🔐 **CONFIGURAZIONE CREDENZIALI** ✅ NUOVO
+- **Credenziali richieste durante l'installazione**: Claude Desktop chiede email e password
+  Garmin al momento dell'installazione del bundle. La password viene conservata nel vault
+  del sistema operativo, mai in un file di testo.
+- **`setup_credentials`**: nuovo tool per configurare le credenziali dalla chat, senza
+  riavviare l'estensione.
+- **`check_credentials`**: mostra se le credenziali sono configurate, da quale fonte
+  provengono e dove sono archiviate (non restituisce mai la password).
+- **`clear_credentials`**: elimina credenziali cifrate e token OAuth.
+
+### 🐛 **AVVIO DEL SERVER** ✅ CORRETTO
+- Il server non termina più all'avvio quando le credenziali mancano o sono errate:
+  il transport MCP viene collegato per primo e il login avviene alla prima richiesta.
+  L'errore `Server transport closed unexpectedly` su una installazione pulita è risolto,
+  e al suo posto compare un messaggio che spiega cosa configurare.
+- Le credenziali impostate nell'estensione hanno la precedenza sulla copia cifrata su
+  disco, che viene riallineata automaticamente quando cambiano.
+
+### 📈 Ora con **109 TOOLS** disponibili!
+
+---
 
 ## 🎉 Novità v4.1.0 - Gear Management & Collections
 
@@ -300,6 +324,20 @@ Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi d
 
 ---
 
+## 🆕 Nuovi Strumenti v4.2
+
+### Credenziali
+Funzionano anche quando l'autenticazione a Garmin non è ancora possibile: sono il modo
+per configurarla.
+
+| Strumento | Descrizione |
+|-----------|-------------|
+| `setup_credentials` | Salva email e password cifrate nel vault del SO e verifica subito l'accesso |
+| `check_credentials` | Stato della configurazione: fonte attiva, archivio, sessione (mai la password) |
+| `clear_credentials` | Elimina credenziali cifrate e token OAuth e chiude la sessione |
+
+---
+
 ## Prerequisiti
 
 - **Node.js** 18.0 o superiore
@@ -326,7 +364,7 @@ npm install keytar
 Usa il browser oppure:
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.1.1/garmin-mcp-ts.mcpb
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.2.0/garmin-mcp-ts.mcpb
 ```
 
 ### 3. Verifica l'integrità
@@ -334,7 +372,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.1.1/garmin-m
 Verifica l'integrità (opzionale ma consigliato):
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.1.1/garmin-mcp-ts.mcpb.sha256
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.2.0/garmin-mcp-ts.mcpb.sha256
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 
@@ -354,9 +392,17 @@ sha256sum -c garmin-mcp-ts.mcpb.sha256
 
 ---
 
-### 5. Configura le Credenziali Garmin (Metodo Sicuro - Raccomandato)
+### 5. Configura le Credenziali Garmin
 
-Apri una **nuova chat su Claude Desktop** e scrivi il seguente prompt:
+Durante l'installazione Claude Desktop mostra due campi, **Garmin Email** e
+**Garmin Password**: compilali con le credenziali del tuo account Garmin Connect.
+La password viene conservata nel vault nativo del sistema operativo (Windows Credential
+Manager, macOS Keychain, Linux Secret Service) e non viene mai scritta in chiaro.
+
+Puoi rivedere o modificare i due campi in qualsiasi momento da
+**Impostazioni → Estensioni → garmin-mcp-ts**.
+
+**In alternativa, dalla chat:** apri una **nuova chat su Claude Desktop** e scrivi:
 
 ```
 Configura le credenziali di accesso per Garmin
@@ -366,9 +412,19 @@ Rispondi al messaggio fornendo:
 - **Utente:** la tua email Garmin
 - **Password:** la tua password Garmin
 
-L'estensione provvederà automaticamente a criptare e salvare le credenziali in modo sicuro nel vault nativo del sistema operativo (Windows Credential Manager, macOS Keychain, Linux Secret Service).
+Claude usa il tool `setup_credentials`, che cifra e salva le credenziali nel vault nativo
+del sistema operativo e verifica subito l'accesso a Garmin Connect. Non serve riavviare.
 
-> **Nota:** Le credenziali NON verranno salvate in file di testo. Saranno sempre crittografate e gestite dal vault nativo del SO.
+> **Nota:** Le credenziali NON verranno salvate in file di testo. Saranno sempre
+> crittografate e gestite dal vault nativo del SO. Se hai compilato i campi
+> dell'estensione, quei valori hanno la precedenza su quanto salvato da
+> `setup_credentials`: per cambiarli, modificali in Impostazioni → Estensioni.
+
+Per verificare la configurazione in qualsiasi momento:
+
+```
+Controlla lo stato delle credenziali Garmin
+```
 
 ### 6. Riavvia Claude Desktop
 
@@ -583,7 +639,7 @@ garmin-mcp-ts/
 │   │   └── simple-login.ts # Utility standalone per test login
 │   ├── mcp/
 │   │   ├── server.ts      # Setup server MCP e gestori richieste
-│   │   ├── tools.ts       # Definizioni strumenti e schemi (106 tools)
+│   │   ├── tools.ts       # Definizioni strumenti e schemi (109 tools)
 │   │   └── handlers.ts    # Logica implementazione strumenti
 │   └── utils/
 │       ├── constants.ts   # Costanti dell'applicazione

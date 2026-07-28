@@ -1,7 +1,7 @@
 {
   "manifest_version": "0.2",
   "name": "garmin-mcp-ts",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
   "author": {
     "name": "sedoglia",
@@ -20,7 +20,25 @@
       "args": [
         "${__dirname}/dist/index.js"
       ],
-      "env": {}
+      "env": {
+        "GARMIN_EMAIL": "${user_config.garmin_email}",
+        "GARMIN_PASSWORD": "${user_config.garmin_password}"
+      }
+    }
+  },
+  "user_config": {
+    "garmin_email": {
+      "type": "string",
+      "title": "Garmin Email",
+      "description": "The email address of your Garmin Connect account.",
+      "required": true
+    },
+    "garmin_password": {
+      "type": "string",
+      "title": "Garmin Password",
+      "description": "The password of your Garmin Connect account. Stored in the operating system keychain, never in a plain text file.",
+      "sensitive": true,
+      "required": true
     }
   },
   "license": "MIT",

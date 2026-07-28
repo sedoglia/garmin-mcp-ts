@@ -1,13 +1,23 @@
 // src/mcp/handlers.ts
 
 import { GarminConnectClient } from '../garmin/client.js';
+import { AuthManager } from '../garmin/auth.js';
+import { SOURCE_LABELS, maskEmail } from '../utils/credentials.js';
 import logger from '../utils/logger.js';
 
 // Tipo per gli argomenti dei tool
 type ToolArgs = Record<string, unknown> | undefined | null;
 
+// Tool che gestiscono le credenziali: devono restare utilizzabili proprio
+// quando l'autenticazione non è possibile, quindi saltano il guard.
+const CREDENTIAL_TOOLS = new Set(['setup_credentials', 'check_credentials', 'clear_credentials']);
+
 export class ToolHandler {
-  constructor(private client: GarminConnectClient) {}
+  private client: GarminConnectClient;
+
+  constructor(private auth: AuthManager) {
+    this.client = auth.getClient();
+  }
 
   async handle(name: string, args: ToolArgs): Promise<unknown> {
     logger.info(`Handling tool: ${name}`);
@@ -17,8 +27,25 @@ export class ToolHandler {
 
     logger.info(`Safe args: ${JSON.stringify(safeArgs)}`);
 
+    // Login pigro: la prima chiamata che richiede dati Garmin autentica.
+    // Se le credenziali mancano o sono errate l'errore è leggibile e il
+    // server resta attivo.
+    if (!CREDENTIAL_TOOLS.has(name)) {
+      await this.auth.ensureAuthenticated();
+    }
+
     try {
       switch (name) {
+        // ═══════════════════════════════════════════════════════════════
+        // CREDENZIALI
+        // ═══════════════════════════════════════════════════════════════
+        case 'setup_credentials':
+          return await this.handleSetupCredentials(safeArgs);
+        case 'check_credentials':
+          return await this.handleCheckCredentials();
+        case 'clear_credentials':
+          return await this.handleClearCredentials();
+
         case 'list_recent_activities':
           return await this.handleListRecentActivities(safeArgs);
         case 'get_activity_details':
@@ -292,6 +319,87 @@ export class ToolHandler {
       logger.error(`Error in tool ${name}: ${error}`);
       throw err;
     }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // CREDENTIAL HANDLERS
+  // ═══════════════════════════════════════════════════════════════
+
+  private async handleSetupCredentials(args: Record<string, unknown>): Promise<unknown> {
+    const email = this.getStringParam(args, 'email', '');
+    const password = this.getStringParam(args, 'password', '');
+
+    if (!email || !password) {
+      throw new Error('Parameters "email" and "password" are both required');
+    }
+
+    if (!email.includes('@')) {
+      throw new Error('Parameter "email" must be a valid email address');
+    }
+
+    // Non loggare mai la password, nemmeno in debug mode.
+    logger.info('Storing new Garmin credentials');
+
+    // Le credenziali dell'estensione vengono riapplicate a ogni riavvio: se
+    // sono diverse da quelle appena salvate, l'utente deve saperlo.
+    const overriddenByExtension = this.auth.isOverriddenByEnvironment(email, password);
+
+    const status = await this.auth.configure(email, password);
+
+    return {
+      success: true,
+      authenticated: status.authenticated,
+      message: overriddenByExtension
+        ? 'Credentials verified and saved to encrypted storage, and in use for this session. Note that the extension settings hold a different pair, which will take over at the next restart: update or clear those fields in Claude Desktop -> Settings -> Extensions -> garmin-mcp-ts.'
+        : 'Credentials verified against Garmin Connect, encrypted and saved. No restart needed.',
+      email: maskEmail(email),
+      activeSource: SOURCE_LABELS['secure-storage'],
+      sourceAfterRestart: overriddenByExtension ? status.sourceLabel : undefined,
+      storage: {
+        dataDir: status.dataDir,
+        keyStorageMethod: status.keyStorageMethod,
+        nativeVaultAvailable: status.nativeVaultAvailable,
+      },
+    };
+  }
+
+  private async handleCheckCredentials(): Promise<unknown> {
+    const status = await this.auth.getStatus();
+
+    return {
+      success: true,
+      configured: status.configured,
+      authenticated: status.authenticated,
+      email: status.email,
+      activeSource: status.sourceLabel,
+      sources: {
+        extensionSettings: status.environmentOverride,
+        encryptedStorage: status.storedCredentialsExist,
+      },
+      storage: {
+        dataDir: status.dataDir,
+        keyStorageMethod: status.keyStorageMethod,
+        nativeVaultAvailable: status.nativeVaultAvailable,
+        oauthTokensStored: status.storedTokensExist,
+      },
+      lastError: status.lastError,
+      hint: status.configured
+        ? undefined
+        : `Run setup_credentials, or fill in the fields in Claude Desktop -> Settings -> Extensions -> garmin-mcp-ts. Sources checked, in order: ${Object.values(SOURCE_LABELS).join(', ')}.`,
+    };
+  }
+
+  private async handleClearCredentials(): Promise<unknown> {
+    const status = await this.auth.clear();
+
+    return {
+      success: true,
+      message: status.environmentOverride
+        ? 'Encrypted credentials and OAuth tokens deleted. The extension settings still provide credentials: clear those fields in Claude Desktop -> Settings -> Extensions -> garmin-mcp-ts to fully disconnect.'
+        : 'Encrypted credentials and OAuth tokens deleted. The session is closed.',
+      stillConfigured: status.configured,
+      activeSource: status.sourceLabel,
+    };
   }
 
   private async handleListRecentActivities(args: Record<string, unknown>): Promise<unknown> {

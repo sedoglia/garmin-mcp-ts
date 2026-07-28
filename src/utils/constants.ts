@@ -39,6 +39,13 @@ export const LOG_LEVELS = {
 } as const;
 
 export const MCP_TOOL_NAMES = {
+  // ═══════════════════════════════════════════════════════════════
+  // CREDENZIALI - utilizzabili anche senza sessione Garmin attiva
+  // ═══════════════════════════════════════════════════════════════
+  SETUP_CREDENTIALS: 'setup_credentials',
+  CHECK_CREDENTIALS: 'check_credentials',
+  CLEAR_CREDENTIALS: 'clear_credentials',
+
   // Tool esistenti
   LIST_RECENT_ACTIVITIES: 'list_recent_activities',
   GET_ACTIVITY_DETAILS: 'get_activity_details',

@@ -40,6 +40,58 @@ export interface ToolDefinition {
 }
 
 export const toolDefinitions: ToolDefinition[] = [
+  // ═══════════════════════════════════════════════════════════════
+  // CREDENZIALI
+  // Questi tool non richiedono una sessione Garmin attiva: sono il modo
+  // per crearne una quando le credenziali non sono ancora configurate.
+  // ═══════════════════════════════════════════════════════════════
+  {
+    name: MCP_TOOL_NAMES.SETUP_CREDENTIALS,
+    title: 'Setup Garmin Credentials',
+    description:
+      'Store Garmin Connect credentials encrypted in the OS native vault and log in immediately. ' +
+      'Use this when the server reports that credentials are missing or invalid. ' +
+      'The password is encrypted at rest and never written to a plain text file.',
+    annotations: { confirmationRequiredHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: 'Garmin Connect account email (required)',
+        },
+        password: {
+          type: 'string',
+          description: 'Garmin Connect account password (required)',
+        },
+      },
+      required: ['email', 'password'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.CHECK_CREDENTIALS,
+    title: 'Check Garmin Credentials',
+    description:
+      'Report whether Garmin credentials are configured, which source they come from, where the ' +
+      'encrypted data is stored and whether the session is authenticated. Never returns the password.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.CLEAR_CREDENTIALS,
+    title: 'Clear Garmin Credentials',
+    description:
+      'Delete the encrypted credentials and OAuth tokens from secure storage and end the current session. ' +
+      'Credentials supplied through the extension settings are not affected and must be cleared there.',
+    annotations: { destructiveHint: true, confirmationRequiredHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
   {
     name: MCP_TOOL_NAMES.LIST_RECENT_ACTIVITIES,
     title: 'List Recent Activities',

@@ -9,10 +9,10 @@ import {
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { toolDefinitions } from './tools.js';
 import { ToolHandler } from './handlers.js';
-import { GarminConnectClient } from '../garmin/client.js';
+import { AuthManager } from '../garmin/auth.js';
 import logger from '../utils/logger.js';
 
-export async function createMCPServer(garminClient: GarminConnectClient): Promise<Server> {
+export async function createMCPServer(auth: AuthManager): Promise<Server> {
   const server = new Server(
     {
       name: 'garmin-mcp',
@@ -25,7 +25,7 @@ export async function createMCPServer(garminClient: GarminConnectClient): Promis
     }
   );
 
-  const toolHandler = new ToolHandler(garminClient);
+  const toolHandler = new ToolHandler(auth);
 
   // Handler per listare i tool disponibili
   server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -86,16 +86,15 @@ export async function createMCPServer(garminClient: GarminConnectClient): Promis
   return server;
 }
 
-export async function runServer(garminClient: GarminConnectClient): Promise<void> {
+export async function runServer(auth: AuthManager): Promise<void> {
   logger.info('Starting Garmin MCP Server...');
 
   try {
-    const server = await createMCPServer(garminClient);
+    const server = await createMCPServer(auth);
     const transport = new StdioServerTransport();
     await server.connect(transport);
 
     logger.info('Garmin MCP Server running!');
-    logger.info('Connected to Garmin Connect');
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err);
     logger.error('Failed to start server: ' + error);

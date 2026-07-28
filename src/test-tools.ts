@@ -2,8 +2,9 @@
 // Test script for all v2.0 tools with real Garmin data
 
 import { GarminConnectClient } from './garmin/client.js';
+import { AuthManager } from './garmin/auth.js';
 import { ToolHandler } from './mcp/handlers.js';
-import { secureStorage } from './utils/secure-storage.js';
+import { resolveCredentials } from './utils/credentials.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -37,37 +38,8 @@ async function testTool(
   }
 }
 
-/**
- * Load credentials from multiple sources in priority order:
- * 1. Environment variables
- * 2. Encrypted secure storage
- * 3. .env file (already loaded by dotenv)
- */
-async function loadCredentials(): Promise<{ email: string; password: string } | null> {
-  // Try environment variables first
-  if (process.env.GARMIN_EMAIL && process.env.GARMIN_PASSWORD) {
-    return {
-      email: process.env.GARMIN_EMAIL,
-      password: process.env.GARMIN_PASSWORD
-    };
-  }
-
-  // Try encrypted secure storage
-  try {
-    const encrypted = await secureStorage.loadCredentials();
-    if (encrypted?.email && encrypted?.password) {
-      console.log('📦 Using credentials from encrypted secure storage');
-      return encrypted;
-    }
-  } catch {
-    // Continue to next source
-  }
-
-  return null;
-}
-
 async function main() {
-  const credentials = await loadCredentials();
+  const credentials = await resolveCredentials();
 
   if (!credentials) {
     console.error('❌ No credentials found. Please either:');
@@ -79,10 +51,13 @@ async function main() {
 
   console.log('🔐 Connecting to Garmin Connect...\n');
 
-  const client = new GarminConnectClient();
-  await client.initialize(credentials.email, credentials.password);
+  console.log('Using credentials from: ' + credentials.source);
 
-  const handler = new ToolHandler(client);
+  const client = new GarminConnectClient();
+  const auth = new AuthManager(client);
+  await auth.ensureAuthenticated();
+
+  const handler = new ToolHandler(auth);
   const today = new Date().toISOString().split('T')[0];
   const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
   const lastMonth = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];

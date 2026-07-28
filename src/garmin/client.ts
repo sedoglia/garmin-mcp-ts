@@ -141,6 +141,24 @@ export class GarminConnectClient {
   }
 
   /**
+   * Whether the client holds a live authenticated session
+   */
+  isReady(): boolean {
+    return this.initialized;
+  }
+
+  /**
+   * Drops the current session so the next call re-authenticates.
+   * Used when credentials change or a login attempt fails.
+   */
+  reset(): void {
+    this.gc = null;
+    this.initialized = false;
+    this.displayName = null;
+    this.userProfilePk = null;
+  }
+
+  /**
    * Get the display name of the logged-in user
    */
   getDisplayName(): string | null {
