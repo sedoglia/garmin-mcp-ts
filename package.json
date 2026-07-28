@@ -20,8 +20,7 @@
     "@modelcontextprotocol/sdk": "^1.29.0",
     "axios": "^1.18.0",
     "dotenv": "^17.4.2",
-    "garmin-connect": "^1.6.2",
-    "zod": "^4.4.3"
+    "garmin-connect": "^1.6.2"
   },
   "overrides": {
     "ajv": ">=8.18.0",
