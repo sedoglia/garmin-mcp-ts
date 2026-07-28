@@ -68,7 +68,7 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 ### 🤝 **SOCIAL FEATURES** ⚠️ PARTIAL
 - **`get_activity_comments`**: Get comments on an activity ✅ WORKING
 - ~~**`add_activity_comment`**: Add comments to activities~~ ❌ **REMOVED** (Not supported by Garmin OAuth API)
-- **`set_activity_privacy`**: Set privacy (**public** or **private** only) ⚠️ PARTIAL ("followers" option not supported)
+- **`set_activity_privacy`**: Set privacy (**public**, **private** or **subscribers**)
 
 ### 📊 **ADVANCED TRAINING METRICS** ✅ TESTED
 - **`get_training_load`**: Weekly training load and balance
@@ -108,7 +108,7 @@ This MCP server provides **106 powerful tools** to interact with your Garmin Con
 |------|-------------|
 | `get_health_metrics` | Get daily health metrics (steps, heart rate, VO2 max) |
 | `get_sleep_data` | Get detailed sleep information (duration, quality, stages) |
-| `get_body_composition` | Get body composition data (weight, BMI, body fat) |
+| `get_body_composition` | Get body composition measurements (weight, BMI, body fat, muscle mass) over a `days` window, plus the average |
 | `get_steps` | Get step count for a specific date |
 | `get_heart_rate` | Get detailed heart rate data for a specific date |
 | `get_hydration` | Get daily hydration/water intake data |
@@ -125,9 +125,9 @@ This MCP server provides **106 powerful tools** to interact with your Garmin Con
 ### User & Device Tools
 | Tool | Description |
 |------|-------------|
-| `get_devices` | Get list of connected Garmin devices |
+| `get_devices` | Get the list of registered Garmin devices (id, model, serial, firmware) |
 | `get_user_profile` | Get user profile information |
-| `get_training_status` | Get training status and activity statistics |
+| `get_training_status` | Get the training status for a date: status, VO2 max, acute/chronic load, ACWR |
 
 ---
 
@@ -164,13 +164,13 @@ This MCP server provides **106 powerful tools** to interact with your Garmin Con
 | Tool | Description |
 |------|-------------|
 | `get_all_day_stress` | Get detailed all-day stress data |
-| `get_floors` | Get floors climbed |
-| `get_intensity_minutes` | Get intensity minutes (moderate and vigorous) |
+| `get_floors` | Get floors climbed and descended, with the 15-minute breakdown |
+| `get_intensity_minutes` | Get intensity minutes (moderate and vigorous) for a date or range, with weekly totals and goal |
 | `get_max_metrics` | Get max metrics (VO2 max, etc.) |
 | `get_training_readiness` | **Get Training Readiness score** |
 | `get_endurance_score` | **Get Endurance Score** |
 | `get_fitness_age` | **Get estimated Fitness Age** |
-| `get_daily_summary` | Get comprehensive daily summary |
+| `get_daily_summary` | Get a full daily summary (steps, calories, distance, floors, intensity minutes, HR, stress, Body Battery) |
 
 ### Weight & Body
 | Tool | Description |
@@ -186,17 +186,17 @@ This MCP server provides **106 powerful tools** to interact with your Garmin Con
 | Tool | Description |
 |------|-------------|
 | `get_activity_weather` | Get weather during an activity |
-| `get_activity_hr_zones` | Get time in HR zones |
+| `get_activity_hr_zones` | Get the time spent in each heart rate zone |
 | `get_activity_exercise_sets` | Get exercise sets (strength training) |
 
 ### Goals, Challenges & Records
 | Tool | Description |
 |------|-------------|
-| `get_goals` | Get goals (active, future, past) |
+| `get_goals` | Get goals; without `status` every status is queried and the results merged |
 | `get_adhoc_challenges` | Get ad-hoc challenges |
 | `get_badge_challenges` | Get available badge challenges |
 | `get_earned_badges` | Get earned badges |
-| `get_personal_records` | Get personal records |
+| `get_personal_records` | Get personal records (typeId, value, date and the activity they were set in) |
 | `get_race_predictions` | Get race time predictions (5K, 10K, HM, M) |
 
 ### Gear Management
@@ -268,7 +268,7 @@ This MCP server provides **106 powerful tools** to interact with your Garmin Con
 |------|-------------|
 | `get_activity_types` | Get all available activity types |
 | `get_primary_training_device` | Get primary training device |
-| `count_activities` | Count total number of activities |
+| `count_activities` | Count activities, over the whole history or over a date range |
 | `get_fitness_stats` | Get fitness statistics over a date range |
 | `add_hydration_data` | Add hydration data |
 
@@ -280,12 +280,12 @@ This MCP server provides **106 powerful tools** to interact with your Garmin Con
 | Tool | Description |
 |------|-------------|
 | `get_activity_comments` | Get comments on an activity |
-| `set_activity_privacy` | Set activity privacy (public/private) |
+| `set_activity_privacy` | Set activity privacy (public/private/subscribers) |
 
 ### Advanced Training Metrics
 | Tool | Description |
 |------|-------------|
-| `get_training_load` | Weekly training load and balance |
+| `get_training_load` | Monthly training load balance (low/high aerobic, anaerobic) against its targets |
 | `get_load_ratio` | Acute/chronic workload ratio (injury risk indicator) |
 | `get_performance_condition` | Current performance condition score |
 
@@ -293,7 +293,7 @@ This MCP server provides **106 powerful tools** to interact with your Garmin Con
 | Tool | Description |
 |------|-------------|
 | `get_sleep_movement` | Sleep movement data and restless moments |
-| `get_device_alarms` | Alarms configured on devices |
+| `get_device_alarms` | Alarms configured on devices (time, repeat days, on/off) |
 | `get_courses` | Saved routes/courses |
 
 ### Activity Analysis
@@ -713,10 +713,13 @@ Some endpoints and features are not available through Garmin's public OAuth API:
     - NOT available via OAuth API
 
 #### Activity Privacy
-- ✅ **Setting privacy** (`set_activity_privacy`): Partially working
+- ✅ **Setting privacy** (`set_activity_privacy`): Working
   - ✅ `public`: Works correctly
   - ✅ `private`: Works correctly
-  - ❌ `followers`: **NOT SUPPORTED** - returns 400 error "PRIVACY_INVALID"
+  - ✅ `subscribers`: Works correctly (shown as "connections only" in Garmin Connect)
+  - ❌ `followers`: **NOT SUPPORTED** - not a valid key, returns 400. The correct key is `subscribers`
+
+  The current level is in `accessControlRuleDTO` from `get_activity_details`: read it before changing it, so `subscribers` is not overwritten with `public`.
 
 #### Gear Management
 - ✅ **List gear** (`get_all_gear`): Working (via `filterGear` endpoint)
@@ -734,12 +737,12 @@ Some metrics may not be available depending on your smartwatch model:
 | Metric | Supported Devices | Notes |
 |--------|-------------------|-------|
 | `get_endurance_score` | Premium devices only (Fenix 7+, Forerunner 955+) | Not available on Instinct 2 Solar |
-| `get_training_readiness` | Instinct 2**X** only | Not on standard Instinct 2 Solar |
-| `get_floors` | Requires barometer | May not sync via API |
-| `get_intensity_minutes` | All devices | May not sync via API |
-| `get_training_load` | Requires 7+ days of data | Uses Firstbeat Analytics |
+| `get_training_readiness` | Requires overnight HRV recording | Absent when the device does not record HRV |
+| `get_floors` | Requires barometer | Absent on devices without a barometric altimeter |
+| `get_intensity_minutes` | All devices | — |
+| `get_training_load` | Requires 7+ days of data | Snapshot at the requested date, not an aggregate over the range |
 | `get_load_ratio` | Requires 4+ consecutive weeks | Calculated on extended history |
-| `get_performance_condition` | During activity | Visible on watch, not always via API |
+| `get_performance_condition` | During activity | Garmin does not expose it as a daily metric: use `get_activity_details` |
 
 **Note**: Some metrics are visible in the Garmin Connect app but may not be exposed via OAuth API.
 

@@ -165,16 +165,23 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     name: MCP_TOOL_NAMES.GET_BODY_COMPOSITION,
     title: 'Get Body Composition',
-    description: 'Get body composition data including weight measurements.',
+    description:
+      'Get body composition measurements (weight, BMI, body fat, muscle and bone mass) over a period, ' +
+      'plus the average across the period.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
         days: {
           type: 'number',
-          description: 'Number of days of historical data (1-365)',
+          description: 'Number of days of historical data ending at endDate (1-365, default 30)',
           minimum: 1,
           maximum: 365,
+        },
+        endDate: {
+          type: 'string',
+          description: 'Last day of the period in YYYY-MM-DD format. Defaults to today.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
         },
       },
     },
@@ -182,7 +189,9 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     name: MCP_TOOL_NAMES.GET_DEVICES,
     title: 'Get Devices',
-    description: 'Get information about connected Garmin devices and user settings.',
+    description:
+      'List the Garmin devices registered on the account with their id, model, serial and firmware version. ' +
+      'Use get_device_settings for the configuration of a single device.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -202,16 +211,17 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     name: MCP_TOOL_NAMES.GET_TRAINING_STATUS,
     title: 'Get Training Status',
-    description: 'Get training status including activity count and user fitness settings.',
+    description:
+      'Get the training status for a date: status and feedback phrase, VO2 max, fitness trend, ' +
+      'acute and chronic training load and the acute/chronic workload ratio.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
-        days: {
-          type: 'number',
-          description: 'Number of days for statistics (1-365)',
-          minimum: 1,
-          maximum: 365,
+        date: {
+          type: 'string',
+          description: 'Date in YYYY-MM-DD format. Defaults to today.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
         },
       },
     },
@@ -703,7 +713,7 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_DEVICE_LAST_USED,
     title: 'Get Device Last Used',
-    description: 'Get information about the last used Garmin device.',
+    description: 'Get the Garmin device that uploaded data most recently, with its id, name and upload time.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -750,7 +760,8 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_FLOORS,
     title: 'Get Floors',
-    description: 'Get floors climbed data for a specific date.',
+    description:
+      'Get floors climbed and descended for a specific date, with the 15-minute breakdown.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -766,14 +777,21 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_INTENSITY_MINUTES,
     title: 'Get Intensity Minutes',
-    description: 'Get intensity minutes (moderate and vigorous) for a specific date.',
+    description:
+      'Get intensity minutes (moderate and vigorous) for a date, or for a date range when endDate is given, ' +
+      'together with the weekly totals and goal.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
         date: {
           type: 'string',
-          description: 'Date in YYYY-MM-DD format.',
+          description: 'Date in YYYY-MM-DD format (start of the range when endDate is given).',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'Optional last day of the range in YYYY-MM-DD format.',
           pattern: '^\\d{4}-\\d{2}-\\d{2}$',
         },
       },
@@ -1057,14 +1075,17 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_GOALS,
     title: 'Get Goals',
-    description: 'Get user goals (active, future, or past).',
+    description:
+      'Get user goals. Without a status every status is queried in turn and the results are merged, ' +
+      'each goal carrying the status it was found under.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
         status: {
           type: 'string',
-          description: 'Filter by status: active, future, past. Defaults to all.',
+          description: 'Filter by status. Defaults to all three.',
+          enum: ['active', 'future', 'past'],
         },
       },
     },
@@ -1102,7 +1123,9 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_PERSONAL_RECORDS,
     title: 'Get Personal Records',
-    description: 'Get all personal records (PRs) across activities.',
+    description:
+      'Get all personal records (PRs). Each record carries a typeId identifying its category, its value, ' +
+      'the date it was set and, for records set during an activity, that activity.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -1194,7 +1217,10 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_DAILY_SUMMARY,
     title: 'Get Daily Summary',
-    description: 'Get comprehensive daily summary including steps, calories, distance, floors, and more.',
+    description:
+      'Get a compact daily summary: steps and goal, calories, distance, floors, intensity minutes, ' +
+      'resting/min/max heart rate, stress, body battery and time breakdown. ' +
+      'Use get_heart_rate for the full heart rate series.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -1633,11 +1659,23 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.COUNT_ACTIVITIES,
     title: 'Count Activities',
-    description: 'Get the total count of activities in Garmin Connect.',
+    description:
+      'Count the activities in Garmin Connect, over the whole history or over a date range.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
-      properties: {},
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'Optional start date in YYYY-MM-DD format. Omit to count from the beginning.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'Optional end date in YYYY-MM-DD format. Defaults to today.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
     },
   },
   {
@@ -1910,7 +1948,9 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.SET_ACTIVITY_PRIVACY,
     title: 'Set Activity Privacy',
-    description: 'Change activity privacy settings (public or private only). Note: The "followers" option is not supported by Garmin API and returns 400 error.',
+    description:
+      'Change the privacy of an activity. "subscribers" is what Garmin Connect shows as "connections only". ' +
+      'Read the current level from accessControlRuleDTO in get_activity_details before changing it.',
     annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
@@ -1921,7 +1961,8 @@ Example for interval running workout:
         },
         privacy: {
           type: 'string',
-          description: 'Privacy level: "public" or "private" (required). Note: "followers" is not supported.',
+          description: 'Privacy level (required). "followers" is not a valid key and returns 400.',
+          enum: ['public', 'private', 'subscribers'],
         },
       },
       required: ['activityId', 'privacy'],
@@ -1935,7 +1976,9 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_TRAINING_LOAD,
     title: 'Get Training Load',
-    description: 'Get training load data showing weekly training volume and balance.',
+    description:
+      'Get the monthly training load balance (low aerobic, high aerobic, anaerobic) against its target ranges. ' +
+      'This is a snapshot taken on endDate, not an aggregate over the range.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -1974,7 +2017,9 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_PERFORMANCE_CONDITION,
     title: 'Get Performance Condition',
-    description: 'Get performance condition score based on recent activities.',
+    description:
+      'Get the performance condition score for a date. Garmin records this per activity rather than daily, ' +
+      'so it is usually only available through get_activity_details.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -2013,17 +2058,18 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_DEVICE_ALARMS,
     title: 'Get Device Alarms',
-    description: 'Get alarms configured on a specific Garmin device.',
+    description:
+      'Get the alarms configured on a Garmin device, with time, repeat days and whether each one is on. ' +
+      'Without a deviceId every registered device is reported.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
       properties: {
         deviceId: {
           type: 'string',
-          description: 'The device identifier (required)',
+          description: 'Optional device identifier (from get_devices). Defaults to every device.',
         },
       },
-      required: ['deviceId'],
     },
   },
 
@@ -2056,7 +2102,9 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.COMPARE_ACTIVITIES,
     title: 'Compare Activities',
-    description: 'Compare 2-5 activities side by side with key metrics.',
+    description:
+      'Compare 2-5 activities side by side: distance, duration, speed, heart rate, calories, ' +
+      'elevation, steps and training effect.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -2072,7 +2120,9 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.FIND_SIMILAR_ACTIVITIES,
     title: 'Find Similar Activities',
-    description: 'Find activities similar to a reference activity based on type, distance, and duration (within 20% tolerance).',
+    description:
+      'Find activities similar to a reference activity by type, distance and duration (within 20% tolerance). ' +
+      'Returns the closest matches first, each with its full metrics and a similarity score.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -2086,6 +2136,12 @@ Example for interval running workout:
           description: 'Maximum number of similar activities to return (default: 10)',
           minimum: 1,
           maximum: 50,
+        },
+        searchDepth: {
+          type: 'number',
+          description: 'How many recent activities to search through (default: 200)',
+          minimum: 20,
+          maximum: 1000,
         },
       },
       required: ['activityId'],

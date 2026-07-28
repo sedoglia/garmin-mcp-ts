@@ -7,6 +7,27 @@ import { secureStorage, OAuthTokens } from '../utils/secure-storage.js';
 // La libreria è CommonJS, quindi l'export default contiene la classe
 const GarminConnect = (GarminConnectModule as any).GarminConnect || GarminConnectModule;
 
+/**
+ * Formats a date as YYYY-MM-DD in local time.
+ * `toISOString()` would shift the calendar day for anyone east of UTC during
+ * the first hours after midnight, asking Garmin for the wrong day.
+ */
+export function toLocalDateString(date: Date = new Date()): string {
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+/**
+ * Parses a YYYY-MM-DD string as a local calendar day.
+ * `new Date('2026-07-28')` is UTC midnight, which is still the 27th anywhere
+ * west of Greenwich.
+ */
+function parseLocalDate(dateString: string): Date {
+  const [year, month, day] = dateString.split('-').map(Number);
+  if (!year || !month || !day) return new Date(dateString);
+  return new Date(year, month - 1, day);
+}
+
 export class GarminConnectClient {
   private gc: any;
   private initialized: boolean = false;
@@ -32,9 +53,11 @@ export class GarminConnectClient {
         logger.info('✅ Loaded existing OAuth tokens from secure storage');
         this.initialized = true;
 
-        // Verify tokens are still valid by making a simple request
+        // Verify tokens are still valid by making a simple request.
+        // The profile is cached here too: many endpoints are addressed by
+        // displayName, and skipping this left it null for the whole session.
         try {
-          await this.gc.getUserProfile();
+          this.cacheProfile(await this.gc.getUserProfile());
           logger.info('✅ OAuth tokens are valid');
           return;
         } catch {
@@ -52,9 +75,7 @@ export class GarminConnectClient {
 
       // Get display name and profilePk for user-specific API calls
       try {
-        const profile = await this.gc.getUserProfile();
-        this.displayName = profile?.displayName || profile?.userName || null;
-        this.userProfilePk = profile?.profileId || profile?.userProfilePk || null;
+        this.cacheProfile(await this.gc.getUserProfile());
       } catch {
         // Non-critical, some endpoints may not need it
       }
@@ -76,9 +97,7 @@ export class GarminConnectClient {
       this.initialized = true;
 
       // Verify tokens are valid
-      const profile = await this.gc.getUserProfile();
-      this.displayName = profile?.displayName || profile?.userName || null;
-      this.userProfilePk = profile?.profileId || profile?.userProfilePk || null;
+      this.cacheProfile(await this.gc.getUserProfile());
       logger.info('✅ OAuth token authentication successful');
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -166,18 +185,92 @@ export class GarminConnectClient {
   }
 
   /**
+   * Stores the identifiers every user-scoped endpoint is addressed by.
+   */
+  private cacheProfile(profile: any): void {
+    this.displayName = profile?.displayName || profile?.userName || null;
+    this.userProfilePk = profile?.profileId || profile?.userProfilePk || null;
+  }
+
+  /**
    * Get the userProfilePk (lazy loading if not cached)
    */
   private async getUserProfilePk(): Promise<number> {
     if (this.userProfilePk) return this.userProfilePk;
     try {
-      const profile = await this.gc.getUserProfile();
-      this.userProfilePk = profile?.profileId || profile?.userProfilePk || null;
+      this.cacheProfile(await this.gc.getUserProfile());
       if (this.userProfilePk) return this.userProfilePk;
     } catch {
       // fall through
     }
     throw new Error('Could not determine userProfilePk');
+  }
+
+  /**
+   * Get the displayName (lazy loading if not cached).
+   * Several services are addressed by displayName, and a missing one silently
+   * turns into a request for the literal user "null", answered with a 403.
+   */
+  private async resolveDisplayName(): Promise<string> {
+    if (this.displayName) return this.displayName;
+    try {
+      this.cacheProfile(await this.gc.getUserProfile());
+      if (this.displayName) return this.displayName;
+    } catch {
+      // fall through
+    }
+    throw new Error('Could not determine the Garmin display name');
+  }
+
+  /**
+   * Activity metrics live at the top level in the activity list, but inside
+   * summaryDTO in the activity detail. Everything that compares or aggregates
+   * activities has to read both shapes.
+   */
+  private normalizeActivityMetrics(activity: any): {
+    activityId: number | undefined;
+    name: string | undefined;
+    type: string | undefined;
+    date: string | undefined;
+    distance: number | undefined;
+    duration: number | undefined;
+    elapsedDuration: number | undefined;
+    movingDuration: number | undefined;
+    avgSpeed: number | undefined;
+    maxSpeed: number | undefined;
+    avgHR: number | undefined;
+    maxHR: number | undefined;
+    calories: number | undefined;
+    elevationGain: number | undefined;
+    elevationLoss: number | undefined;
+    steps: number | undefined;
+    aerobicTrainingEffect: number | undefined;
+    anaerobicTrainingEffect: number | undefined;
+  } {
+    const summary = activity?.summaryDTO ?? {};
+    const pick = <T>(...values: T[]): T | undefined =>
+      values.find((v) => v !== undefined && v !== null);
+
+    return {
+      activityId: activity?.activityId,
+      name: activity?.activityName,
+      type: pick(activity?.activityType?.typeKey, activity?.activityTypeDTO?.typeKey),
+      date: pick(summary.startTimeLocal, activity?.startTimeLocal, summary.startTimeGMT, activity?.startTimeGMT),
+      distance: pick(activity?.distance, summary.distance),
+      duration: pick(activity?.duration, summary.duration),
+      elapsedDuration: pick(activity?.elapsedDuration, summary.elapsedDuration),
+      movingDuration: pick(activity?.movingDuration, summary.movingDuration),
+      avgSpeed: pick(activity?.averageSpeed, summary.averageSpeed),
+      maxSpeed: pick(activity?.maxSpeed, summary.maxSpeed),
+      avgHR: pick(activity?.averageHR, summary.averageHR),
+      maxHR: pick(activity?.maxHR, summary.maxHR),
+      calories: pick(activity?.calories, summary.calories),
+      elevationGain: pick(activity?.elevationGain, summary.elevationGain),
+      elevationLoss: pick(activity?.elevationLoss, summary.elevationLoss),
+      steps: pick(activity?.steps, summary.steps),
+      aerobicTrainingEffect: pick(activity?.aerobicTrainingEffect, summary.trainingEffect),
+      anaerobicTrainingEffect: pick(activity?.anaerobicTrainingEffect, summary.anaerobicTrainingEffect),
+    };
   }
 
   async getRecentActivities(limit: number = 10, start: number = 0): Promise<any> {
@@ -233,14 +326,59 @@ export class GarminConnectClient {
     }
   }
 
-  async getBodyComposition(days: number = 30): Promise<any> {
+  /**
+   * Get body composition (weight, body fat, muscle mass...) over a period.
+   * The weight-service exposes a date range, so `days` is honoured instead of
+   * being reduced to today's day view, which is empty on any day without a
+   * measurement.
+   */
+  async getBodyComposition(days: number = 30, endDate?: string): Promise<any> {
     this.checkInitialized();
     try {
-      // Ottieni il peso giornaliero per oggi (API non supporta range)
-      const weight = await this.gc.getDailyWeightData(new Date());
+      const end = endDate ? parseLocalDate(endDate) : new Date();
+      const start = new Date(end);
+      start.setDate(end.getDate() - (days - 1));
+
+      const startDate = toLocalDateString(start);
+      const finalDate = toLocalDateString(end);
+
+      const url = `https://connectapi.garmin.com/weight-service/weight/dateRange?startDate=${startDate}&endDate=${finalDate}`;
+      const data = await this.gc.get(url);
+
+      const measurements = (data?.dateWeightList || []).map((entry: any) => ({
+        samplePk: entry.samplePk,
+        date: entry.calendarDate,
+        weightKg: entry.weight != null ? entry.weight / 1000 : null,
+        bmi: entry.bmi,
+        bodyFatPercent: entry.bodyFat,
+        bodyWaterPercent: entry.bodyWater,
+        boneMassKg: entry.boneMass != null ? entry.boneMass / 1000 : null,
+        muscleMassKg: entry.muscleMass != null ? entry.muscleMass / 1000 : null,
+        visceralFat: entry.visceralFat,
+        metabolicAge: entry.metabolicAge,
+        physiqueRating: entry.physiqueRating,
+        sourceType: entry.sourceType,
+      }));
+
+      const average = data?.totalAverage || {};
+
       return {
-        weight,
+        startDate,
+        endDate: finalDate,
         requestedDays: days,
+        measurementCount: measurements.length,
+        measurements,
+        average: {
+          weightKg: average.weight != null ? average.weight / 1000 : null,
+          bmi: average.bmi,
+          bodyFatPercent: average.bodyFat,
+          bodyWaterPercent: average.bodyWater,
+          muscleMassKg: average.muscleMass != null ? average.muscleMass / 1000 : null,
+          boneMassKg: average.boneMass != null ? average.boneMass / 1000 : null,
+        },
+        message: measurements.length === 0
+          ? `No body composition measurement recorded between ${startDate} and ${finalDate}`
+          : undefined,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -249,15 +387,34 @@ export class GarminConnectClient {
     }
   }
 
+  /**
+   * Get the registered Garmin devices.
+   * The registration payload is mostly capability flags (~10 KB per device);
+   * only the identifying fields are returned. Use getDeviceSettings for the
+   * per-device configuration.
+   */
   async getDevices(): Promise<any> {
     this.checkInitialized();
     try {
-      // La libreria non ha un metodo diretto per devices
-      // Usiamo getUserSettings che contiene info sui dispositivi
-      const settings = await this.gc.getUserSettings();
+      const url = 'https://connectapi.garmin.com/device-service/deviceregistration/devices';
+      const devices = await this.gc.get(url);
+      const list = Array.isArray(devices) ? devices : [];
+
       return {
-        message: 'Device info available through user settings',
-        settings,
+        count: list.length,
+        devices: list.map((device: any) => ({
+          deviceId: device.deviceId ?? device.unitId,
+          unitId: device.unitId,
+          productDisplayName: device.productDisplayName,
+          displayName: device.displayName,
+          applicationKey: device.applicationKey,
+          deviceTypePk: device.deviceTypePk,
+          serialNumber: device.serialNumber,
+          partNumber: device.partNumber,
+          currentFirmwareVersion: device.currentFirmwareVersion,
+          primary: device.primary,
+          imageUrl: device.imageUrl,
+        })),
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -278,18 +435,47 @@ export class GarminConnectClient {
     }
   }
 
-  async getTrainingStatus(_days: number = 7): Promise<any> {
+  /**
+   * Get the aggregated training status for a date.
+   * The previous implementation returned the lifetime activity count and the
+   * full user settings, which is not training status at all.
+   */
+  async getTrainingStatus(date?: string): Promise<any> {
     this.checkInitialized();
+    const calendarDate = date || toLocalDateString();
     try {
-      // Ottieni conteggio attività e statistiche come proxy per training status
-      const count = await this.gc.countActivities();
-      const settings = await this.gc.getUserSettings();
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/trainingstatus/aggregated/${calendarDate}`;
+      const data = await this.gc.get(url);
+
+      const statusByDevice = data?.mostRecentTrainingStatus?.latestTrainingStatusData || {};
+      const latest: any = Object.values(statusByDevice)[0] || {};
+      const acute = latest.acuteTrainingLoadDTO || {};
+      const vo2 = data?.mostRecentVO2Max?.generic || {};
+
       return {
-        activityCount: count,
-        userSettings: settings,
+        date: calendarDate,
+        trainingStatus: latest.trainingStatus ?? null,
+        trainingStatusFeedbackPhrase: latest.trainingStatusFeedbackPhrase ?? null,
+        trainingStatusDate: latest.calendarDate ?? null,
+        trainingPaused: latest.trainingPaused ?? null,
+        fitnessTrend: latest.fitnessTrend ?? null,
+        fitnessTrendSport: latest.fitnessTrendSport ?? null,
+        vo2Max: vo2.vo2MaxPreciseValue ?? vo2.vo2MaxValue ?? null,
+        vo2MaxDate: vo2.calendarDate ?? null,
+        fitnessAge: vo2.fitnessAge ?? null,
+        acuteTrainingLoad: acute.dailyTrainingLoadAcute ?? null,
+        chronicTrainingLoad: acute.dailyTrainingLoadChronic ?? null,
+        acuteChronicWorkloadRatio: acute.dailyAcuteChronicWorkloadRatio ?? null,
+        acwrStatus: acute.acwrStatus ?? null,
+        acwrPercent: acute.acwrPercent ?? null,
+        devices: data?.mostRecentTrainingStatus?.recordedDevices ?? [],
+        raw: data,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { date: calendarDate, message: 'No training status data for this date' };
+      }
       logger.error('Error fetching training status:', error);
       throw err;
     }
@@ -360,20 +546,29 @@ export class GarminConnectClient {
     }
   }
 
+  /**
+   * Get the laps/splits of an activity.
+   * The activity detail payload carries no splits (only summaryDTO), so this
+   * has to go through the dedicated splits endpoint.
+   */
   async getActivitySplits(activityId: number): Promise<any> {
     this.checkInitialized();
     try {
-      // L'attività dettagliata contiene già i dati dei split
-      const activity = await this.gc.getActivity({ activityId });
-      // Estrai splits/laps se presenti
-      const splits = (activity as any)?.splitSummaries || (activity as any)?.laps || [];
+      const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/splits`;
+      const data = await this.gc.get(url);
+      const splits = data?.lapDTOs || [];
+
       return {
         activityId,
-        activityName: (activity as any)?.activityName,
+        splitCount: splits.length,
         splits,
+        events: data?.eventDTOs || [],
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { activityId, splitCount: 0, splits: [], message: 'No splits for this activity' };
+      }
       logger.error('Error fetching activity splits:', error);
       throw err;
     }
@@ -1157,14 +1352,25 @@ export class GarminConnectClient {
   async getDeviceLastUsed(): Promise<any> {
     this.checkInitialized();
     try {
-      // Use getUserSettings which contains device info
-      const settings = await this.gc.getUserSettings();
+      const url = 'https://connectapi.garmin.com/device-service/deviceservice/mylastused';
+      const device = await this.gc.get(url);
+
       return {
-        message: 'Device info from user settings',
-        settings,
+        deviceId: device?.userDeviceId ?? null,
+        deviceName: device?.lastUsedDeviceName ?? null,
+        applicationKey: device?.lastUsedDeviceApplicationKey ?? null,
+        lastUploadTimestamp: device?.lastUsedDeviceUploadTime ?? null,
+        lastUpload: device?.lastUsedDeviceUploadTime
+          ? new Date(device.lastUsedDeviceUploadTime).toISOString()
+          : null,
+        imageUrl: device?.imageUrl ?? null,
+        raw: device,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
+      if (error.includes('404')) {
+        return { message: 'No device has been used with this account yet' };
+      }
       logger.error('Error fetching last used device:', error);
       throw err;
     }
@@ -1213,16 +1419,35 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get floors climbed data
+   * Get floors climbed data.
+   * The daily/floors path answers 404; the floors chart is the endpoint that
+   * actually serves this data, as 15-minute buckets that are summed here.
    */
   async getFloors(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/wellness-service/wellness/daily/floors/${date}`;
-      const floors = await this.gc.get(url);
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/floorsChartData/daily/${date}`;
+      const data = await this.gc.get(url);
+
+      const buckets: any[] = data?.floorValuesArray || [];
+      let floorsAscended = 0;
+      let floorsDescended = 0;
+
+      for (const bucket of buckets) {
+        floorsAscended += bucket[2] || 0;
+        floorsDescended += bucket[3] || 0;
+      }
+
       return {
         date,
-        ...floors,
+        floorsAscended,
+        floorsDescended,
+        startTimestampLocal: data?.startTimestampLocal,
+        endTimestampLocal: data?.endTimestampLocal,
+        intervalCount: buckets.length,
+        // [startTimeGMT, endTimeGMT, floorsAscended, floorsDescended]
+        valueDescriptors: data?.floorsValueDescriptorDTOList || [],
+        floorValuesArray: buckets,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1235,17 +1460,40 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get intensity minutes data
+   * Get intensity minutes data.
+   * The service is a range endpoint (daily/im/{start}/{end}); the singular
+   * daily/intensityMinutes path used before answers 404 for every date.
    */
-  async getIntensityMinutes(date: string): Promise<any> {
+  async getIntensityMinutes(date: string, endDate?: string): Promise<any> {
     this.checkInitialized();
+    const end = endDate || date;
     try {
-      const url = `https://connectapi.garmin.com/wellness-service/wellness/daily/intensityMinutes/${date}`;
+      const url = `https://connectapi.garmin.com/wellness-service/wellness/daily/im/${date}/${end}`;
       const data = await this.gc.get(url);
-      return {
-        date,
-        ...data,
-      };
+      const days = Array.isArray(data) ? data : data ? [data] : [];
+
+      if (days.length === 0) {
+        return { date, message: 'No intensity minutes data for this date' };
+      }
+
+      const mapped = days.map((day: any) => ({
+        date: day.calendarDate,
+        moderateMinutes: day.moderateMinutes ?? 0,
+        vigorousMinutes: day.vigorousMinutes ?? 0,
+        // Garmin counts a vigorous minute twice towards the weekly goal
+        totalMinutes: (day.moderateMinutes ?? 0) + 2 * (day.vigorousMinutes ?? 0),
+        weeklyModerate: day.weeklyModerate,
+        weeklyVigorous: day.weeklyVigorous,
+        weeklyTotal: day.weeklyTotal,
+        weekGoal: day.weekGoal,
+      }));
+
+      // Single date stays flat so the common case is not wrapped in an array
+      if (!endDate) {
+        return { ...mapped[0], date, dailyValues: days[0]?.imValuesArray || [] };
+      }
+
+      return { startDate: date, endDate: end, dayCount: mapped.length, days: mapped };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       if (error.includes('404')) {
@@ -1264,9 +1512,20 @@ export class GarminConnectClient {
     try {
       const url = `https://connectapi.garmin.com/metrics-service/metrics/maxmet/daily/${date}/${date}`;
       const metrics = await this.gc.get(url);
+      // The service answers with an array; spreading it produced {"0": {...}}
+      const daily = Array.isArray(metrics) ? metrics[0] : metrics;
+
+      if (!daily) {
+        return { date, message: 'No max metrics data for this date' };
+      }
+
       return {
         date,
-        ...metrics,
+        vo2Max: daily.generic?.vo2MaxPreciseValue ?? daily.generic?.vo2MaxValue ?? null,
+        vo2MaxCycling: daily.cycling?.vo2MaxPreciseValue ?? daily.cycling?.vo2MaxValue ?? null,
+        fitnessAge: daily.generic?.fitnessAge ?? null,
+        measurementDate: daily.generic?.calendarDate ?? null,
+        ...daily,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1286,9 +1545,17 @@ export class GarminConnectClient {
     try {
       const url = `https://connectapi.garmin.com/metrics-service/metrics/trainingreadiness/${date}`;
       const readiness = await this.gc.get(url);
+      // The service answers with one entry per device; spreading the array
+      // turned it into {"0": {...}}
+      const latest = Array.isArray(readiness) ? readiness[0] : readiness;
+
+      if (!latest) {
+        return { date, message: 'No training readiness data for this date' };
+      }
+
       return {
         date,
-        ...readiness,
+        ...latest,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1553,9 +1820,13 @@ export class GarminConnectClient {
     try {
       const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/hrTimeInZones`;
       const zones = await this.gc.get(url);
+      // A list of zones: spreading it produced {"0": ..., "1": ...}
+      const list = Array.isArray(zones) ? zones : zones ? [zones] : [];
+
       return {
         activityId,
-        ...zones,
+        zones: list,
+        totalSecondsInZones: list.reduce((total: number, zone: any) => total + (zone?.secsInZone || 0), 0),
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1574,10 +1845,15 @@ export class GarminConnectClient {
     this.checkInitialized();
     try {
       const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}/exerciseSets`;
-      const sets = await this.gc.get(url);
+      const data = await this.gc.get(url);
+      // The payload wraps the sets; returning it whole put the envelope
+      // itself under `sets`
+      const sets = Array.isArray(data) ? data : data?.exerciseSets || [];
+
       return {
         activityId,
-        sets: sets || [],
+        setCount: sets.length,
+        sets,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1594,19 +1870,42 @@ export class GarminConnectClient {
   // ═══════════════════════════════════════════════════════════════════════════
 
   /**
-   * Get user goals
+   * Get user goals.
+   * The service rejects a request without `status` ("userId and status cant be
+   * null"), so "all" is served by querying each status in turn.
    */
-  async getGoals(status?: 'active' | 'future' | 'past'): Promise<any> {
+  async getGoals(status?: 'active' | 'future' | 'past', limit: number = 30): Promise<any> {
     this.checkInitialized();
     try {
-      let url = 'https://connectapi.garmin.com/goal-service/goal/goals';
-      if (status) {
-        url += `?status=${status}`;
+      const statuses: Array<'active' | 'future' | 'past'> = status
+        ? [status]
+        : ['active', 'future', 'past'];
+      const url = 'https://connectapi.garmin.com/goal-service/goal/goals';
+      const goals: any[] = [];
+
+      for (const goalStatus of statuses) {
+        let start = 1;
+        // The endpoint pages; keep asking until it stops returning goals.
+        while (true) {
+          const params = {
+            status: goalStatus,
+            start: String(start),
+            limit: String(limit),
+            sortOrder: 'asc',
+          };
+          const page = await this.gc.get(url, { params });
+          if (!Array.isArray(page) || page.length === 0) break;
+
+          goals.push(...page.map((goal: any) => ({ ...goal, goalStatus })));
+          if (page.length < limit) break;
+          start += limit;
+        }
       }
-      const goals = await this.gc.get(url);
+
       return {
         status: status || 'all',
-        goals: goals || [],
+        count: goals.length,
+        goals,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1670,21 +1969,40 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get personal records
+   * Get personal records.
+   * The social profile carries no personalRecords field, so the old
+   * implementation always answered with an empty stub. The dedicated
+   * personalrecord service holds the real ones.
    */
   async getPersonalRecords(): Promise<any> {
     this.checkInitialized();
     try {
-      // Personal records are typically part of the user profile
-      const profile = await this.gc.getUserProfile();
+      const displayName = await this.resolveDisplayName();
+      const url = `https://connectapi.garmin.com/personalrecord-service/personalrecord/prs/${displayName}`;
+      const data = await this.gc.get(url);
+      const records = Array.isArray(data) ? data : [];
+
       return {
-        records: (profile as any)?.personalRecords || [],
-        message: 'Personal records are available through activity history',
+        count: records.length,
+        // typeId identifies the record category (distance PRs carry the
+        // activity they were set in, aggregate ones such as step records do not)
+        records: records.map((record: any) => ({
+          id: record.id,
+          typeId: record.typeId,
+          value: record.value,
+          activityId: record.activityId || null,
+          activityName: record.activityName,
+          activityType: record.activityType,
+          activityStartDate: record.activityStartDateTimeLocalFormatted,
+          recordDate: record.prStartTimeLocalFormatted,
+          status: record.status,
+        })),
+        raw: records,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       if (error.includes('404')) {
-        return { records: [], message: 'No personal records available' };
+        return { count: 0, records: [], message: 'No personal records available' };
       }
       logger.error('Error fetching personal records:', error);
       throw err;
@@ -1692,14 +2010,42 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get race predictions (5K, 10K, half, marathon)
+   * Get race predictions (5K, 10K, half, marathon).
+   * The endpoint is user-scoped: without the displayName it answers 404.
    */
   async getRacePredictions(): Promise<any> {
     this.checkInitialized();
     try {
-      const url = 'https://connectapi.garmin.com/metrics-service/metrics/racepredictions/latest';
+      const displayName = await this.resolveDisplayName();
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/racepredictions/latest/${displayName}`;
       const predictions = await this.gc.get(url);
-      return predictions;
+
+      if (!predictions) {
+        return { message: 'No race predictions available' };
+      }
+
+      const format = (seconds?: number | null) => {
+        if (seconds == null) return null;
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = Math.round(seconds % 60);
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+      };
+
+      return {
+        date: predictions.calendarDate,
+        time5K: predictions.time5K,
+        time10K: predictions.time10K,
+        timeHalfMarathon: predictions.timeHalfMarathon,
+        timeMarathon: predictions.timeMarathon,
+        formatted: {
+          time5K: format(predictions.time5K),
+          time10K: format(predictions.time10K),
+          timeHalfMarathon: format(predictions.timeHalfMarathon),
+          timeMarathon: format(predictions.timeMarathon),
+        },
+      };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       if (error.includes('404')) {
@@ -1766,15 +2112,9 @@ export class GarminConnectClient {
   async getProgressSummary(startDate: string, endDate: string, metric: string = 'distance'): Promise<any> {
     this.checkInitialized();
     try {
-      // Get activities in the date range and calculate summary
-      const activities = await this.gc.getActivities(0, 100);
-      const startTime = new Date(startDate).getTime();
-      const endTime = new Date(endDate).getTime() + 86400000; // End of day
-
-      const filtered = (activities as any[]).filter((a: any) => {
-        const actTime = new Date(a.startTimeLocal || a.startTimeGMT).getTime();
-        return actTime >= startTime && actTime <= endTime;
-      });
+      // Ask the service for the range instead of filtering the last 100
+      // activities, which silently truncated any busier period.
+      const filtered = await this.getActivitiesByDate(startDate, endDate);
 
       let totalDistance = 0;
       let totalDuration = 0;
@@ -1807,20 +2147,59 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get daily summary for a date
+   * Get daily summary for a date.
+   * Built on the user summary service, which carries calories, distance,
+   * floors and intensity minutes. The old implementation returned only the
+   * step count plus the entire heart rate series, duplicating get_heart_rate.
    */
   async getDailySummary(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      // Use library method to get daily stats
-      const dateObj = new Date(date);
-      const steps = await this.gc.getSteps(dateObj);
-      const heartRate = await this.gc.getHeartRate(dateObj);
+      const summary = await this.getUserSummary(date);
+
+      // Dates outside the recorded history answer 200 with every field null
+      // rather than 404, which would otherwise read as a real zero-day.
+      const hasData =
+        summary &&
+        !summary.message &&
+        (summary.totalSteps != null ||
+          summary.totalKilocalories != null ||
+          summary.totalDistanceMeters != null);
+
+      if (!hasData) {
+        return { date, message: 'No daily summary for this date' };
+      }
 
       return {
         date,
-        steps,
-        heartRate,
+        steps: summary.totalSteps ?? null,
+        stepGoal: summary.dailyStepGoal ?? null,
+        distanceMeters: summary.totalDistanceMeters ?? null,
+        distanceKm:
+          summary.totalDistanceMeters != null
+            ? Number((summary.totalDistanceMeters / 1000).toFixed(2))
+            : null,
+        totalCalories: summary.totalKilocalories ?? null,
+        activeCalories: summary.activeKilocalories ?? null,
+        bmrCalories: summary.bmrKilocalories ?? null,
+        floorsAscended: summary.floorsAscended ?? null,
+        floorsDescended: summary.floorsDescended ?? null,
+        floorsGoal: summary.userFloorsAscendedGoal ?? null,
+        moderateIntensityMinutes: summary.moderateIntensityMinutes ?? null,
+        vigorousIntensityMinutes: summary.vigorousIntensityMinutes ?? null,
+        intensityMinutesGoal: summary.intensityMinutesGoal ?? null,
+        restingHeartRate: summary.restingHeartRate ?? null,
+        minHeartRate: summary.minHeartRate ?? null,
+        maxHeartRate: summary.maxHeartRate ?? null,
+        averageStressLevel: summary.averageStressLevel ?? null,
+        maxStressLevel: summary.maxStressLevel ?? null,
+        bodyBatteryHighest: summary.bodyBatteryHighestValue ?? null,
+        bodyBatteryLowest: summary.bodyBatteryLowestValue ?? null,
+        highlyActiveSeconds: summary.highlyActiveSeconds ?? null,
+        activeSeconds: summary.activeSeconds ?? null,
+        sedentarySeconds: summary.sedentarySeconds ?? null,
+        sleepingSeconds: summary.sleepingSeconds ?? null,
+        averageRespiration: summary.avgWakingRespirationValue ?? null,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1842,7 +2221,7 @@ export class GarminConnectClient {
   async getUserSummary(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const displayName = this.displayName || (await this.gc.getUserProfile())?.displayName;
+      const displayName = await this.resolveDisplayName();
       const url = `https://connectapi.garmin.com/usersummary-service/usersummary/daily/${displayName}`;
       const params = { calendarDate: date };
       const summary = await this.gc.get(url, { params });
@@ -1863,7 +2242,7 @@ export class GarminConnectClient {
   async getStepsData(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const displayName = this.displayName || (await this.gc.getUserProfile())?.displayName;
+      const displayName = await this.resolveDisplayName();
       const url = `https://connectapi.garmin.com/wellness-service/wellness/dailySummaryChart/${displayName}`;
       const params = { date };
       const data = await this.gc.get(url, { params });
@@ -1998,7 +2377,7 @@ export class GarminConnectClient {
   async getRhrDay(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const displayName = this.displayName || (await this.gc.getUserProfile())?.displayName;
+      const displayName = await this.resolveDisplayName();
       const url = `https://connectapi.garmin.com/userstats-service/wellness/daily/${displayName}`;
       const params = { fromDate: date, untilDate: date, metricId: 60 };
       const data = await this.gc.get(url, { params });
@@ -2400,13 +2779,37 @@ export class GarminConnectClient {
   }
 
   /**
-   * Count total activities
+   * Count activities, over the whole history or over a date range.
+   * The service answers with an array of buckets carrying `countOfActivities`;
+   * reading a non-existent `totalCount` off it always produced 0.
    */
-  async countActivities(): Promise<number> {
+  async countActivities(startDate?: string, endDate?: string): Promise<any> {
     this.checkInitialized();
+    const start = startDate || '1970-01-01';
+    const end = endDate || toLocalDateString();
+
     try {
-      const count = await this.gc.countActivities();
-      return typeof count === 'object' ? count.totalCount || 0 : count;
+      const url = 'https://connectapi.garmin.com/fitnessstats-service/activity';
+      const params = {
+        aggregation: 'lifetime',
+        startDate: start,
+        endDate: end,
+        metric: 'duration',
+      };
+      const data = await this.gc.get(url, { params });
+
+      const buckets = Array.isArray(data) ? data : data ? [data] : [];
+      const count = buckets.reduce(
+        (total: number, bucket: any) => total + (bucket?.countOfActivities || 0),
+        0
+      );
+
+      return {
+        count,
+        startDate: startDate || null,
+        endDate: endDate || null,
+        scope: startDate || endDate ? 'range' : 'lifetime',
+      };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error counting activities:', error);
@@ -2592,17 +2995,21 @@ export class GarminConnectClient {
   // }
 
   /**
-   * Set activity privacy (public or private)
+   * Set activity privacy.
    *
-   * Note: The 'followers' option returns 400 Bad Request error from Garmin API
-   * Only 'public' and 'private' are supported
+   * Note: the level Garmin Connect calls "connections only" is keyed
+   * `subscribers`, not `followers` — the latter is what returns 400.
    */
-  async setActivityPrivacy(activityId: number, privacy: 'public' | 'private'): Promise<any> {
+  async setActivityPrivacy(
+    activityId: number,
+    privacy: 'public' | 'private' | 'subscribers'
+  ): Promise<any> {
     this.checkInitialized();
     try {
       const privacyMap = {
         public: { typeId: 1, typeKey: 'public' },
         private: { typeId: 2, typeKey: 'private' },
+        subscribers: { typeId: 3, typeKey: 'subscribers' },
       };
 
       const url = `https://connectapi.garmin.com/activity-service/activity/${activityId}`;
@@ -2626,23 +3033,42 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get training load (weekly load balance)
+   * Get the training load balance (low aerobic / high aerobic / anaerobic).
+   * There is no metrics-service/trainingload endpoint — it answers 404, which
+   * the caller could only read as "no data". The balance is part of the
+   * aggregated training status snapshot.
    */
   async getTrainingLoad(startDate: string, endDate?: string): Promise<any> {
     this.checkInitialized();
-    const end = endDate || startDate;
+    const date = endDate || startDate;
     try {
-      const url = `https://connectapi.garmin.com/metrics-service/metrics/trainingload/${startDate}/${end}`;
-      const load = await this.gc.get(url);
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/trainingstatus/aggregated/${date}`;
+      const data = await this.gc.get(url);
+
+      const balanceByDevice = data?.mostRecentTrainingLoadBalance?.metricsTrainingLoadBalanceDTOMap || {};
+      const balance: any = Object.values(balanceByDevice)[0] || {};
+
       return {
-        startDate,
-        endDate: end,
-        ...load,
+        date,
+        // A snapshot on `date`, not an aggregate over a range
+        calendarDate: balance.calendarDate ?? null,
+        monthlyLoadAerobicLow: balance.monthlyLoadAerobicLow ?? null,
+        monthlyLoadAerobicHigh: balance.monthlyLoadAerobicHigh ?? null,
+        monthlyLoadAnaerobic: balance.monthlyLoadAnaerobic ?? null,
+        monthlyLoadAerobicLowTargetMin: balance.monthlyLoadAerobicLowTargetMin ?? null,
+        monthlyLoadAerobicLowTargetMax: balance.monthlyLoadAerobicLowTargetMax ?? null,
+        monthlyLoadAerobicHighTargetMin: balance.monthlyLoadAerobicHighTargetMin ?? null,
+        monthlyLoadAerobicHighTargetMax: balance.monthlyLoadAerobicHighTargetMax ?? null,
+        monthlyLoadAnaerobicTargetMin: balance.monthlyLoadAnaerobicTargetMin ?? null,
+        monthlyLoadAnaerobicTargetMax: balance.monthlyLoadAnaerobicTargetMax ?? null,
+        trainingBalanceFeedbackPhrase: balance.trainingBalanceFeedbackPhrase ?? null,
+        primaryTrainingDevice: balance.primaryTrainingDevice ?? null,
+        raw: data?.mostRecentTrainingLoadBalance ?? null,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       if (error.includes('404')) {
-        return { startDate, endDate: end, message: 'No training load data' };
+        return { date, message: 'No training load data' };
       }
       logger.error('Error fetching training load:', error);
       throw err;
@@ -2650,16 +3076,35 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get acute/chronic load ratio
+   * Get acute/chronic load ratio.
+   * Same story as getTrainingLoad: the dedicated endpoint does not exist, the
+   * ratio comes from the aggregated training status.
    */
   async getLoadRatio(date: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/metrics-service/metrics/acutechronicworkloadratio/${date}`;
-      const ratio = await this.gc.get(url);
+      const url = `https://connectapi.garmin.com/metrics-service/metrics/trainingstatus/aggregated/${date}`;
+      const data = await this.gc.get(url);
+
+      const statusByDevice = data?.mostRecentTrainingStatus?.latestTrainingStatusData || {};
+      const latest: any = Object.values(statusByDevice)[0] || {};
+      const acute = latest.acuteTrainingLoadDTO;
+
+      if (!acute) {
+        return { date, message: 'No load ratio data' };
+      }
+
       return {
         date,
-        ...ratio,
+        calendarDate: latest.calendarDate ?? null,
+        acuteLoad: acute.dailyTrainingLoadAcute ?? null,
+        chronicLoad: acute.dailyTrainingLoadChronic ?? null,
+        acuteChronicWorkloadRatio: acute.dailyAcuteChronicWorkloadRatio ?? null,
+        acwrPercent: acute.acwrPercent ?? null,
+        acwrStatus: acute.acwrStatus ?? null,
+        acwrStatusFeedback: acute.acwrStatusFeedback ?? null,
+        minTrainingLoadChronic: acute.minTrainingLoadChronic ?? null,
+        maxTrainingLoadChronic: acute.maxTrainingLoadChronic ?? null,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -2672,7 +3117,9 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get performance condition
+   * Get performance condition.
+   * Garmin exposes no daily endpoint for it; the value is recorded per
+   * activity, so a 404 is reported as "not available" rather than "no data".
    */
   async getPerformanceCondition(date: string): Promise<any> {
     this.checkInitialized();
@@ -2686,7 +3133,12 @@ export class GarminConnectClient {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       if (error.includes('404')) {
-        return { date, message: 'No performance condition data' };
+        return {
+          date,
+          message:
+            'Performance condition is not exposed as a daily metric by the Garmin API. ' +
+            'It is recorded per activity: use get_activity_details on a run or ride.',
+        };
       }
       logger.error('Error fetching performance condition:', error);
       throw err;
@@ -2713,22 +3165,54 @@ export class GarminConnectClient {
   }
 
   /**
-   * Get device alarms
+   * Get the alarms configured on a device, or on every device when no id is
+   * given. There is no alarms endpoint (the old one answered 404, which the
+   * caller could not tell apart from "no alarms"): alarms are part of the
+   * device settings.
    */
-  async getDeviceAlarms(deviceId: string): Promise<any> {
+  async getDeviceAlarms(deviceId?: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/device-service/deviceservice/alarms/${deviceId}`;
-      const alarms = await this.gc.get(url);
+      let deviceIds: string[];
+
+      if (deviceId) {
+        deviceIds = [deviceId];
+      } else {
+        const registered = await this.getDevices();
+        deviceIds = (registered.devices || [])
+          .map((device: any) => device.deviceId)
+          .filter((id: unknown): id is number | string => id !== null && id !== undefined)
+          .map(String);
+      }
+
+      const perDevice = [];
+      for (const id of deviceIds) {
+        const settings = await this.getDeviceSettings(id);
+        const alarms = (settings?.alarms || []).map((alarm: any) => ({
+          alarmId: alarm.alarmId,
+          enabled: alarm.alarmMode === 'ON',
+          mode: alarm.alarmMode,
+          // alarmTime is minutes since midnight
+          time:
+            typeof alarm.alarmTime === 'number'
+              ? `${String(Math.floor(alarm.alarmTime / 60)).padStart(2, '0')}:${String(alarm.alarmTime % 60).padStart(2, '0')}`
+              : null,
+          alarmTimeMinutes: alarm.alarmTime,
+          days: alarm.alarmDays || [],
+          sound: alarm.alarmSound,
+          message: alarm.alarmMessage,
+        }));
+
+        perDevice.push({ deviceId: id, alarmCount: alarms.length, alarms });
+      }
+
       return {
-        deviceId,
-        alarms: alarms || [],
+        deviceCount: perDevice.length,
+        alarmCount: perDevice.reduce((total, device) => total + device.alarmCount, 0),
+        devices: perDevice,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
-      if (error.includes('404')) {
-        return { deviceId, alarms: [] };
-      }
       logger.error('Error fetching device alarms:', error);
       throw err;
     }
@@ -2768,19 +3252,11 @@ export class GarminConnectClient {
         activityIds.map(id => this.getActivityDetails(id))
       );
 
-      // Extract key metrics for comparison
+      // The detail payload keeps the metrics inside summaryDTO, so reading
+      // them off the top level produced a list of names with no numbers.
       const comparison = activities.map((act: any, idx: number) => ({
+        ...this.normalizeActivityMetrics(act),
         activityId: activityIds[idx],
-        name: act.activityName,
-        type: act.activityType?.typeKey,
-        date: act.startTimeLocal,
-        distance: act.distance,
-        duration: act.duration,
-        avgSpeed: act.averageSpeed,
-        avgHR: act.averageHR,
-        maxHR: act.maxHR,
-        calories: act.calories,
-        elevationGain: act.elevationGain,
       }));
 
       return {
@@ -2799,52 +3275,68 @@ export class GarminConnectClient {
    */
   async findSimilarActivities(
     activityId: number,
-    limit: number = 10
+    limit: number = 10,
+    searchDepth: number = 200
   ): Promise<any> {
     this.checkInitialized();
     try {
-      // Get reference activity
-      const reference: any = await this.getActivityDetails(activityId);
+      // Get reference activity. Its metrics live in summaryDTO, so comparing
+      // them against the flat list fields used to yield NaN and drop every
+      // candidate.
+      const referenceDetail: any = await this.getActivityDetails(activityId);
+      const reference = this.normalizeActivityMetrics(referenceDetail);
 
-      // Get recent activities of same type
-      const allActivities = await this.gc.getActivities(0, 100);
+      if (!reference.distance || !reference.duration) {
+        return {
+          referenceActivityId: activityId,
+          referenceActivity: reference,
+          similarActivities: [],
+          count: 0,
+          message: 'The reference activity has no distance or duration to compare against',
+        };
+      }
 
-      const similar = (allActivities as any[])
-        .filter((act: any) => {
+      const allActivities = await this.gc.getActivities(0, searchDepth);
+
+      const candidates = (allActivities as any[])
+        .map((act: any) => this.normalizeActivityMetrics(act))
+        .filter((act) => {
           if (act.activityId === activityId) return false;
-          if (act.activityType?.typeKey !== reference.activityType?.typeKey) return false;
+          if (act.type !== reference.type) return false;
+          if (!act.distance || !act.duration) return false;
 
           // Distance within 20%
-          const distanceDiff = Math.abs(act.distance - reference.distance) / reference.distance;
+          const distanceDiff = Math.abs(act.distance - reference.distance!) / reference.distance!;
           if (distanceDiff > 0.2) return false;
 
           // Duration within 20%
-          const durationDiff = Math.abs(act.duration - reference.duration) / reference.duration;
+          const durationDiff = Math.abs(act.duration - reference.duration!) / reference.duration!;
           if (durationDiff > 0.2) return false;
 
           return true;
         })
-        .slice(0, limit)
-        .map((act: any) => ({
-          activityId: act.activityId,
-          name: act.activityName,
-          date: act.startTimeLocal,
-          distance: act.distance,
-          duration: act.duration,
-          avgSpeed: act.averageSpeed,
-          similarity: 'high',
-        }));
+        .map((act) => {
+          const distanceDiff = Math.abs(act.distance! - reference.distance!) / reference.distance!;
+          const durationDiff = Math.abs(act.duration! - reference.duration!) / reference.duration!;
+          const deviation = (distanceDiff + durationDiff) / 2;
+
+          return {
+            ...act,
+            distanceDiffPercent: Number((distanceDiff * 100).toFixed(1)),
+            durationDiffPercent: Number((durationDiff * 100).toFixed(1)),
+            similarityScore: Number((1 - deviation).toFixed(3)),
+          };
+        })
+        // Closest match first, rather than whatever the list happened to order
+        .sort((a, b) => b.similarityScore - a.similarityScore)
+        .slice(0, limit);
 
       return {
         referenceActivityId: activityId,
-        referenceActivity: {
-          name: reference.activityName,
-          type: reference.activityType?.typeKey,
-          distance: reference.distance,
-          duration: reference.duration,
-        },
-        similarActivities: similar,
-        count: similar.length,
+        referenceActivity: reference,
+        searchedActivities: (allActivities as any[]).length,
+        similarActivities: candidates,
+        count: candidates.length,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);

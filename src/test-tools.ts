@@ -70,7 +70,7 @@ async function main() {
   results.push(await testTool(handler, 'list_recent_activities', { limit: 5 }));
   results.push(await testTool(handler, 'get_user_profile'));
   results.push(await testTool(handler, 'get_devices'));
-  results.push(await testTool(handler, 'get_training_status', { days: 7 }));
+  results.push(await testTool(handler, 'get_training_status', { date: today }));
   results.push(await testTool(handler, 'get_health_metrics', { date: today }));
   results.push(await testTool(handler, 'get_sleep_data', { date: yesterday }));
   results.push(await testTool(handler, 'get_body_composition', { days: 30 }));
@@ -368,21 +368,53 @@ async function main() {
     // REMOVED: add_activity_comment - Not supported by Garmin OAuth API
     console.log('⚠️  add_activity_comment removed - not supported by Garmin OAuth API');
 
-    // Test privacy - cycle through public/private to verify it works
-    console.log('🔒 Testing set_activity_privacy (public/private only)...');
-    const privacyTest1 = await testTool(handler, 'set_activity_privacy', {
-      activityId,
-      privacy: 'private',
-    });
-    results.push(privacyTest1);
+    // Test privacy. The original level has to be read first: assuming it was
+    // "public" left every account that uses "connections only" (subscribers)
+    // with a publicly visible activity after each run.
+    const detail = await handler.handle('get_activity_details', { activityId }) as any;
+    const originalPrivacy: string | undefined =
+      detail?.data?.accessControlRuleDTO?.typeKey;
 
-    // Wait a moment then set back to public to restore original state
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    const privacyTest2 = await testTool(handler, 'set_activity_privacy', {
-      activityId,
-      privacy: 'public',
-    });
-    results.push(privacyTest2);
+    if (!originalPrivacy) {
+      console.log('⚠️  Skipping set_activity_privacy: could not read the current privacy to restore it');
+    } else {
+      console.log(`🔒 Testing set_activity_privacy (original: ${originalPrivacy})...`);
+
+      // Flip to something the activity is not currently set to
+      const probePrivacy = originalPrivacy === 'private' ? 'public' : 'private';
+      results.push(await testTool(handler, 'set_activity_privacy', {
+        activityId,
+        privacy: probePrivacy,
+      }));
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const restore = await testTool(handler, 'set_activity_privacy', {
+        activityId,
+        privacy: originalPrivacy,
+      });
+      results.push(restore);
+
+      // Leaving the activity on the probe value would be a silent data change,
+      // so confirm the restore landed rather than trusting the 200.
+      const after = await handler.handle('get_activity_details', { activityId }) as any;
+      const restoredPrivacy = after?.data?.accessControlRuleDTO?.typeKey;
+
+      if (restoredPrivacy === originalPrivacy) {
+        console.log(`✅ privacy restored to "${originalPrivacy}"`);
+      } else {
+        console.error(
+          `❌ PRIVACY NOT RESTORED for activity ${activityId}: ` +
+          `expected "${originalPrivacy}", found "${restoredPrivacy}". Fix it manually.`
+        );
+        results.push({
+          tool: 'set_activity_privacy (restore)',
+          success: false,
+          duration: 0,
+          error: `activity ${activityId} left as "${restoredPrivacy}" instead of "${originalPrivacy}"`,
+        });
+      }
+    }
   }
 
   console.log('\n═══════════════════════════════════════════════════════════════');
@@ -399,12 +431,13 @@ async function main() {
 
   results.push(await testTool(handler, 'get_sleep_movement', { date: yesterday }));
 
-  // Get device alarms (requires deviceId)
+  // Alarms across every registered device, then for a single one
+  results.push(await testTool(handler, 'get_device_alarms'));
+
   const devicesResult = results.find(r => r.tool === 'get_devices');
-  if (devicesResult?.success && devicesResult.result?.data?.settings) {
-    // Try to extract device ID from settings
-    console.log('⚠️  Note: get_device_alarms requires a valid deviceId from your Garmin device');
-    // Skip for now as we don't have an easy way to get the correct deviceId
+  const firstDeviceId = devicesResult?.result?.data?.devices?.[0]?.deviceId;
+  if (firstDeviceId) {
+    results.push(await testTool(handler, 'get_device_alarms', { deviceId: String(firstDeviceId) }));
   }
 
   console.log('\n═══════════════════════════════════════════════════════════════');
