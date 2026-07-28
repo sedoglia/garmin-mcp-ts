@@ -1,6 +1,6 @@
 // src/mcp/handlers.ts
 
-import { GarminConnectClient } from '../garmin/client.js';
+import { GarminConnectClient, toLocalDateString } from '../garmin/client.js';
 import { AuthManager } from '../garmin/auth.js';
 import { SOURCE_LABELS, maskEmail } from '../utils/credentials.js';
 import logger from '../utils/logger.js';
@@ -254,7 +254,7 @@ export class ToolHandler {
         case 'get_primary_training_device':
           return await this.handleGetPrimaryTrainingDevice();
         case 'count_activities':
-          return await this.handleCountActivities();
+          return await this.handleCountActivities(safeArgs);
         case 'get_fitness_stats':
           return await this.handleGetFitnessStats(safeArgs);
 
@@ -468,10 +468,11 @@ export class ToolHandler {
 
   private async handleGetBodyComposition(args: Record<string, unknown>): Promise<unknown> {
     const days = this.getNumberParam(args, 'days', 30, 1, 365);
+    const endDate = this.getStringParam(args, 'endDate', '');
 
     logger.info(`Fetching body composition for ${days} days`);
 
-    const composition = await this.client.getBodyComposition(days);
+    const composition = await this.client.getBodyComposition(days, endDate || undefined);
 
     return {
       success: true,
@@ -512,15 +513,15 @@ export class ToolHandler {
   }
 
   private async handleGetTrainingStatus(args: Record<string, unknown>): Promise<unknown> {
-    const days = this.getNumberParam(args, 'days', 7, 1, 365);
+    const date = this.getStringParam(args, 'date', this.getTodayDate());
 
-    logger.info(`Fetching training status for ${days} days`);
+    logger.info(`Fetching training status for ${date}`);
 
-    const status = await this.client.getTrainingStatus(days);
+    const status = await this.client.getTrainingStatus(date);
 
     return {
       success: true,
-      requestedDays: days,
+      date,
       data: status,
     };
   }
@@ -661,7 +662,9 @@ export class ToolHandler {
 
   // Helper per ottenere la data di oggi in formato YYYY-MM-DD
   private getTodayDate(): string {
-    return new Date().toISOString().split('T')[0];
+    // Local, not UTC: east of Greenwich toISOString() still reports yesterday
+    // for the first hours after midnight.
+    return toLocalDateString();
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -1073,10 +1076,11 @@ export class ToolHandler {
 
   private async handleGetIntensityMinutes(args: Record<string, unknown>): Promise<unknown> {
     const date = this.getStringParam(args, 'date', this.getTodayDate());
+    const endDate = this.getStringParam(args, 'endDate', '');
 
-    logger.info(`Fetching intensity minutes for: ${date}`);
+    logger.info(`Fetching intensity minutes for: ${date}${endDate ? ` to ${endDate}` : ''}`);
 
-    const minutes = await this.client.getIntensityMinutes(date);
+    const minutes = await this.client.getIntensityMinutes(date, endDate || undefined);
 
     return {
       success: true,
@@ -1821,13 +1825,17 @@ export class ToolHandler {
     };
   }
 
-  private async handleCountActivities(): Promise<unknown> {
-    logger.info('Counting activities');
-    const count = await this.client.countActivities();
+  private async handleCountActivities(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '');
+
+    logger.info(`Counting activities${startDate || endDate ? ` from ${startDate || 'the beginning'} to ${endDate || 'today'}` : ''}`);
+    const result = await this.client.countActivities(startDate || undefined, endDate || undefined);
 
     return {
       success: true,
-      totalCount: count,
+      totalCount: result.count,
+      ...result,
     };
   }
 
@@ -1948,14 +1956,14 @@ export class ToolHandler {
 
   private async handleSetActivityPrivacy(args: Record<string, unknown>): Promise<unknown> {
     const activityId = this.getNumberParam(args, 'activityId', 0);
-    const privacy = this.getStringParam(args, 'privacy', '') as 'public' | 'private';
+    const privacy = this.getStringParam(args, 'privacy', '') as 'public' | 'private' | 'subscribers';
 
     if (!activityId || !privacy) {
       throw new Error('Parameters "activityId" and "privacy" are required');
     }
 
-    if (!['public', 'private'].includes(privacy)) {
-      throw new Error('Parameter "privacy" must be one of: public, private');
+    if (!['public', 'private', 'subscribers'].includes(privacy)) {
+      throw new Error('Parameter "privacy" must be one of: public, private, subscribers');
     }
 
     logger.info(`Setting activity ${activityId} privacy to ${privacy}`);
@@ -2035,12 +2043,8 @@ export class ToolHandler {
   private async handleGetDeviceAlarms(args: Record<string, unknown>): Promise<unknown> {
     const deviceId = this.getStringParam(args, 'deviceId', '');
 
-    if (!deviceId) {
-      throw new Error('Parameter "deviceId" is required');
-    }
-
-    logger.info(`Fetching alarms for device ${deviceId}`);
-    const data = await this.client.getDeviceAlarms(deviceId);
+    logger.info(`Fetching alarms for ${deviceId ? `device ${deviceId}` : 'every registered device'}`);
+    const data = await this.client.getDeviceAlarms(deviceId || undefined);
 
     return {
       success: true,
@@ -2079,14 +2083,15 @@ export class ToolHandler {
 
   private async handleFindSimilarActivities(args: Record<string, unknown>): Promise<unknown> {
     const activityId = this.getNumberParam(args, 'activityId', 0);
-    const limit = this.getNumberParam(args, 'limit', 10);
+    const limit = this.getNumberParam(args, 'limit', 10, 1, 50);
+    const searchDepth = this.getNumberParam(args, 'searchDepth', 200, 20, 1000);
 
     if (!activityId) {
       throw new Error('Parameter "activityId" is required');
     }
 
     logger.info(`Finding similar activities to ${activityId}`);
-    const data = await this.client.findSimilarActivities(activityId, limit);
+    const data = await this.client.findSimilarActivities(activityId, limit, searchDepth);
 
     return {
       success: true,

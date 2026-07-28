@@ -68,7 +68,7 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 ### 🤝 **SOCIAL FEATURES** ⚠️ PARZIALE
 - **`get_activity_comments`**: Ottieni commenti su un'attività ✅ FUNZIONANTE
 - ~~**`add_activity_comment`**: Aggiungi commenti alle attività~~ ❌ **RIMOSSO** (Non supportato da API OAuth Garmin)
-- **`set_activity_privacy`**: Imposta privacy (**public** o **private** solo) ⚠️ PARZIALE (opzione "followers" non supportata)
+- **`set_activity_privacy`**: Imposta privacy (**public**, **private** o **subscribers**)
 
 ### 📊 **ADVANCED TRAINING METRICS** ✅ TESTATO
 - **`get_training_load`**: Carico di allenamento settimanale e bilanciamento
@@ -108,7 +108,7 @@ Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi d
 |-----------|-------------|
 | `get_health_metrics` | Ottiene metriche di salute giornaliere (passi, frequenza cardiaca, VO2 max) |
 | `get_sleep_data` | Ottiene informazioni dettagliate sul sonno (durata, qualità, fasi) |
-| `get_body_composition` | Ottiene dati sulla composizione corporea (peso, BMI, grasso corporeo) |
+| `get_body_composition` | Ottiene misurazioni della composizione corporea (peso, BMI, grasso, massa muscolare) su un periodo di `days` giorni, con la media |
 | `get_steps` | Ottiene il conteggio passi per una data specifica |
 | `get_heart_rate` | Ottiene dati dettagliati sulla frequenza cardiaca |
 | `get_hydration` | Ottiene dati giornalieri sull'idratazione |
@@ -125,9 +125,9 @@ Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi d
 ### Strumenti Utente & Dispositivi
 | Strumento | Descrizione |
 |-----------|-------------|
-| `get_devices` | Ottiene la lista dei dispositivi Garmin connessi |
+| `get_devices` | Ottiene la lista dei dispositivi Garmin registrati (id, modello, seriale, firmware) |
 | `get_user_profile` | Ottiene informazioni sul profilo utente |
-| `get_training_status` | Ottiene lo stato di allenamento e statistiche delle attività |
+| `get_training_status` | Ottiene lo stato di allenamento per una data: status, VO2 max, carico acuto/cronico, rapporto ACWR |
 
 ---
 
@@ -164,13 +164,13 @@ Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi d
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_all_day_stress` | Ottiene stress dettagliato per tutto il giorno |
-| `get_floors` | Ottiene piani saliti |
-| `get_intensity_minutes` | Ottiene minuti di intensità (moderata e vigorosa) |
+| `get_floors` | Ottiene piani saliti e scesi, con il dettaglio a intervalli di 15 minuti |
+| `get_intensity_minutes` | Ottiene minuti di intensità (moderata e vigorosa) per una data o un range, con totali e obiettivo settimanali |
 | `get_max_metrics` | Ottiene metriche max (VO2 max, etc.) |
 | `get_training_readiness` | **Ottiene punteggio Training Readiness** |
 | `get_endurance_score` | **Ottiene Endurance Score** |
 | `get_fitness_age` | **Ottiene Fitness Age stimata** |
-| `get_daily_summary` | Ottiene sommario giornaliero completo |
+| `get_daily_summary` | Ottiene sommario giornaliero completo (passi, calorie, distanza, piani, minuti intensità, FC, stress, Body Battery) |
 
 ### Weight & Body
 | Strumento | Descrizione |
@@ -186,17 +186,17 @@ Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi d
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_activity_weather` | Ottiene meteo durante un'attività |
-| `get_activity_hr_zones` | Ottiene tempo nelle zone HR |
+| `get_activity_hr_zones` | Ottiene il tempo trascorso in ciascuna zona di frequenza cardiaca |
 | `get_activity_exercise_sets` | Ottiene set esercizi (strength training) |
 
 ### Goals, Challenges & Records
 | Strumento | Descrizione |
 |-----------|-------------|
-| `get_goals` | Ottiene obiettivi (attivi, futuri, passati) |
+| `get_goals` | Ottiene obiettivi; senza `status` interroga tutti gli stati e unisce i risultati |
 | `get_adhoc_challenges` | Ottiene sfide ad-hoc |
 | `get_badge_challenges` | Ottiene sfide badge disponibili |
 | `get_earned_badges` | Ottiene badge guadagnati |
-| `get_personal_records` | Ottiene record personali |
+| `get_personal_records` | Ottiene i record personali (typeId, valore, data e attività di riferimento) |
 | `get_race_predictions` | Ottiene previsioni tempi gara (5K, 10K, HM, M) |
 
 ### Gear Management
@@ -268,7 +268,7 @@ Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi d
 |-----------|-------------|
 | `get_activity_types` | Ottiene tutti i tipi di attività disponibili |
 | `get_primary_training_device` | Ottiene dispositivo di allenamento primario |
-| `count_activities` | Conta il numero totale di attività |
+| `count_activities` | Conta le attività, su tutto lo storico o in un range di date |
 | `get_fitness_stats` | Ottiene statistiche fitness in un range di date |
 | `add_hydration_data` | Aggiunge dati idratazione |
 
@@ -280,12 +280,12 @@ Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi d
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_activity_comments` | Ottiene commenti su un'attività |
-| `set_activity_privacy` | Imposta privacy attività (public/private) |
+| `set_activity_privacy` | Imposta privacy attività (public/private/subscribers) |
 
 ### Advanced Training Metrics
 | Strumento | Descrizione |
 |-----------|-------------|
-| `get_training_load` | Carico di allenamento settimanale e bilanciamento |
+| `get_training_load` | Bilanciamento del carico mensile (aerobico basso/alto, anaerobico) rispetto ai target |
 | `get_load_ratio` | Rapporto acuto/cronico (injury risk indicator) |
 | `get_performance_condition` | Condizione di performance attuale |
 
@@ -293,7 +293,7 @@ Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi d
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_sleep_movement` | Movimenti durante il sonno e momenti irrequieti |
-| `get_device_alarms` | Sveglie configurate sui dispositivi |
+| `get_device_alarms` | Sveglie configurate sui dispositivi (orario, giorni, attiva/disattiva) |
 | `get_courses` | Percorsi/route salvati |
 
 ### Activity Analysis
@@ -713,10 +713,13 @@ Alcuni endpoint e funzionalità non sono disponibili tramite l'API OAuth pubblic
     - NON disponibile via API OAuth
 
 #### Privacy Attività
-- ✅ **Impostare privacy** (`set_activity_privacy`): Parzialmente funzionante
+- ✅ **Impostare privacy** (`set_activity_privacy`): Funzionante
   - ✅ `public`: Funziona correttamente
   - ✅ `private`: Funziona correttamente
-  - ❌ `followers`: **NON SUPPORTATO** - restituisce errore 400 "PRIVACY_INVALID"
+  - ✅ `subscribers`: Funziona correttamente (è "solo connessioni" in Garmin Connect)
+  - ❌ `followers`: **NON SUPPORTATO** - non è una chiave valida, restituisce 400. La chiave corretta è `subscribers`
+
+  Il livello attuale si legge da `accessControlRuleDTO` in `get_activity_details`: leggerlo prima di modificarlo evita di sovrascrivere `subscribers` con `public`.
 
 #### Gear Management
 - ✅ **Lista gear** (`get_all_gear`): Funzionante (via endpoint `filterGear`)
@@ -734,12 +737,12 @@ Alcune metriche potrebbero non essere disponibili a seconda del modello di smart
 | Metrica | Dispositivi Supportati | Note |
 |---------|------------------------|------|
 | `get_endurance_score` | Solo dispositivi premium (Fenix 7+, Forerunner 955+) | Non disponibile su Instinct 2 Solar |
-| `get_training_readiness` | Solo Instinct 2**X** | Non su Instinct 2 Solar standard |
-| `get_floors` | Richiede barometro | Potrebbe non sincronizzarsi via API |
-| `get_intensity_minutes` | Tutti i dispositivi | Potrebbe non sincronizzarsi via API |
-| `get_training_load` | Richiede 7+ giorni di dati | Usa Firstbeat Analytics |
+| `get_training_readiness` | Richiede rilevazione HRV notturna | Assente se il dispositivo non registra l'HRV |
+| `get_floors` | Richiede barometro | Assente sui dispositivi senza altimetro barometrico |
+| `get_intensity_minutes` | Tutti i dispositivi | — |
+| `get_training_load` | Richiede 7+ giorni di dati | Snapshot alla data richiesta, non un aggregato del range |
 | `get_load_ratio` | Richiede 4+ settimane consecutive | Calcolato su storico esteso |
-| `get_performance_condition` | Durante attività | Visibile sul watch, non sempre via API |
+| `get_performance_condition` | Durante attività | Garmin non la espone come metrica giornaliera: usare `get_activity_details` |
 
 **Nota**: Alcune metriche sono visibili nell'app Garmin Connect ma potrebbero non essere esposte tramite API OAuth.
 
