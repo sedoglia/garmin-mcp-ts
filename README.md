@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.2.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.3.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,49 @@
 ---
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
+
+## 🆕 Novità v4.3.0 - Correttezza dei dati restituiti dai tool
+
+Diciannove tool restituivano dati vuoti, fittizi o semplicemente sbagliati. Ogni
+correzione è stata verificata contro un account Garmin reale.
+
+### 🐛 **DATI SBAGLIATI** ✅ CORRETTO
+- **`count_activities`**: restituiva sempre `0`. Il servizio risponde con un array di
+  bucket contenenti `countOfActivities`, mentre il codice leggeva un `totalCount`
+  inesistente. Accetta ora `startDate` / `endDate` opzionali.
+- **`get_training_status`**: restituiva il conteggio delle attività di tutta la vita più
+  l'intero blob delle impostazioni utente. Ora usa l'endpoint dello stato di allenamento
+  e accetta `date` al posto dell'inutile `days`.
+- **`get_goals`**: errore 400 perché non inviava il parametro `status`. Senza `status`
+  interroga ora tutti e tre gli stati e unisce i risultati.
+- **`get_device_alarms`**: restituiva `[]`. L'endpoint `deviceservice/alarms` non esiste:
+  le sveglie fanno parte delle impostazioni del dispositivo. `deviceId` è ora opzionale.
+- **`get_devices` / `get_device_last_used`**: restituivano entrambi le impostazioni
+  utente invece di un elenco di dispositivi e dell'ultimo usato.
+- **`get_personal_records`**: leggeva `profile.personalRecords`, campo inesistente.
+- **`get_intensity_minutes` / `get_floors`**: gli endpoint usati rispondevano 404, quindi
+  dichiaravano "nessun dato" anche per giornate piene.
+- **`get_daily_summary`**: restituiva solo i passi più l'intera serie di frequenza
+  cardiaca. Ora include calorie, distanza, piani, minuti di intensità, stress e Body Battery.
+- **`get_body_composition`**: ignorava `days` e interrogava solo la giornata odierna.
+- **`compare_activities` / `find_similar_activities`**: nel dettaglio attività le metriche
+  stanno in `summaryDTO`, quindi i confronti producevano `undefined` e `NaN`.
+- **`get_activity_splits`**: sempre vuoto, cercava i dati in un payload che non li contiene.
+- **`get_race_predictions`**, **`get_training_load`**, **`get_load_ratio`**: endpoint
+  errati o inesistenti, mascherati da "nessun dato".
+- **`get_training_readiness`**, **`get_max_metrics`**, **`get_activity_hr_zones`**,
+  **`get_activity_exercise_sets`**: forma della risposta errata (array espansi in oggetti
+  del tipo `{"0": ...}`).
+- **`get_progress_summary`**: filtrava solo le ultime 100 attività, troncando in silenzio
+  i periodi più intensi.
+
+### ✨ **NUOVI PARAMETRI**
+- `count_activities`: `startDate`, `endDate`
+- `get_training_status`: `date` (sostituisce `days`)
+- `get_device_alarms`: `deviceId` ora opzionale, di default tutti i dispositivi
+- `get_intensity_minutes`, `get_body_composition`: `endDate`
+- `find_similar_activities`: `searchDepth`
+- `set_activity_privacy`: livello `subscribers` ("solo connessioni")
 
 ## 🆕 Novità v4.2.0 - Prima installazione e credenziali
 
@@ -364,7 +407,7 @@ npm install keytar
 Usa il browser oppure:
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.2.0/garmin-mcp-ts.mcpb
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.0/garmin-mcp-ts.mcpb
 ```
 
 ### 3. Verifica l'integrità
@@ -372,7 +415,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.2.0/garmin-m
 Verifica l'integrità (opzionale ma consigliato):
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.2.0/garmin-mcp-ts.mcpb.sha256
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.0/garmin-mcp-ts.mcpb.sha256
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 
