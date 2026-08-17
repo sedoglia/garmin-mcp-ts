@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.3.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.3.1-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,14 @@
 ---
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
+
+## 🆕 What's New in v4.3.1 - Bundle metadata
+
+A metadata-only patch: no change to the server code or to any tool.
+
+- **`display_name`**: a required manifest field that was missing. It now reads "Garmin Connect".
+- **`icon`**: the value was `.\GARMIN.png`, a Windows-style relative path that does not
+  resolve when the bundle is unpacked on other platforms. It is now `GARMIN.png`.
 
 ## 🆕 What's New in v4.3.0 - Correctness of the data tools return
 
@@ -408,7 +416,7 @@ npm install keytar
 Use your browser or:
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.0/garmin-mcp-ts.mcpb
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.1/garmin-mcp-ts.mcpb
 ```
 
 ### 3. Verify integrity
@@ -416,7 +424,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.0/garmin-m
 Verify the integrity (optional but recommended):
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.0/garmin-mcp-ts.mcpb.sha256
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.1/garmin-mcp-ts.mcpb.sha256
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 
