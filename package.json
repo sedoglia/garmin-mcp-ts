@@ -1,6 +1,6 @@
 {
   "name": "garmin-mcp-ts",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "type": "module",
   "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
   "main": "dist/index.js",
@@ -11,8 +11,9 @@
     "build": "tsc",
     "sync:manifest": "npx tsx scripts/sync-manifest.ts",
     "check:manifest": "npx tsx scripts/sync-manifest.ts --check",
+    "fetch:keytar": "node scripts/fetch-keytar-prebuilds.mjs",
     "validate:manifest": "mcpb validate manifest.json",
-    "pack": "npm run build && npm run check:manifest && npm run validate:manifest && mcpb pack . garmin-mcp-ts.mcpb",
+    "pack": "npm run build && npm run check:manifest && npm run validate:manifest && npm run fetch:keytar && mcpb pack . garmin-mcp-ts.mcpb",
     "start": "node dist/index.js",
     "login": "node dist/garmin/simple-login.js",
     "dev": "tsx watch src/index.ts",

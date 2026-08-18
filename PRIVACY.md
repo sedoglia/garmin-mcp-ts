@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last Updated:** December 2025
+**Last Updated:** August 2026
 
 ## Overview
 
@@ -60,6 +60,13 @@ All sensitive data is encrypted using **AES-256-GCM** encryption:
 - No data is stored in plaintext
 - File permissions are restricted to the current user only
 - Industry-standard AES-256-GCM encryption with random IV for each operation
+
+Where the vault cannot be reached — an architecture the vault library publishes no
+binary for, or a Linux session with no keyring daemon running — the encryption key is
+written instead to `.encryption.key` in the data directory above, readable only by your
+user account. Your credentials and tokens stay encrypted either way; the difference is
+where the key that decrypts them is held. `check_credentials` reports which of the two
+is in use on your machine.
 
 ### Data Retention
 

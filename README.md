@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.3.1-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.3.2-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,29 @@
 ---
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
+
+## 🆕 Novità v4.3.2 - Vault nativo su tutte le piattaforme
+
+### 🔐 **KEYTAR**
+- Il bundle conteneva **un solo binario nativo di keytar**, quello della macchina che
+  lo impacchettava. Su ogni altra piattaforma il caricamento falliva e la chiave di
+  cifratura finiva nel file di fallback invece che nel vault del sistema operativo —
+  cioè su Windows e macOS, dove gira Claude Desktop, mentre il manifest e la privacy
+  policy promettevano il vault.
+- Il bundle porta ora un binario per piattaforma (`darwin-x64`, `darwin-arm64`,
+  `win32-x64`, `win32-ia32`, `linux-x64`, `linux-arm64`) sotto `vendor/keytar`, e il
+  server carica quello che corrisponde a `process.platform` / `process.arch`. I binari
+  sono scaricati al momento del pack dallo stesso `prebuild-install` che userebbe npm
+  su ciascuna piattaforma.
+- Il fallback su file resta per le architetture senza prebuild e per le sessioni Linux
+  senza keyring attivo: `check_credentials` dice quale dei due è in uso.
+- **Migrazione automatica**: chi aggiorna da una versione precedente ha la chiave nel
+  file; al primo avvio viene spostata nel vault e il file viene rimosso. Se il vault
+  rifiuta, la chiave resta dov'è e il tentativo si ripete al riavvio successivo. Il
+  metodo che fa la migrazione esisteva già nel progetto ma non veniva mai chiamato.
+
+### 📄 **PRIVACY POLICY**
+- Documentato il fallback su file, che prima non era menzionato.
 
 ## 🆕 Novità v4.3.1 - Requisiti per la MCP Directory
 

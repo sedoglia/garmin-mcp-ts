@@ -14,6 +14,11 @@ releases/
 # CI configuration: the default exclusions cover .git/ but not .github/.
 .github/
 
+# keytar's own binary is built for whoever ran npm install, so in a bundle it
+# is the packing machine's and loads nowhere else. vendor/keytar carries one
+# per platform instead, and secure-storage.ts picks from there.
+node_modules/keytar/build/
+
 # Defence in depth for the credential files this project can produce.
 .env.*
 config.json
