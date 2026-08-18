@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.3.1-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.3.2-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,28 @@
 ---
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
+
+## 🆕 What's New in v4.3.2 - The OS vault on every platform
+
+### 🔐 **KEYTAR**
+- The bundle carried **a single native keytar binary**, the one belonging to whichever
+  machine packed it. Loading it failed on every other platform, and the encryption key
+  went to the fallback file rather than the operating system vault — that is, on Windows
+  and macOS, where Claude Desktop runs, while the manifest and the privacy policy
+  promised the vault.
+- The bundle now carries one binary per platform (`darwin-x64`, `darwin-arm64`,
+  `win32-x64`, `win32-ia32`, `linux-x64`, `linux-arm64`) under `vendor/keytar`, and the
+  server loads the one matching `process.platform` / `process.arch`. They are fetched at
+  pack time by the same `prebuild-install` npm would use on each platform.
+- The file fallback remains for architectures with no prebuild, and for Linux sessions
+  with no keyring daemon running: `check_credentials` reports which of the two is in use.
+- **Automatic migration**: anyone upgrading has their key in the file; on the first start
+  it is moved into the vault and the file removed. If the vault refuses, the key stays
+  where it is and the move is retried on the next start. The method that performs the
+  migration had been in the project for some time but was never called.
+
+### 📄 **PRIVACY POLICY**
+- The file fallback is documented; it was not mentioned before.
 
 ## 🆕 What's New in v4.3.1 - MCP Directory requirements
 

@@ -127,6 +127,12 @@ jobs:
       - name: Reinstall production dependencies only
         run: npm ci --omit=dev
 
+      # keytar installs a binary for the runner and nothing else. The bundle
+      # needs one per platform, so they are fetched before packing.
+      # prebuild-install is keytar's own dependency and survives the prune.
+      - name: Fetch the keytar prebuilds
+        run: npm run fetch:keytar
+
       # The packer is a dev dependency and has just been pruned along with the
       # rest of them, so it comes from the npx cache, outside the tree being
       # packed. The range is read from package.json to keep one source of truth.

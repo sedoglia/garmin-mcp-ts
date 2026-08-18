@@ -48,6 +48,10 @@ coverage/
 .cache/
 *.tmp
 
+# Native keytar binaries, downloaded per platform at pack time by
+# scripts/fetch-keytar-prebuilds.mjs
+vendor/
+
 # Releases (MCPB packages)
 releases/
 *.mcpb

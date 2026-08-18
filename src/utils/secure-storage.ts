@@ -17,6 +17,12 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+
+// Per caricare i binari nativi: un file .node si apre solo con require.
+const requireBinary = createRequire(import.meta.url);
+const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 
 // Constants for keytar service
 const KEYTAR_SERVICE = 'garmin-mcp-server';
@@ -135,27 +141,59 @@ class SecureStorage {
   }
 
   /**
-   * Attempts to load keytar for native vault access
+   * Attempts to load keytar for native vault access.
+   *
+   * Two sources, in this order:
+   *
+   * 1. The installed package. `npm install` builds or downloads keytar for the
+   *    machine that runs it, so this is the right binary for a clone of the
+   *    repository.
+   * 2. The per-platform binaries under vendor/keytar, which is what the .mcpb
+   *    bundle carries. A bundle is packed once and installed everywhere, so the
+   *    single binary in node_modules would be the packing machine's own and
+   *    would load nowhere else.
+   *
+   * The .node file exports getPassword and setPassword directly: keytar's JS
+   * wrapper only adds argument checks on top of the same native calls.
+   *
+   * Neither source is guaranteed — an architecture with no published prebuild
+   * reaches neither — so the file-based key store remains the last resort.
    */
   private async loadKeytar(): Promise<void> {
-    try {
-      // Dynamic import to make keytar optional
-      // Using Function constructor to avoid TypeScript static analysis
-      const importKeytar = new Function('return import("keytar")');
-      const keytarModule = await importKeytar();
-      // Handle ESM/CJS interop: use .default if available, otherwise use the module directly
-      this.keytar = keytarModule.default || keytarModule;
-      this.keytarAvailable = typeof this.keytar.setPassword === 'function';
-      if (this.keytarAvailable) {
-        console.error('🔐 Native vault (keytar) available');
-      } else {
-        console.error('⚠️  Keytar loaded but setPassword not available');
-        this.keytarAvailable = false;
+    const platformTarget = `${process.platform}-${process.arch}`;
+
+    const sources: Array<[string, () => Promise<unknown>]> = [
+      ['installed package', async () => {
+        // Il Function constructor tiene l'import fuori dall'analisi statica di
+        // TypeScript: keytar è una dipendenza opzionale e può mancare.
+        const importKeytar = new Function('return import("keytar")');
+        const keytarModule = await importKeytar();
+        return keytarModule.default || keytarModule;
+      }],
+      [`bundled ${platformTarget}`, async () => {
+        // dist/utils/secure-storage.js -> radice del bundle
+        const binary = path.resolve(moduleDir, '..', '..', 'vendor', 'keytar', platformTarget, 'keytar.node');
+        return fs.existsSync(binary) ? requireBinary(binary) : null;
+      }],
+    ];
+
+    for (const [source, load] of sources) {
+      try {
+        const keytar = await load() as { setPassword?: unknown } | null;
+        if (keytar && typeof keytar.setPassword === 'function') {
+          this.keytar = keytar;
+          this.keytarAvailable = true;
+          console.error(`🔐 Native vault (keytar) available (${source})`);
+          return;
+        }
+      } catch {
+        // Sorgente non utilizzabile su questa macchina: si prova la successiva.
       }
-    } catch {
-      this.keytarAvailable = false;
-      console.error('⚠️  Native vault (keytar) not available, using file-based fallback');
     }
+
+    this.keytar = null;
+    this.keytarAvailable = false;
+    console.error(`⚠️  Native vault (keytar) not available for ${platformTarget}, using file-based fallback`);
   }
 
   /**
@@ -182,6 +220,10 @@ class SecureStorage {
       try {
         this.encryptionKey = fs.readFileSync(keyFilePath, 'utf-8').trim();
         console.error('🔑 Encryption key loaded from fallback file');
+        // Chi ha installato un bundle che non portava il binario nativo per la
+        // sua piattaforma ha la chiave nel file anche dove il vault esiste.
+        // Spostarla è ciò che rende vera la promessa anche in aggiornamento.
+        await this.promoteKeyToVault();
         return;
       } catch (err) {
         console.error('⚠️  Failed to read fallback key file:', err);
@@ -465,6 +507,23 @@ class SecureStorage {
 
     if (!this.encryptionKey) {
       console.error('❌ No encryption key to migrate');
+      return false;
+    }
+
+    return this.promoteKeyToVault();
+  }
+
+  /**
+   * Moves the encryption key from the fallback file into the native vault.
+   *
+   * Runs during initialization, so it must not call initialize() itself, and
+   * says nothing when there is no vault to move the key into: that case is
+   * normal and loadKeytar has already reported it. Anything that goes wrong
+   * leaves the key where it is — the fallback file is removed only once the
+   * vault has accepted the key.
+   */
+  private async promoteKeyToVault(): Promise<boolean> {
+    if (!this.keytarAvailable || !this.keytar || !this.encryptionKey) {
       return false;
     }
 
