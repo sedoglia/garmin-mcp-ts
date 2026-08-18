@@ -752,6 +752,11 @@ La release nasce in bozza. La casella *publish* la pubblica: lanciando di nuovo 
 workflow sullo stesso tag con quella casella spuntata, la bozza esistente viene
 pubblicata senza toccarne gli allegati.
 
+Le note della release stanno in `.github/release-notes/<tag>.md`. Se il file esiste il
+workflow lo usa come testo della release, altrimenti ripiega sull'elenco automatico delle
+pull request. Per correggere il testo di una release già pubblicata basta modificare il
+file e rilanciare il workflow: gli allegati non vengono toccati.
+
 In entrambi i casi il workflow rifiuta di procedere se il tag non corrisponde alla
 versione dichiarata nel manifest. Per costruire il bundle in locale:
 
