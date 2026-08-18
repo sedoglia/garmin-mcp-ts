@@ -740,9 +740,15 @@ garmin-mcp-ts/
 
 ## 📦 Costruire il bundle .mcpb
 
-Il bundle pubblicato viene costruito dal workflow `Release`, che si attiva sul tag
-(`git tag v4.3.1 && git push origin v4.3.1`) e allega `.mcpb` e `.sha256` a una release
-in bozza. Per costruirlo in locale:
+Il bundle pubblicato viene costruito dal workflow `Release`, che allega `.mcpb` e
+`.sha256` a una release in bozza. Si attiva in due modi:
+
+- **dal tag**: `git tag v4.3.1 && git push origin v4.3.1`;
+- **a mano**: Actions → Release → *Run workflow*, indicando il tag da pubblicare. Se non
+  esiste ancora, il workflow lo crea dal ramo selezionato.
+
+In entrambi i casi il workflow rifiuta di procedere se il tag non corrisponde alla
+versione dichiarata nel manifest. Per costruire il bundle in locale:
 
 ```bash
 npm ci
