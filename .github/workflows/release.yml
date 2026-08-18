@@ -16,6 +16,10 @@ on:
       tag:
         description: "Tag to publish (e.g. v4.3.1). Created from the selected branch if it does not exist yet."
         required: true
+      publish:
+        description: "Publish the release instead of leaving it as a draft."
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -118,9 +122,24 @@ jobs:
       - name: Checksum
         run: sha256sum garmin-mcp-ts.mcpb > garmin-mcp-ts.mcpb.sha256
 
-      # Published as a draft: the release notes are worth a read before the
+      # A draft is invisible to the by-tag release endpoints, so the release is
+      # found by listing instead. That is also what makes a re-run safe: the
+      # run adds a release when there is none and otherwise leaves the existing
+      # one, and its assets, alone.
+      - name: Look the release up
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.name }}
+        run: |
+          id="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"$TAG\")] | first | .id // empty")"
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+
+      # Created as a draft: the release notes are worth a read before the
       # download links in the README start resolving to it.
-      - name: Publish the release
+      - name: Create the release
+        if: steps.release.outputs.id == ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.tag.outputs.name }}
@@ -130,3 +149,21 @@ jobs:
             --generate-notes \
             --title "$TAG" \
             garmin-mcp-ts.mcpb garmin-mcp-ts.mcpb.sha256
+
+      - name: Publish the release
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.name }}
+        run: |
+          id="${{ steps.release.outputs.id }}"
+          if [ -z "$id" ]; then
+            id="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+              --jq "[.[] | select(.tag_name == \"$TAG\")] | first | .id // empty")"
+          fi
+          if [ -z "$id" ]; then
+            echo "no release found for $TAG" >&2
+            exit 1
+          fi
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \
+            -F draft=false -f make_latest=true --jq .html_url
