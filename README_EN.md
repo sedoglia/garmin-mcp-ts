@@ -747,7 +747,12 @@ The published bundle is built by the `Release` workflow, which attaches `.mcpb` 
 
 - **from a tag**: `git tag v4.3.1 && git push origin v4.3.1`;
 - **by hand**: Actions → Release → *Run workflow*, naming the tag to publish. If that tag
-  does not exist yet, the workflow creates it from the selected branch.
+  does not exist yet, the workflow creates it from the selected branch; if it does, the
+  workflow builds what the tag points at.
+
+The release starts as a draft. The *publish* checkbox publishes it: running the workflow
+again on the same tag with that box ticked publishes the existing draft, leaving its
+assets untouched.
 
 Either way the workflow refuses to go on when the tag disagrees with the version the
 manifest declares. To build the bundle locally:

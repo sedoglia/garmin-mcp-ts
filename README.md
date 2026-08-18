@@ -745,7 +745,12 @@ Il bundle pubblicato viene costruito dal workflow `Release`, che allega `.mcpb` 
 
 - **dal tag**: `git tag v4.3.1 && git push origin v4.3.1`;
 - **a mano**: Actions → Release → *Run workflow*, indicando il tag da pubblicare. Se non
-  esiste ancora, il workflow lo crea dal ramo selezionato.
+  esiste ancora, il workflow lo crea dal ramo selezionato; se esiste, costruisce quello
+  che il tag contiene.
+
+La release nasce in bozza. La casella *publish* la pubblica: lanciando di nuovo il
+workflow sullo stesso tag con quella casella spuntata, la bozza esistente viene
+pubblicata senza toccarne gli allegati.
 
 In entrambi i casi il workflow rifiuta di procedere se il tag non corrisponde alla
 versione dichiarata nel manifest. Per costruire il bundle in locale:
