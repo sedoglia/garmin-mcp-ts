@@ -55,6 +55,22 @@ jobs:
           fi
           echo "commit=$commit" >> "$GITHUB_OUTPUT"
 
+      # Notes written by hand live at .github/release-notes/<tag>.md. They are
+      # read from the dispatched ref and set aside here, because the checkout
+      # below can move to a commit that predates the file. Without them the run
+      # falls back to the generated list of merged pull requests, which
+      # describes the work rather than the release.
+      - name: Set the release notes aside
+        id: notes
+        env:
+          TAG: ${{ steps.tag.outputs.name }}
+        run: |
+          file=".github/release-notes/$TAG.md"
+          if [ -f "$file" ]; then
+            cp "$file" "$RUNNER_TEMP/release-notes.md"
+            echo "file=$RUNNER_TEMP/release-notes.md" >> "$GITHUB_OUTPUT"
+          fi
+
       # A manual run naming a tag that already exists publishes what that tag
       # points at, not whatever the branch has drifted to since.
       - name: Build from the existing tag
@@ -136,19 +152,37 @@ jobs:
             --jq "[.[] | select(.tag_name == \"$TAG\")] | first | .id // empty")"
           echo "id=$id" >> "$GITHUB_OUTPUT"
 
-      # Created as a draft: the release notes are worth a read before the
-      # download links in the README start resolving to it.
+      # Created as a draft: the notes are worth a read before the download
+      # links in the README start resolving to it.
       - name: Create the release
         if: steps.release.outputs.id == ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.tag.outputs.name }}
+          NOTES: ${{ steps.notes.outputs.file }}
         run: |
+          if [ -n "$NOTES" ]; then
+            notes_arg=(--notes-file "$NOTES")
+          else
+            notes_arg=(--generate-notes)
+          fi
           gh release create "$TAG" \
             --draft \
-            --generate-notes \
+            "${notes_arg[@]}" \
             --title "$TAG" \
             garmin-mcp-ts.mcpb garmin-mcp-ts.mcpb.sha256
+
+      # Editing the notes file and re-running is how a published release gets
+      # its text fixed; the assets are not touched.
+      - name: Update the release notes
+        if: steps.release.outputs.id != '' && steps.notes.outputs.file != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NOTES: ${{ steps.notes.outputs.file }}
+        run: |
+          jq -n --rawfile body "$NOTES" '{body: $body}' \
+            | gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/${{ steps.release.outputs.id }}" \
+              --input - --jq .html_url
 
       - name: Publish the release
         if: inputs.publish

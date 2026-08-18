@@ -754,6 +754,11 @@ The release starts as a draft. The *publish* checkbox publishes it: running the 
 again on the same tag with that box ticked publishes the existing draft, leaving its
 assets untouched.
 
+Release notes live in `.github/release-notes/<tag>.md`. When that file exists the workflow
+uses it as the release body, otherwise it falls back to the generated list of pull
+requests. Fixing the text of a release that is already out is a matter of editing the file
+and running the workflow again; the assets are left alone.
+
 Either way the workflow refuses to go on when the tag disagrees with the version the
 manifest declares. To build the bundle locally:
 
