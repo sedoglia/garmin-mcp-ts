@@ -4,10 +4,15 @@
   "display_name": "Garmin Connect",
   "version": "4.3.1",
   "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
+  "long_description": "Connects Claude to a personal Garmin Connect account. It exposes activities, health and wellness metrics, sleep, training status, workouts, gear and device data as MCP tools, and can also write back to the account (workouts, manual activities, weigh-ins, gear links) when explicitly asked.\n\nThe server runs entirely on the user's machine and talks to no service other than connect.garmin.com over HTTPS. Credentials are encrypted at rest with AES-256-GCM, with the encryption key held in the operating system's native vault (Windows Credential Manager, macOS Keychain, Linux Secret Service).",
   "author": {
     "name": "sedoglia",
     "email": "sedoglia@gmail.com",
     "url": "https://github.com/sedoglia"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sedoglia/garmin-mcp-ts"
   },
   "homepage": "https://github.com/sedoglia/garmin-mcp-ts",
   "documentation": "https://github.com/sedoglia/garmin-mcp-ts/blob/main/README_EN.md",
@@ -27,6 +32,470 @@
       }
     }
   },
+  "tools": [
+    {
+      "name": "setup_credentials",
+      "description": "Store Garmin Connect credentials encrypted in the OS native vault and log in immediately. Use this when the server reports that credentials are missing or invalid. The password is encrypted at rest and never written to a plain text file."
+    },
+    {
+      "name": "check_credentials",
+      "description": "Report whether Garmin credentials are configured, which source they come from, where the encrypted data is stored and whether the session is authenticated. Never returns the password."
+    },
+    {
+      "name": "clear_credentials",
+      "description": "Delete the encrypted credentials and OAuth tokens from secure storage and end the current session. Credentials supplied through the extension settings are not affected and must be cleared there."
+    },
+    {
+      "name": "list_recent_activities",
+      "description": "Get a list of recent activities from Garmin Connect. Returns activity summaries including name, type, distance, duration, and date."
+    },
+    {
+      "name": "get_activity_details",
+      "description": "Get detailed information about a specific activity including splits, heart rate zones, and GPS data."
+    },
+    {
+      "name": "get_health_metrics",
+      "description": "Get daily health metrics including heart rate data and step count for a specific date."
+    },
+    {
+      "name": "get_sleep_data",
+      "description": "Get detailed sleep information including duration, sleep stages, and quality score."
+    },
+    {
+      "name": "get_body_composition",
+      "description": "Get body composition measurements (weight, BMI, body fat, muscle and bone mass) over a period, plus the average across the period."
+    },
+    {
+      "name": "get_devices",
+      "description": "List the Garmin devices registered on the account with their id, model, serial and firmware version. Use get_device_settings for the configuration of a single device."
+    },
+    {
+      "name": "get_user_profile",
+      "description": "Get user profile information including display name and account details."
+    },
+    {
+      "name": "get_training_status",
+      "description": "Get the training status for a date: status and feedback phrase, VO2 max, fitness trend, acute and chronic training load and the acute/chronic workload ratio."
+    },
+    {
+      "name": "get_steps",
+      "description": "Get step count for a specific date. Returns the total number of steps recorded."
+    },
+    {
+      "name": "get_heart_rate",
+      "description": "Get detailed heart rate data for a specific date including resting HR, max HR, and HR zones."
+    },
+    {
+      "name": "get_hydration",
+      "description": "Get daily hydration/water intake data for a specific date."
+    },
+    {
+      "name": "get_workouts",
+      "description": "Get list of scheduled/planned workouts from Garmin Connect."
+    },
+    {
+      "name": "get_activity_splits",
+      "description": "Get split/lap data for a specific activity including pace, distance, and time for each split."
+    },
+    {
+      "name": "get_stress_data",
+      "description": "Get stress level data for a specific date. Returns stress levels throughout the day (0-100 scale), with 0-25 resting, 26-50 low, 51-75 medium, 76-100 high stress. Includes overall stress level, durations by category, and detailed timestamp values."
+    },
+    {
+      "name": "get_body_battery",
+      "description": "Get Body Battery energy level data for a date range. Body Battery tracks energy levels (0-100) throughout the day based on sleep, stress, and activity. Shows charged/drained periods and sleep quality impact."
+    },
+    {
+      "name": "get_hrv_data",
+      "description": "Get Heart Rate Variability (HRV) data for a specific date. HRV measures the variation in time between heartbeats, indicating recovery and stress levels."
+    },
+    {
+      "name": "get_respiration_data",
+      "description": "Get respiration/breathing rate data for a specific date. Shows breaths per minute throughout the day and during sleep."
+    },
+    {
+      "name": "get_spo2_data",
+      "description": "Get SpO2 (blood oxygen saturation) data for a specific date. Shows pulse oximetry readings as percentage (typically 95-100% is normal)."
+    },
+    {
+      "name": "get_workout_by_id",
+      "description": "Get detailed information about a specific workout by its ID."
+    },
+    {
+      "name": "download_workout",
+      "description": "Download a workout in FIT format for syncing to a Garmin device."
+    },
+    {
+      "name": "create_workout",
+      "description": "Create a new structured workout in Garmin Connect. Supports complex interval workouts with warmup, cooldown, and repeat blocks.\n\nExample for interval running workout:\n{\n  \"workoutName\": \"5x3min Intervals\",\n  \"sportType\": \"running\",\n  \"description\": \"Interval training\",\n  \"workoutSegments\": [{\n    \"segmentOrder\": 1,\n    \"sportType\": \"running\",\n    \"workoutSteps\": [\n      { \"stepOrder\": 1, \"stepType\": \"warmup\", \"endCondition\": \"time\", \"endConditionValue\": 600 },\n      { \"stepOrder\": 2, \"stepType\": \"interval\", \"endCondition\": \"time\", \"endConditionValue\": 180, \"targetType\": \"pace\" },\n      { \"stepOrder\": 3, \"stepType\": \"recovery\", \"endCondition\": \"time\", \"endConditionValue\": 120 },\n      { \"stepOrder\": 4, \"stepType\": \"cooldown\", \"endCondition\": \"time\", \"endConditionValue\": 600 }\n    ]\n  }]\n}"
+    },
+    {
+      "name": "update_workout",
+      "description": "Update an existing workout (name, description, or structure)."
+    },
+    {
+      "name": "delete_workout",
+      "description": "Delete a workout from Garmin Connect."
+    },
+    {
+      "name": "schedule_workout",
+      "description": "Schedule an existing workout on a specific date. Returns a workoutScheduleId that can be used to unschedule."
+    },
+    {
+      "name": "unschedule_workout",
+      "description": "Remove a scheduled workout from the calendar. IMPORTANT: Always unschedule before deleting a workout to avoid ghost entries."
+    },
+    {
+      "name": "upload_activity",
+      "description": "Upload an activity file (FIT, GPX, TCX format) to Garmin Connect."
+    },
+    {
+      "name": "create_manual_activity",
+      "description": "Create a manual activity entry in Garmin Connect."
+    },
+    {
+      "name": "set_activity_name",
+      "description": "Change the name of an existing activity."
+    },
+    {
+      "name": "set_activity_type",
+      "description": "Change the type/category of an existing activity."
+    },
+    {
+      "name": "delete_activity",
+      "description": "Delete an activity from Garmin Connect. WARNING: This action cannot be undone."
+    },
+    {
+      "name": "download_activity",
+      "description": "Download an activity in various formats (FIT, TCX, GPX, KML, CSV)."
+    },
+    {
+      "name": "get_device_last_used",
+      "description": "Get the Garmin device that uploaded data most recently, with its id, name and upload time."
+    },
+    {
+      "name": "get_device_settings",
+      "description": "Get settings for a specific Garmin device."
+    },
+    {
+      "name": "get_all_day_stress",
+      "description": "Get detailed all-day stress data with full breakdown."
+    },
+    {
+      "name": "get_floors",
+      "description": "Get floors climbed and descended for a specific date, with the 15-minute breakdown."
+    },
+    {
+      "name": "get_intensity_minutes",
+      "description": "Get intensity minutes (moderate and vigorous) for a date, or for a date range when endDate is given, together with the weekly totals and goal."
+    },
+    {
+      "name": "get_max_metrics",
+      "description": "Get max metrics including VO2 max and related fitness data."
+    },
+    {
+      "name": "get_training_readiness",
+      "description": "Get training readiness score indicating how prepared your body is for training."
+    },
+    {
+      "name": "get_endurance_score",
+      "description": "Get endurance score based on recent training load."
+    },
+    {
+      "name": "get_fitness_age",
+      "description": "Get fitness age estimation based on VO2 max and other metrics."
+    },
+    {
+      "name": "get_weigh_ins",
+      "description": "Get weigh-in records for a date range."
+    },
+    {
+      "name": "add_weigh_in",
+      "description": "Add a new weigh-in record with optional body composition data."
+    },
+    {
+      "name": "delete_weigh_in",
+      "description": "Permanently delete a single weigh-in record from Garmin Connect, identified by its weigh-in ID. The ID comes from get_body_composition or get_weigh_ins. The measurement cannot be recovered afterwards."
+    },
+    {
+      "name": "get_blood_pressure",
+      "description": "Get blood pressure readings for a date range."
+    },
+    {
+      "name": "set_blood_pressure",
+      "description": "Record a blood pressure reading."
+    },
+    {
+      "name": "delete_blood_pressure",
+      "description": "Delete a blood pressure reading. Use get_blood_pressure with the /all endpoint to find the version ID."
+    },
+    {
+      "name": "get_activity_weather",
+      "description": "Get weather conditions during an activity."
+    },
+    {
+      "name": "get_activity_hr_zones",
+      "description": "Get time spent in each heart rate zone during an activity."
+    },
+    {
+      "name": "get_activity_exercise_sets",
+      "description": "Get exercise sets from a strength training activity."
+    },
+    {
+      "name": "get_goals",
+      "description": "Get user goals. Without a status every status is queried in turn and the results are merged, each goal carrying the status it was found under."
+    },
+    {
+      "name": "get_adhoc_challenges",
+      "description": "Get ad-hoc challenges history."
+    },
+    {
+      "name": "get_badge_challenges",
+      "description": "Get available badge challenges."
+    },
+    {
+      "name": "get_earned_badges",
+      "description": "Get all badges earned by the user."
+    },
+    {
+      "name": "get_personal_records",
+      "description": "Get all personal records (PRs). Each record carries a typeId identifying its category, its value, the date it was set and, for records set during an activity, that activity."
+    },
+    {
+      "name": "get_race_predictions",
+      "description": "Get predicted race times for 5K, 10K, half marathon, and marathon based on current fitness."
+    },
+    {
+      "name": "get_gear_stats",
+      "description": "Get usage statistics for a specific piece of gear. Note: Requires the gear UUID which can be found in Garmin Connect web interface URL."
+    },
+    {
+      "name": "link_gear_to_activity",
+      "description": "Link a piece of gear to an activity. Note: Requires the gear UUID which can be found in Garmin Connect web interface URL."
+    },
+    {
+      "name": "get_progress_summary",
+      "description": "Get aggregated progress summary between two dates."
+    },
+    {
+      "name": "get_daily_summary",
+      "description": "Get a compact daily summary: steps and goal, calories, distance, floors, intensity minutes, resting/min/max heart rate, stress, body battery and time breakdown. Use get_heart_rate for the full heart rate series."
+    },
+    {
+      "name": "get_user_summary",
+      "description": "Get comprehensive user activity summary for a specific date including steps, calories, distance, active minutes, and more."
+    },
+    {
+      "name": "get_steps_data",
+      "description": "Get detailed step data chart for a specific date with timestamps."
+    },
+    {
+      "name": "get_daily_steps",
+      "description": "Get daily step counts for a date range (max 28 days per request, auto-chunked for longer ranges)."
+    },
+    {
+      "name": "get_activities_by_date",
+      "description": "Get all activities within a date range with optional filtering by type."
+    },
+    {
+      "name": "get_activity_typed_splits",
+      "description": "Get typed splits for an activity (more detailed than regular splits, useful for bouldering, strength training, etc.)."
+    },
+    {
+      "name": "get_rhr_day",
+      "description": "Get resting heart rate for a specific day."
+    },
+    {
+      "name": "get_hill_score",
+      "description": "Get hill score data indicating climbing/vertical performance."
+    },
+    {
+      "name": "get_all_day_events",
+      "description": "Get all daily events including auto-detected activities that may not have been recorded."
+    },
+    {
+      "name": "get_body_battery_events",
+      "description": "Get Body Battery events for a date (sleep, activities, naps that affected energy levels)."
+    },
+    {
+      "name": "add_hydration_data",
+      "description": "Add hydration/water intake data in milliliters."
+    },
+    {
+      "name": "get_available_badges",
+      "description": "Get all badges available to earn."
+    },
+    {
+      "name": "get_in_progress_badges",
+      "description": "Get badges that are currently in progress (started but not completed)."
+    },
+    {
+      "name": "get_available_badge_challenges",
+      "description": "Get available badge challenges to join."
+    },
+    {
+      "name": "get_non_completed_badge_challenges",
+      "description": "Get badge challenges that have not been completed yet."
+    },
+    {
+      "name": "get_in_progress_virtual_challenges",
+      "description": "Get virtual challenges that are currently in progress."
+    },
+    {
+      "name": "remove_gear_from_activity",
+      "description": "Remove/unlink a piece of gear from an activity. Note: Requires the gear UUID from Garmin Connect web interface."
+    },
+    {
+      "name": "get_gear_activities",
+      "description": "Get activities where a specific piece of gear was used. Note: Requires the gear UUID from Garmin Connect web interface."
+    },
+    {
+      "name": "get_training_plans",
+      "description": "Get all available training plans."
+    },
+    {
+      "name": "get_training_plan_by_id",
+      "description": "Get detailed information about a specific training plan."
+    },
+    {
+      "name": "get_menstrual_data",
+      "description": "Get menstrual cycle data for a specific date."
+    },
+    {
+      "name": "get_pregnancy_summary",
+      "description": "Get pregnancy tracking summary/snapshot data."
+    },
+    {
+      "name": "request_reload",
+      "description": "Request reload of data for a specific date (useful for older data that was offloaded by Garmin)."
+    },
+    {
+      "name": "get_activity_types",
+      "description": "Get all activity types available in Garmin Connect."
+    },
+    {
+      "name": "get_primary_training_device",
+      "description": "Get information about the primary training device and device priorities."
+    },
+    {
+      "name": "count_activities",
+      "description": "Count the activities in Garmin Connect, over the whole history or over a date range."
+    },
+    {
+      "name": "get_fitness_stats",
+      "description": "Get aggregated fitness statistics between two dates."
+    },
+    {
+      "name": "get_all_gear",
+      "description": "Get complete list of all gear/equipment with their UUIDs. This solves the UUID problem - you can now discover all gear without needing to manually find UUIDs in the web interface."
+    },
+    {
+      "name": "update_gear",
+      "description": "Update existing gear/equipment details."
+    },
+    {
+      "name": "delete_gear",
+      "description": "Delete a piece of gear/equipment. WARNING: This cannot be undone."
+    },
+    {
+      "name": "get_gear_types",
+      "description": "Get all available gear/equipment types (e.g., Shoes, Bike, Golf Clubs, Other). Returns type names and primary keys used when creating gear."
+    },
+    {
+      "name": "get_gear_makes",
+      "description": "Get all available gear brands/makes (e.g., Nike, Adidas, ASICS, Brooks). Returns make names and primary keys."
+    },
+    {
+      "name": "get_gear_collections",
+      "description": "Get all gear collections. Collections group gear items that are used together (e.g., running kit, bike components)."
+    },
+    {
+      "name": "get_gear_collection",
+      "description": "Get detailed information about a specific gear collection, including the gear items in the collection and associated activity types."
+    },
+    {
+      "name": "create_gear_collection",
+      "description": "Create a new gear collection to group equipment used together (e.g., running kit, bike components). Requires a name and first use date."
+    },
+    {
+      "name": "update_gear_collection",
+      "description": "Update an existing gear collection. Can change name, add/remove gear items, or change associated activity types."
+    },
+    {
+      "name": "delete_gear_collection",
+      "description": "Delete a gear collection. WARNING: This cannot be undone. The gear items in the collection will NOT be deleted."
+    },
+    {
+      "name": "get_activity_comments",
+      "description": "Get all comments on an activity."
+    },
+    {
+      "name": "set_activity_privacy",
+      "description": "Change the privacy of an activity. \"subscribers\" is what Garmin Connect shows as \"connections only\". Read the current level from accessControlRuleDTO in get_activity_details before changing it."
+    },
+    {
+      "name": "get_training_load",
+      "description": "Get the monthly training load balance (low aerobic, high aerobic, anaerobic) against its target ranges. This is a snapshot taken on endDate, not an aggregate over the range."
+    },
+    {
+      "name": "get_load_ratio",
+      "description": "Get acute/chronic workload ratio indicating training balance and injury risk."
+    },
+    {
+      "name": "get_performance_condition",
+      "description": "Get the performance condition score for a date. Garmin records this per activity rather than daily, so it is usually only available through get_activity_details."
+    },
+    {
+      "name": "get_sleep_movement",
+      "description": "Get movement data during sleep including restless moments."
+    },
+    {
+      "name": "get_device_alarms",
+      "description": "Get the alarms configured on a Garmin device, with time, repeat days and whether each one is on. Without a deviceId every registered device is reported."
+    },
+    {
+      "name": "get_courses",
+      "description": "Get saved routes/courses from Garmin Connect."
+    },
+    {
+      "name": "compare_activities",
+      "description": "Compare 2-5 activities side by side: distance, duration, speed, heart rate, calories, elevation, steps and training effect."
+    },
+    {
+      "name": "find_similar_activities",
+      "description": "Find activities similar to a reference activity by type, distance and duration (within 20% tolerance). Returns the closest matches first, each with its full metrics and a similarity score."
+    },
+    {
+      "name": "analyze_training_period",
+      "description": "Comprehensive analysis of training trends, volume, and patterns over a date range."
+    }
+  ],
+  "tools_generated": false,
+  "keywords": [
+    "garmin",
+    "garmin-connect",
+    "fitness",
+    "health",
+    "sleep",
+    "training",
+    "wellness",
+    "activities"
+  ],
+  "license": "MIT",
+  "privacy_policies": [
+    "https://github.com/sedoglia/garmin-mcp-ts/blob/main/PRIVACY.md",
+    "https://www.garmin.com/privacy"
+  ],
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  },
   "user_config": {
     "garmin_email": {
       "type": "string",
@@ -41,10 +510,5 @@
       "sensitive": true,
       "required": true
     }
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sedoglia/garmin-mcp-ts"
   }
 }

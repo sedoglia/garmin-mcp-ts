@@ -18,13 +18,42 @@
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
 
-## 🆕 Novità v4.3.1 - Metadati del bundle
+## 🆕 Novità v4.3.1 - Requisiti per la MCP Directory
 
-Patch di soli metadati: nessuna modifica al codice del server o ai tool.
+Nessun cambiamento nel comportamento dei tool: quello che cambia è ciò che il
+server e il bundle dichiarano di sé.
 
-- **`display_name`**: campo obbligatorio del manifest, mancante. Ora vale "Garmin Connect".
+### 📋 **MANIFEST**
+- **`display_name`**: campo obbligatorio, mancante. Ora vale "Garmin Connect".
 - **`icon`**: il valore era `.\GARMIN.png`, un percorso relativo in stile Windows che non
-  si risolve quando il bundle viene spacchettato su altre piattaforme. Ora è `GARMIN.png`.
+  si risolve quando il bundle viene spacchettato su altre piattaforme. Ora è `GARMIN.png`,
+  e l'immagine è stata portata a 512×512, la dimensione consigliata da Claude Desktop.
+- **`privacy_policies`**: assente. Una privacy policy mancante o incompleta è motivo di
+  rifiuto immediato in fase di review. Ora elenca la policy del progetto e quella di Garmin.
+- **`tools`**: i 109 tool sono ora dichiarati nel manifest, generati dal codice con
+  `npm run sync:manifest` e verificati in CI, così l'elenco non può divergere.
+- **`long_description`**, **`keywords`**, **`compatibility`**: aggiunti per la scheda della
+  directory e per dichiarare piattaforme e versione di Node richieste.
+
+### 🏷️ **ANNOTAZIONI DEI TOOL**
+- `tools/list` restituiva solo nome, descrizione e schema: **titoli e annotazioni non
+  uscivano mai dal server**. La directory legge proprio quella risposta per classificare i
+  tool, quindi i 109 tool risultavano privi di titolo e di indicazione di sicurezza. Ora
+  ogni tool espone `title`, `readOnlyHint`/`destructiveHint` e `openWorldHint`.
+- **`setup_credentials`**: era l'unico tool senza `readOnlyHint` né `destructiveHint`.
+  Sovrascrive credenziali e token salvati, quindi ora dichiara `destructiveHint`.
+- **`delete_weigh_in`**: descrizione ampliata a cosa viene cancellato e dove trovare l'ID.
+
+### 🔒 **SICUREZZA**
+- Gli argomenti dei tool venivano loggati integralmente con `DEBUG_GARMIN` attivo: la
+  password passata a `setup_credentials` finiva in chiaro su stderr. I valori sensibili
+  sono ora sostituiti da `[redacted]` e l'email viene mascherata.
+
+### 🔧 **RILASCIO**
+- Il bundle `.mcpb` e il suo `.sha256` sono costruiti dal tag da un workflow GitHub
+  Actions, con le sole dipendenze di produzione, e non più a mano.
+- I link di download nel README puntano a `releases/latest`: non si disallineano più a
+  ogni versione.
 
 ## 🆕 Novità v4.3.0 - Correttezza dei dati restituiti dai tool
 
@@ -144,7 +173,7 @@ correzione è stata verificata contro un account Garmin reale.
 
 ## Funzionalità
 
-Questo server MCP fornisce **106 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
+Questo server MCP fornisce **109 potenti strumenti** per interagire con i tuoi dati Garmin Connect:
 
 ### Strumenti Attività (Base)
 | Strumento | Descrizione |
@@ -415,7 +444,7 @@ npm install keytar
 Usa il browser oppure:
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.1/garmin-mcp-ts.mcpb
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/latest/download/garmin-mcp-ts.mcpb
 ```
 
 ### 3. Verifica l'integrità
@@ -423,7 +452,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.1/garmin-m
 Verifica l'integrità (opzionale ma consigliato):
 
 ```bash
-wget https://github.com/sedoglia/garmin-mcp-ts/releases/download/v4.3.1/garmin-mcp-ts.mcpb.sha256
+wget https://github.com/sedoglia/garmin-mcp-ts/releases/latest/download/garmin-mcp-ts.mcpb.sha256
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 
@@ -700,11 +729,35 @@ garmin-mcp-ts/
 ├── scripts/
 │   ├── setup-encryption.ts  # Script interattivo per setup credenziali
 │   ├── check-encryption.ts  # Script diagnostico per verificare encryption
+│   ├── sync-manifest.ts     # Rigenera e verifica manifest.json dal codice
 │   └── test-keytar.ts       # Script diagnostico per testare l'integrazione con Keytar
 ├── dist/                  # Output JavaScript compilato
+├── manifest.json          # Manifest MCPB del bundle (generato in parte da sync-manifest)
+├── PRIVACY.md             # Privacy policy referenziata dal manifest
 ├── package.json
 └── tsconfig.json
 ```
+
+## 📦 Costruire il bundle .mcpb
+
+Il bundle pubblicato viene costruito dal workflow `Release`, che si attiva sul tag
+(`git tag v4.3.1 && git push origin v4.3.1`) e allega `.mcpb` e `.sha256` a una release
+in bozza. Per costruirlo in locale:
+
+```bash
+npm ci
+npm run pack        # build + controllo manifest + validazione + mcpb pack
+```
+
+Se cambi, aggiungi o rimuovi un tool, rigenera l'elenco dichiarato nel manifest:
+
+```bash
+npm run sync:manifest
+```
+
+`npm run check:manifest` fa fallire la CI quando manifest e codice divergono: la directory
+MCP legge il manifest e la risposta di `tools/list`, e un disallineamento fra i due si
+scopre altrimenti solo in fase di review.
 
 ## 🔐 Architettura di Sicurezza
 

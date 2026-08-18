@@ -52,7 +52,10 @@ export const toolDefinitions: ToolDefinition[] = [
       'Store Garmin Connect credentials encrypted in the OS native vault and log in immediately. ' +
       'Use this when the server reports that credentials are missing or invalid. ' +
       'The password is encrypted at rest and never written to a plain text file.',
-    annotations: { confirmationRequiredHint: true },
+    // Sovrascrive le credenziali salvate e i token OAuth della sessione
+    // precedente: non è readOnly, e la directory MCP richiede che ogni tool
+    // dichiari readOnlyHint oppure destructiveHint.
+    annotations: { destructiveHint: true, confirmationRequiredHint: true },
     inputSchema: {
       type: 'object',
       properties: {
@@ -928,7 +931,9 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.DELETE_WEIGH_IN,
     title: 'Delete Weigh-In',
-    description: 'Delete a weigh-in record.',
+    description:
+      'Permanently delete a single weigh-in record from Garmin Connect, identified by its weigh-in ID. '
+      + 'The ID comes from get_body_composition or get_weigh_ins. The measurement cannot be recovered afterwards.',
     annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',

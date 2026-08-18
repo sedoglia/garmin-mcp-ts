@@ -2,7 +2,7 @@
 
 import { GarminConnectClient, toLocalDateString } from '../garmin/client.js';
 import { AuthManager } from '../garmin/auth.js';
-import { SOURCE_LABELS, maskEmail } from '../utils/credentials.js';
+import { SOURCE_LABELS, maskEmail, redactArgs } from '../utils/credentials.js';
 import logger from '../utils/logger.js';
 
 // Tipo per gli argomenti dei tool
@@ -25,7 +25,7 @@ export class ToolHandler {
     // Normalizza gli argomenti: undefined, null o oggetto
     const safeArgs: Record<string, unknown> = (args && typeof args === 'object') ? args : {};
 
-    logger.info(`Safe args: ${JSON.stringify(safeArgs)}`);
+    logger.info(`Safe args: ${JSON.stringify(redactArgs(safeArgs))}`);
 
     // Login pigro: la prima chiamata che richiede dati Garmin autentica.
     // Se le credenziali mancano o sono errate l'errore è leggibile e il

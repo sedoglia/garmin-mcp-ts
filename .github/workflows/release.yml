@@ -1,0 +1,79 @@
+name: Release
+
+# The .mcpb bundle attached to a release is the artifact submitted to the MCP
+# Directory. It is built here, from the tag, rather than by hand on a developer
+# machine, so what users download is what the tag contains.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (e.g. v4.3.1)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Check manifest is in sync
+        run: npm run check:manifest
+
+      - name: Validate manifest against the MCPB schema
+        run: npm run validate:manifest
+
+      # A release tagged v4.3.1 carrying a 4.3.0 manifest is the first thing a
+      # reviewer notices, so the tag and the manifest have to agree.
+      - name: Check tag matches the manifest version
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          version="$(node -p "require('./manifest.json').version")"
+          if [ "$TAG" != "v$version" ]; then
+            echo "tag $TAG does not match manifest version $version" >&2
+            exit 1
+          fi
+
+      # mcpb pack archives node_modules as it finds it, so the dev
+      # dependencies have to go before packing. The build above already ran
+      # with them in place.
+      - name: Reinstall production dependencies only
+        run: npm ci --omit=dev
+
+      - name: Pack the bundle
+        run: npx --no-install mcpb pack . garmin-mcp-ts.mcpb
+
+      - name: Checksum
+        run: sha256sum garmin-mcp-ts.mcpb > garmin-mcp-ts.mcpb.sha256
+
+      # Published as a draft: the release notes are worth a read before the
+      # download links in the README start resolving to it.
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            --draft \
+            --generate-notes \
+            --title "$TAG" \
+            garmin-mcp-ts.mcpb garmin-mcp-ts.mcpb.sha256
