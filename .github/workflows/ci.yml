@@ -31,6 +31,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The manifest is what the MCP Directory reads. When its tool list or
+      # version drifts from the code, the submission is rejected long after
+      # the merge that caused it.
+      - name: Check manifest is in sync
+        run: npm run check:manifest
+
+      - name: Validate manifest against the MCPB schema
+        run: npm run validate:manifest
+
       # Reported, not enforced: a fresh advisory should not turn unrelated
       # pull requests red.
       - name: Audit

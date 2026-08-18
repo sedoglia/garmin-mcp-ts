@@ -8,6 +8,8 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { toolDefinitions } from './tools.js';
+import { SERVER_NAME, SERVER_VERSION } from '../utils/constants.js';
+import { redactArgs } from '../utils/credentials.js';
 import { ToolHandler } from './handlers.js';
 import { AuthManager } from '../garmin/auth.js';
 import logger from '../utils/logger.js';
@@ -15,8 +17,8 @@ import logger from '../utils/logger.js';
 export async function createMCPServer(auth: AuthManager): Promise<Server> {
   const server = new Server(
     {
-      name: 'garmin-mcp',
-      version: '1.0.0',
+      name: SERVER_NAME,
+      version: SERVER_VERSION,
     },
     {
       capabilities: {
@@ -27,14 +29,27 @@ export async function createMCPServer(auth: AuthManager): Promise<Server> {
 
   const toolHandler = new ToolHandler(auth);
 
-  // Handler per listare i tool disponibili
+  // Handler per listare i tool disponibili.
+  //
+  // title e annotations viaggiano con ogni tool: la directory MCP legge la
+  // risposta di tools/list e raggruppa i tool per annotation, quindi un tool
+  // senza title o senza readOnlyHint/destructiveHint risulta non annotato
+  // anche se la annotation esiste qui nel sorgente.
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     logger.info('Listing available tools');
     return {
       tools: toolDefinitions.map((tool) => ({
         name: tool.name,
+        title: tool.title,
         description: tool.description,
         inputSchema: tool.inputSchema,
+        annotations: {
+          title: tool.title,
+          ...tool.annotations,
+          // Ogni tool, credenziali comprese, parla con connect.garmin.com:
+          // il dominio su cui operano non è chiuso e locale.
+          openWorldHint: true,
+        },
       })),
     };
   });
@@ -45,7 +60,7 @@ export async function createMCPServer(auth: AuthManager): Promise<Server> {
     const toolArgs = request.params.arguments;
 
     logger.info(`Tool called: ${toolName}`);
-    logger.info(`Arguments received: ${JSON.stringify(toolArgs)}`);
+    logger.info(`Arguments received: ${JSON.stringify(redactArgs(toolArgs))}`);
 
     try {
       // Passa gli argomenti direttamente all'handler

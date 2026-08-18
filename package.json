@@ -4,8 +4,15 @@
   "type": "module",
   "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
+    "sync:manifest": "npx tsx scripts/sync-manifest.ts",
+    "check:manifest": "npx tsx scripts/sync-manifest.ts --check",
+    "validate:manifest": "mcpb validate manifest.json",
+    "pack": "npm run build && npm run check:manifest && npm run validate:manifest && mcpb pack . garmin-mcp-ts.mcpb",
     "start": "node dist/index.js",
     "login": "node dist/garmin/simple-login.js",
     "dev": "tsx watch src/index.ts",
@@ -38,6 +45,7 @@
     "keytar": "^7.9.0"
   },
   "devDependencies": {
+    "@anthropic-ai/mcpb": "^2.1.2",
     "@types/node": "^24.13.3",
     "tsx": "^4.23.1",
     "typescript": "^7.0.2"

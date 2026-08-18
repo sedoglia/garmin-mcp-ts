@@ -50,6 +50,8 @@ coverage/
 
 # Releases (MCPB packages)
 releases/
+*.mcpb
+*.mcpb.sha256
 
 # Log folder
 log/

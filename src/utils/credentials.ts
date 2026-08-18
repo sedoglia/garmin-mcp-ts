@@ -54,6 +54,31 @@ export function maskEmail(email: string): string {
   return `${visible}@${domain}`;
 }
 
+// Nomi di parametro il cui valore non deve finire in un log, nemmeno con
+// DEBUG_GARMIN attivo: `setup_credentials` riceve la password in chiaro.
+const SENSITIVE_ARG_KEYS = new Set(['password', 'passwd', 'pwd', 'token', 'secret', 'apikey', 'api_key']);
+
+/**
+ * Copia degli argomenti di un tool con i valori sensibili sostituiti da
+ * `[redacted]`, per il logging. L'email viene mascherata, non rimossa: serve a
+ * capire quale account era in uso.
+ */
+export function redactArgs(args: unknown): unknown {
+  if (!args || typeof args !== 'object' || Array.isArray(args)) return args;
+
+  const redacted: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(args as Record<string, unknown>)) {
+    if (SENSITIVE_ARG_KEYS.has(key.toLowerCase())) {
+      redacted[key] = '[redacted]';
+    } else if (key.toLowerCase() === 'email' && typeof value === 'string') {
+      redacted[key] = maskEmail(value);
+    } else {
+      redacted[key] = value;
+    }
+  }
+  return redacted;
+}
+
 /**
  * Reads a credential pair from the environment, ignoring blank values.
  * Claude Desktop substitutes empty strings for user_config fields the user
