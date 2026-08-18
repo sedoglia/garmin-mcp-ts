@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.3.2-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.3.3-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,14 @@
 ---
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
+
+## 🆕 What's New in v4.3.3 - Icon
+
+- The bundle icon was the official Garmin Connect app artwork. It has been replaced with
+  an original drawing: no third-party logo or trademark, so the extension does not
+  present itself as a Garmin product.
+- The area around the rounded square is transparent rather than white — an opaque PNG
+  would show a white box around the icon on a dark theme.
 
 ## 🆕 What's New in v4.3.2 - The OS vault on every platform
 
