@@ -758,6 +758,8 @@ This project was inspired by and built upon the work of several open-source proj
 
 Special thanks to the [garmin-connect](https://www.npmjs.com/package/garmin-connect) npm package maintainers.
 
+The full history of the project, version by version, is in the [CHANGELOG](CHANGELOG_EN.md).
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

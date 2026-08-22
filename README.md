@@ -758,6 +758,8 @@ Questo progetto è stato ispirato e costruito sul lavoro di diversi progetti ope
 
 Un ringraziamento speciale ai manutentori del pacchetto npm [garmin-connect](https://www.npmjs.com/package/garmin-connect).
 
+La storia completa del progetto, versione per versione, è nel [CHANGELOG](CHANGELOG.md).
+
 ## Contribuire
 
 I contributi sono benvenuti! Sentiti libero di inviare una Pull Request.
