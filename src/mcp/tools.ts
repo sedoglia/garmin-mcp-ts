@@ -152,7 +152,11 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     name: MCP_TOOL_NAMES.GET_SLEEP_DATA,
     title: 'Get Sleep Data',
-    description: 'Get detailed sleep information including duration, sleep stages, and quality score.',
+    description:
+      'Get a night of sleep: duration, sleep stages, quality score and the nightly summary. ' +
+      'The per-minute series behind it (movement, heart rate, stress, body battery, HRV, respiration) ' +
+      'are reported as counts only; set includeTimeSeries to inline them, or use the dedicated tool ' +
+      'for the one series you need.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -161,6 +165,12 @@ export const toolDefinitions: ToolDefinition[] = [
           type: 'string',
           description: 'Date in YYYY-MM-DD format. Defaults to today if not specified.',
           pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        includeTimeSeries: {
+          type: 'boolean',
+          description:
+            'Inline every per-minute series for the night (default false). This is a very large ' +
+            'response; prefer get_sleep_movement, get_hrv_data or get_respiration_data for a single series.',
         },
       },
     },
@@ -322,7 +332,10 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     name: MCP_TOOL_NAMES.GET_STRESS_DATA,
     title: 'Get Stress Data',
-    description: 'Get stress level data for a specific date. Returns stress levels throughout the day (0-100 scale), with 0-25 resting, 26-50 low, 51-75 medium, 76-100 high stress. Includes overall stress level, durations by category, and detailed timestamp values.',
+    description:
+      'Get stress for a date on the 0-100 scale (0-25 resting, 26-50 low, 51-75 medium, 76-100 high). ' +
+      'Returns average/max/min and the seconds spent in each band; set includeValues to also get the ' +
+      '~460 three-minute samples those figures are derived from.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -331,6 +344,12 @@ export const toolDefinitions: ToolDefinition[] = [
           type: 'string',
           description: 'Date in YYYY-MM-DD format. Defaults to today if not specified.',
           pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        includeValues: {
+          type: 'boolean',
+          description:
+            'Include the individual timestamped stress samples (default false). Only worth requesting ' +
+            'to see when during the day stress rose or fell.',
         },
       },
     },
@@ -1125,11 +1144,20 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_EARNED_BADGES,
     title: 'Get Earned Badges',
-    description: 'Get all badges earned by the user.',
+    description:
+      'Get all badges earned by the user, as id, key, name, category, difficulty, points and the date earned. ' +
+      'Set includeDetails for the full badge records.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
-      properties: {},
+      properties: {
+        includeDetails: {
+          type: 'boolean',
+          description:
+            'Return every field the badge service sends rather than the identifying ones (default false). ' +
+            'This is a much larger response.',
+        },
+      },
     },
   },
   {
@@ -1453,11 +1481,20 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_AVAILABLE_BADGES,
     title: 'Get Available Badges',
-    description: 'Get all badges available to earn.',
+    description:
+      'Get all badges available to earn, as id, key, name, category, difficulty, points and, where set, ' +
+      'the active window and progress. Set includeDetails for the full badge records.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
-      properties: {},
+      properties: {
+        includeDetails: {
+          type: 'boolean',
+          description:
+            'Return every field the badge service sends rather than the identifying ones (default false). ' +
+            'This is a much larger response.',
+        },
+      },
     },
   },
   {

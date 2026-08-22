@@ -314,11 +314,51 @@ export class GarminConnectClient {
     }
   }
 
-  async getSleepData(date: string): Promise<any> {
+  /**
+   * Get a night's sleep.
+   * The upstream payload carries six parallel per-minute series (movement alone
+   * is ~640 points) that together push a single night past the tool-result
+   * token cap, so by default this returns the nightly summary plus the sleep
+   * stages and reports the size of each series instead of inlining it. Each
+   * series has its own tool (getSleepMovement, getHrvData, getRespirationData,
+   * getAllDayStress, getBodyBattery) for when the detail is actually wanted.
+   */
+  async getSleepData(date: string, includeTimeSeries: boolean = false): Promise<any> {
     this.checkInitialized();
     try {
-      const sleep = await this.gc.getSleepData(new Date(date));
-      return sleep;
+      const sleep: any = await this.gc.getSleepData(new Date(date));
+      if (!sleep) return sleep;
+
+      if (includeTimeSeries) return sleep;
+
+      const {
+        sleepMovement,
+        sleepHeartRate,
+        sleepStress,
+        sleepBodyBattery,
+        hrvData,
+        wellnessEpochRespirationDataDTOList,
+        sleepRestlessMoments,
+        ...rest
+      } = sleep;
+
+      const size = (v: unknown) => (Array.isArray(v) ? v.length : 0);
+
+      return {
+        ...rest,
+        // Counts stand in for the series themselves: enough to tell the caller
+        // the data exists and is worth a follow-up call, at a fraction of the cost.
+        omittedTimeSeries: {
+          note: 'Per-minute series omitted. Pass includeTimeSeries: true for the full payload.',
+          sleepMovement: size(sleepMovement),
+          sleepHeartRate: size(sleepHeartRate),
+          sleepStress: size(sleepStress),
+          sleepBodyBattery: size(sleepBodyBattery),
+          hrvData: size(hrvData),
+          respiration: size(wellnessEpochRespirationDataDTOList),
+          sleepRestlessMoments: size(sleepRestlessMoments),
+        },
+      };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error fetching sleep data:', error);
@@ -586,7 +626,7 @@ export class GarminConnectClient {
    * Get stress data for a specific date
    * Uses custom GET request to wellness-service API
    */
-  async getStressData(date: string): Promise<any> {
+  async getStressData(date: string, includeValues: boolean = false): Promise<any> {
     this.checkInitialized();
     try {
       // Endpoint corretto: connectapi.garmin.com (non connect.garmin.com/modern/proxy)
@@ -614,22 +654,40 @@ export class GarminConnectClient {
         }
       }
 
+      // The dailyStress endpoint sends samples, not the banded durations this
+      // tool is expected to report: the fields for them were read straight off
+      // the response and so were always undefined, which the old `raw` dump hid.
+      // The bands are derived from the samples instead, which needs no second call.
+      const sampleSeconds = stressValues.length > 1
+        ? Math.round((stressValues[1].timestamp - stressValues[0].timestamp) / 1000)
+        : 0;
+      const durations = { rest: 0, low: 0, medium: 0, high: 0 };
+      for (const { stressLevel } of stressValues) {
+        if (stressLevel <= 25) durations.rest += sampleSeconds;
+        else if (stressLevel <= 50) durations.low += sampleSeconds;
+        else if (stressLevel <= 75) durations.medium += sampleSeconds;
+        else durations.high += sampleSeconds;
+      }
+
       return {
         date,
         calendarDate: stressData?.calendarDate,
-        overallStressLevel: stressData?.overallStressLevel,
-        restStressDuration: stressData?.restStressDuration,
-        activityStressDuration: stressData?.activityStressDuration,
-        lowStressDuration: stressData?.lowStressDuration,
-        mediumStressDuration: stressData?.mediumStressDuration,
-        highStressDuration: stressData?.highStressDuration,
-        stressQualifier: stressData?.stressQualifier,
+        startTimestampLocal: stressData?.startTimestampLocal,
+        endTimestampLocal: stressData?.endTimestampLocal,
         avgStress,
         maxStress,
         minStress,
+        restStressDuration: durations.rest,
+        lowStressDuration: durations.low,
+        mediumStressDuration: durations.medium,
+        highStressDuration: durations.high,
+        sampleIntervalSeconds: sampleSeconds,
         stressValueCount: stressValues.length,
-        stressValues,
-        raw: stressData,
+        // A day holds ~460 three-minute samples, and the summary above already
+        // answers what stress was like, so the series is opt-in. The old `raw`
+        // field repeated every value above it verbatim and is gone for the same
+        // reason: together they put this tool over the tool-result token cap.
+        ...(includeValues ? { stressValues } : {}),
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1959,15 +2017,48 @@ export class GarminConnectClient {
   }
 
   /**
+   * Reduce a badge to the fields that identify and rank it.
+   * The badge services answer with ~35 fields each and most are null for any
+   * given badge, so a few hundred badges run to hundreds of KB; keeping the
+   * meaningful ones (and only the optional fields that are actually set) is
+   * what puts these two tools back under the tool-result token cap.
+   */
+  private static compactBadge(badge: any): Record<string, unknown> {
+    const out: Record<string, unknown> = {
+      badgeId: badge?.badgeId,
+      badgeKey: badge?.badgeKey,
+      badgeName: badge?.badgeName,
+      badgeCategoryId: badge?.badgeCategoryId,
+      badgeDifficultyId: badge?.badgeDifficultyId,
+      badgePoints: badge?.badgePoints,
+    };
+    const optional: Array<[string, unknown]> = [
+      ['earnedByMe', badge?.earnedByMe],
+      ['badgeEarnedDate', badge?.badgeEarnedDate],
+      ['badgeEarnedNumber', badge?.badgeEarnedNumber],
+      ['badgeStartDate', badge?.badgeStartDate],
+      ['badgeEndDate', badge?.badgeEndDate],
+      ['badgeProgressValue', badge?.badgeProgressValue],
+      ['badgeTargetValue', badge?.badgeTargetValue],
+    ];
+    for (const [key, value] of optional) {
+      if (value !== null && value !== undefined) out[key] = value;
+    }
+    return out;
+  }
+
+  /**
    * Get earned badges
    */
-  async getEarnedBadges(): Promise<any> {
+  async getEarnedBadges(includeDetails: boolean = false): Promise<any> {
     this.checkInitialized();
     try {
       const url = 'https://connectapi.garmin.com/badge-service/badge/earned';
-      const badges = await this.gc.get(url);
+      const badges = (await this.gc.get(url)) || [];
+      const list: any[] = Array.isArray(badges) ? badges : [];
       return {
-        badges: badges || [],
+        count: list.length,
+        badges: includeDetails ? list : list.map((x) => GarminConnectClient.compactBadge(x)),
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -2475,13 +2566,17 @@ export class GarminConnectClient {
   /**
    * Get available badges
    */
-  async getAvailableBadges(): Promise<any> {
+  async getAvailableBadges(includeDetails: boolean = false): Promise<any> {
     this.checkInitialized();
     try {
       const url = 'https://connectapi.garmin.com/badge-service/badge/available';
       const params = { showExclusiveBadge: 'true' };
       const badges = await this.gc.get(url, { params });
-      return { badges: badges || [] };
+      const list: any[] = Array.isArray(badges) ? badges : [];
+      return {
+        count: list.length,
+        badges: includeDetails ? list : list.map((x) => GarminConnectClient.compactBadge(x)),
+      };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error fetching available badges:', error);
