@@ -768,8 +768,11 @@ Example for interval running workout:
 
   {
     name: MCP_TOOL_NAMES.GET_ALL_DAY_STRESS,
-    title: 'Get All Day Stress',
-    description: 'Get detailed all-day stress data with full breakdown.',
+    title: 'Get Stress by Hour',
+    description:
+      'Get the stress of a day hour by hour: average, maximum and stress band for each hour, ' +
+      'plus the totals for the day. Use this to see when stress rose or fell; use get_stress_data ' +
+      'for the day as a whole, and its includeValues for the individual three-minute samples.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',

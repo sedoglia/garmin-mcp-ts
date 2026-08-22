@@ -1054,7 +1054,7 @@ export class ToolHandler {
   private async handleGetAllDayStress(args: Record<string, unknown>): Promise<unknown> {
     const date = this.getStringParam(args, 'date', this.getTodayDate());
 
-    logger.info(`Fetching all day stress for: ${date}`);
+    logger.info(`Fetching hourly stress for: ${date}`);
 
     const stress = await this.client.getAllDayStress(date);
 

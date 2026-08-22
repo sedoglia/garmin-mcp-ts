@@ -179,7 +179,7 @@
     },
     {
       "name": "get_all_day_stress",
-      "description": "Get detailed all-day stress data with full breakdown."
+      "description": "Get the stress of a day hour by hour: average, maximum and stress band for each hour, plus the totals for the day. Use this to see when stress rose or fell; use get_stress_data for the day as a whole, and its includeValues for the individual three-minute samples."
     },
     {
       "name": "get_floors",

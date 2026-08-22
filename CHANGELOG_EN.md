@@ -9,6 +9,27 @@ follows [semantic versioning](https://semver.org/).
 > Earlier entries are reconstructed from commit messages, release tags and historical
 > versions of the READMEs.
 
+## [Unreleased]
+
+### 🔧 `get_all_day_stress` — from raw payload to hourly profile
+- The tool returned the `dailyStress` response verbatim: the ~480 stress samples **plus**
+  the ~480 Body Battery ones that ride along in the same payload. Around 28,000 tokens, past
+  the cap for a single result: like the four tools fixed in 4.5.0, it could not answer at
+  all. It was also a duplicate of `get_stress_data`, which reads the same address.
+- The samples are now aggregated per **local hour**: average, maximum and band for each
+  hour, plus the totals for the day. The response drops from ~28,000 to ~450 tokens. The two
+  tools now answer different questions: `get_stress_data` how much stress there was over the
+  day, `get_all_day_stress` when it rose.
+- **Local hours, not GMT**: sample timestamps are GMT, so bucketing them as they come would
+  report a day shifted by the account's offset. The offset is derived from the two
+  timestamps the payload already carries, one local and one GMT.
+- **Gaps stay gaps**: the `-1` and `-2` values mark stretches the watch could not measure.
+  They are kept out of the average, and an hour containing them also reports `sampleSlots`,
+  so an hour spent off the wrist reads as missing data rather than as calm.
+- **The daily average and maximum are Garmin's own**, the figures the app shows. They are
+  computed on finer data than the three-minute samples, so the daily maximum can exceed
+  every hourly one.
+
 ## [4.5.5] - 2026-08-22 — Body composition on a weigh-in
 
 - **`add_weigh_in`** accepts body fat, water, muscle and bone percentages, but Garmin keeps

@@ -1477,16 +1477,94 @@ export class GarminConnectClient {
   // ═══════════════════════════════════════════════════════════════════════════
 
   /**
-   * Get all-day stress data with detailed breakdown
+   * Get the stress of a day hour by hour.
+   * This reads the same dailyStress endpoint as getStressData, which answers
+   * "how stressed was I" for the whole day; the hourly profile answers "when".
+   * Returning the endpoint's payload verbatim, as this did, meant ~480 stress
+   * samples plus the ~480 body battery samples that ride along in it: past the
+   * tool-result token cap, so the tool could not answer at all. The samples are
+   * aggregated per local hour instead, which is the granularity the question
+   * needs and keeps the response at two dozen rows.
    */
   async getAllDayStress(date: string): Promise<any> {
     this.checkInitialized();
     try {
       const url = `https://connectapi.garmin.com/wellness-service/wellness/dailyStress/${date}`;
       const stressData = await this.gc.get(url);
+
+      const samples: Array<[number, number]> = stressData?.stressValuesArray || [];
+
+      // Sample timestamps are epoch millis in GMT, so bucketing them by hour
+      // directly would report a day shifted by the account's offset. The
+      // payload carries the same instant twice, once local and once GMT: the
+      // difference between them is that offset. Both strings are parsed as UTC
+      // so the machine running this has no say in the result.
+      const asUtc = (s?: string) => (s ? Date.parse(s.replace(/\.\d+$/, '') + 'Z') : NaN);
+      const localStart = asUtc(stressData?.startTimestampLocal);
+      const gmtStart = asUtc(stressData?.startTimestampGMT);
+      const offsetMs = Number.isFinite(localStart) && Number.isFinite(gmtStart)
+        ? localStart - gmtStart
+        : 0;
+
+      // -1 and -2 mark stretches the watch could not measure. They are counted
+      // as gaps rather than averaged in, so an hour spent off the wrist reads
+      // as no data instead of as calm.
+      const buckets = new Map<number, { levels: number[]; total: number }>();
+      for (const [timestamp, level] of samples) {
+        const hour = new Date(timestamp + offsetMs).getUTCHours();
+        const bucket = buckets.get(hour) || { levels: [], total: 0 };
+        bucket.total += 1;
+        if (level >= 0) bucket.levels.push(level);
+        buckets.set(hour, bucket);
+      }
+
+      const band = (value: number) =>
+        value <= 25 ? 'rest' : value <= 50 ? 'low' : value <= 75 ? 'medium' : 'high';
+
+      const hourly = [...buckets.entries()]
+        .sort((a, b) => a[0] - b[0])
+        .map(([hour, { levels, total }]) => {
+          const measured = levels.length;
+          const avg = measured
+            ? Math.round(levels.reduce((a, b) => a + b, 0) / measured)
+            : null;
+          return {
+            hour: `${String(hour).padStart(2, '0')}:00`,
+            avg,
+            max: measured ? Math.max(...levels) : null,
+            band: avg === null ? null : band(avg),
+            samples: measured,
+            // Only worth reading when it differs from `samples`: the watch was
+            // off the wrist, or in an activity, for part of the hour.
+            ...(measured === total ? {} : { sampleSlots: total }),
+          };
+        });
+
+      const measuredLevels = samples
+        .filter(([, level]) => level >= 0)
+        .map(([, level]) => level);
+
+      // The day figures are Garmin's own, so they match what the Connect app
+      // shows. They are computed on data finer than the three-minute chart
+      // samples, which is why the daily maximum can exceed every hourly one
+      // below it; those are necessarily sample-derived. A day with no data
+      // reports these as -1, in which case the samples are all there is.
+      const reported = (value: unknown) =>
+        typeof value === 'number' && value >= 0 ? value : null;
+      const computedAvg = measuredLevels.length
+        ? Math.round(measuredLevels.reduce((a, b) => a + b, 0) / measuredLevels.length)
+        : null;
+
       return {
         date,
-        ...stressData,
+        calendarDate: stressData?.calendarDate,
+        startTimestampLocal: stressData?.startTimestampLocal,
+        endTimestampLocal: stressData?.endTimestampLocal,
+        avgStress: reported(stressData?.avgStressLevel) ?? computedAvg,
+        maxStress: reported(stressData?.maxStressLevel)
+          ?? (measuredLevels.length ? Math.max(...measuredLevels) : null),
+        measuredSampleCount: measuredLevels.length,
+        hourly,
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
