@@ -338,7 +338,9 @@ export const toolDefinitions: ToolDefinition[] = [
     description:
       'Get stress for a date on the 0-100 scale (0-25 resting, 26-50 low, 51-75 medium, 76-100 high). ' +
       'Returns average/max/min and the seconds spent in each band; set includeValues to also get the ' +
-      '~460 three-minute samples those figures are derived from.',
+      '~460 three-minute samples. The average and maximum are the day figures Garmin itself reports, ' +
+      'so they match the Connect app; the minimum and the band seconds are derived from the samples. ' +
+      'Use get_all_day_stress for the same day broken down hour by hour.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',

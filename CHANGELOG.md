@@ -32,6 +32,16 @@ recente alla più vecchia. Il progetto adotta il
   calcolati su dati più fini dei campioni da tre minuti, quindi il massimo del giorno può
   superare quello di ogni singola ora.
 
+### 🔧 `get_stress_data` — media e massimo allineati a quelli dell'app
+- I due valori venivano ricalcolati dai campioni da tre minuti, mentre Garmin li calcola su
+  dati più fini: il massimo usciva qualche punto sotto quello che mostra Connect (85 contro
+  89 sulla giornata di prova). Ora, dove il servizio li manda, valgono i suoi; i campioni
+  restano il ripiego per i giorni in cui non arrivano.
+- Il minimo continua a essere ricavato dai campioni, perché un minimo giornaliero il
+  servizio non lo manda, e così restano i secondi per fascia.
+- Senza questo allineamento i due tool sullo stress avrebbero dato due massimi diversi per
+  lo stesso giorno.
+
 ## [4.5.5] - 2026-08-22 — Composizione corporea nelle pesate
 
 - **`add_weigh_in`** accetta grasso corporeo, acqua, massa muscolare e ossea, ma Garmin
