@@ -23,250 +23,260 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 
 ---
 
-## Features
+## Tools
 
-This MCP server provides **109 powerful tools** to interact with your Garmin Connect data:
+The server exposes **109 tools**, grouped by subject. The **26** marked ✏️ write to the Garmin account; every other one only reads.
 
-### Activity Tools (Base)
-| Tool | Description |
-|------|-------------|
-| `list_recent_activities` | Get a list of recent activities with optional filters |
-| `get_activity_details` | Get detailed information about a specific activity |
-| `get_activity_splits` | Get split/lap data for a specific activity |
-| `get_workouts` | Get list of scheduled/planned workouts |
+### 🏃 Activities
 
-### Health & Wellness Tools
-| Tool | Description |
-|------|-------------|
-| `get_health_metrics` | Get daily health metrics (steps, heart rate, VO2 max) |
-| `get_sleep_data` | Get a night of sleep: duration, stages, score and nightly summary; `includeTimeSeries` adds the per-minute series |
-| `get_body_composition` | Get body composition measurements (weight, BMI, body fat, muscle mass) over a `days` window, plus the average |
-| `get_steps` | Get step count for a specific date |
-| `get_heart_rate` | Get detailed heart rate data for a specific date |
-| `get_hydration` | Get daily hydration/water intake data |
-
-### Wellness Metrics (v1.2)
-| Tool | Description |
-|------|-------------|
-| `get_stress_data` | Get the day's stress (0-100 scale): average/max/min and seconds per band; `includeValues` adds the individual samples |
-| `get_body_battery` | Get Body Battery energy levels (0-100) |
-| `get_hrv_data` | Get Heart Rate Variability (HRV) data |
-| `get_respiration_data` | Get respiration/breathing rate data |
-| `get_spo2_data` | Get SpO2 (blood oxygen saturation) data |
-
-### User & Device Tools
-| Tool | Description |
-|------|-------------|
-| `get_devices` | Get the list of registered Garmin devices (id, model, serial, firmware) |
-| `get_user_profile` | Get the user profile. `profileId` is the id the rest of the data is keyed by (an activity's `ownerId`); `id` is a separate internal identifier |
-| `get_training_status` | Get the training status for a date: status, VO2 max, acute/chronic load, ACWR |
-
----
-
-# New Tools in v2.0
-
-### Workout Management
-| Tool | Description |
-|------|-------------|
-| `get_workout_by_id` | Get details of a specific workout |
-| `download_workout` | Download workout in FIT format for device sync |
-| `create_workout` | **Create structured workouts** with warmup, intervals, cooldown. Valid sports: `running`, `cycling`, `walking`, `swimming`, `strength`, `cardio`, `yoga`, `pilates`, `hiit`, `mobility`, `rucking`, `other` |
-| `update_workout` | Modify an existing workout |
-| `delete_workout` | Delete a workout |
-| `schedule_workout` | Schedule a workout on a specific date |
-| `unschedule_workout` | Remove workout from calendar (⚠️ use before delete_workout) |
-
-### Activity Management
-| Tool | Description |
-|------|-------------|
-| `upload_activity` | Upload activity file (FIT, GPX, TCX) |
-| `create_manual_activity` | Create manual activity entry |
-| `set_activity_name` | Change activity name |
-| `set_activity_type` | Change activity type |
-| `delete_activity` | Delete an activity (⚠️ irreversible) |
-| `download_activity` | Download activity in various formats (FIT, TCX, GPX, KML, CSV) |
-
-### Device & Settings
-| Tool | Description |
-|------|-------------|
-| `get_device_last_used` | Get info about last used device |
-| `get_device_settings` | Get settings for a specific device |
-
-### Advanced Health & Wellness
-| Tool | Description |
-|------|-------------|
-| `get_all_day_stress` | Get detailed all-day stress data |
-| `get_floors` | Get floors climbed and descended; `includeBreakdown` adds the 15-minute intervals |
-| `get_intensity_minutes` | Get intensity minutes (moderate and vigorous) for a date or range, with weekly totals and goal |
-| `get_max_metrics` | Get max metrics (VO2 max, etc.) |
-| `get_training_readiness` | **Get Training Readiness score** |
-| `get_endurance_score` | **Get Endurance Score** |
-| `get_fitness_age` | **Get estimated Fitness Age** |
-| `get_daily_summary` | Get a full daily summary (steps, calories, distance, floors, intensity minutes, HR, stress, Body Battery) |
-
-### Weight & Body
-| Tool | Description |
-|------|-------------|
-| `get_weigh_ins` | Get weigh-ins for a date range |
-| `add_weigh_in` | Add weigh-in with body composition data |
-| `delete_weigh_in` | Delete a weigh-in; `date` is only needed when the weigh-in is filed under a different day than it was entered on |
-| `get_blood_pressure` | Get blood pressure readings |
-| `set_blood_pressure` | Record blood pressure measurement |
-| `delete_blood_pressure` | Delete blood pressure measurement |
-
-### Advanced Activity Details
-| Tool | Description |
-|------|-------------|
-| `get_activity_weather` | Get weather during an activity |
-| `get_activity_hr_zones` | Get the time spent in each heart rate zone |
-| `get_activity_exercise_sets` | Get exercise sets (strength training) |
-
-### Goals, Challenges & Records
-| Tool | Description |
-|------|-------------|
-| `get_goals` | Get goals; without `status` every status is queried and the results merged |
-| `get_adhoc_challenges` | Get ad-hoc challenges |
-| `get_badge_challenges` | Get available badge challenges |
-| `get_earned_badges` | Get earned badges with the date each was won; `includeDetails` returns the full record |
-| `get_personal_records` | Get personal records (typeId, value, date and the activity they were set in) |
-| `get_race_predictions` | Get race time predictions (5K, 10K, HM, M) |
-
-### Gear Management
-| Tool | Description |
-|------|-------------|
-| `get_all_gear` | Complete list of all equipment with UUIDs |
-| `update_gear` | Update existing equipment. `brandName` and `modelName` share one free-text label, because catalogue make and model are a vocabulary Garmin validates |
-| `delete_gear` | Delete equipment |
-| `get_gear_stats` | Get gear usage statistics |
-| `link_gear_to_activity` | Link gear to an activity |
-
-> **Note:** Since v4.1, `get_all_gear` works automatically and provides the UUIDs needed for other gear tools. New gear creation is not supported by Garmin's OAuth API.
-
-### Reports & Progress
-| Tool | Description |
-|------|-------------|
-| `get_progress_summary` | Get progress summary between two dates |
-
----
-
-## 🆕 New Tools in v3.0
-
-### User & Activity Summary
-| Tool | Description |
-|------|-------------|
-| `get_user_summary` | Get user summary for a date (steps, calories, etc.) |
-| `get_steps_data` | Get detailed steps data for a date |
-| `get_daily_steps` | Get daily steps over a date range (max 28 days) |
-| `get_activities_by_date` | Get activities within a date range |
-| `get_activity_typed_splits` | Get splits by activity type |
-
-### Advanced Health Metrics
-| Tool | Description |
-|------|-------------|
-| `get_rhr_day` | Get daily resting heart rate |
-| `get_hill_score` | Get Hill Score over a date range |
-| `get_all_day_events` | Get all day events (stress, body battery) |
-| `get_body_battery_events` | Get detailed Body Battery events |
-
-### Advanced Badges & Challenges
-| Tool | Description |
-|------|-------------|
-| `get_available_badges` | Get available badges (id, name, category, difficulty, points); `includeDetails` returns the full record |
-| `get_in_progress_badges` | Get badges in progress |
-| `get_available_badge_challenges` | Get available badge challenges |
-| `get_non_completed_badge_challenges` | Get non-completed badge challenges |
-| `get_in_progress_virtual_challenges` | Get in-progress virtual challenges |
-
-### Advanced Gear
-| Tool | Description |
-|------|-------------|
-| `get_gear_activities` | Get activities associated with gear |
-| `remove_gear_from_activity` | Remove gear from an activity |
-
-### Training Plans
-| Tool | Description |
-|------|-------------|
-| `get_training_plans` | Get available training plans |
-| `get_training_plan_by_id` | Get training plan details |
-
-### Women's Health
-| Tool | Description |
-|------|-------------|
-| `get_menstrual_data` | Get menstrual cycle data for a date |
-| `get_pregnancy_summary` | Get pregnancy summary |
-
-### Utility & Stats
-| Tool | Description |
-|------|-------------|
-| `get_activity_types` | Get all available activity types |
-| `get_primary_training_device` | Get primary training device |
-| `count_activities` | Count activities, over the whole history or over a date range |
-| `get_fitness_stats` | Get fitness statistics over a date range |
-| `add_hydration_data` | Add hydration data |
-
----
-
-## 🆕 New Tools in v4.0
-
-### Social Features
-| Tool | Description |
-|------|-------------|
-| `get_activity_comments` | Get comments on an activity |
-| `set_activity_privacy` | Set activity privacy (public/private/subscribers) |
-
-### Advanced Training Metrics
-| Tool | Description |
-|------|-------------|
-| `get_training_load` | Monthly training load balance (low/high aerobic, anaerobic) against its targets |
-| `get_load_ratio` | Acute/chronic workload ratio (injury risk indicator) |
-| `get_performance_condition` | Current performance condition score |
-
-### Advanced Sleep & Device
-| Tool | Description |
-|------|-------------|
-| `get_sleep_movement` | Sleep movement data and restless moments |
-| `get_device_alarms` | Alarms configured on devices (time, repeat days, on/off) |
-| `get_courses` | Saved routes/courses |
-
-### Activity Analysis
-| Tool | Description |
-|------|-------------|
-| `compare_activities` | Compare 2-5 activities side by side |
-| `find_similar_activities` | Find similar activities by type/distance/duration |
-| `analyze_training_period` | Comprehensive training trends, volume and patterns |
-
----
-
-## 🆕 New Tools in v4.1
-
-### Gear Metadata
-| Tool | Description |
-|------|-------------|
-| `get_gear_types` | Available equipment types (shoes, bike, etc.) |
-| `get_gear_makes` | Available brands/manufacturers |
-
-### Gear Collections (Full CRUD)
-| Tool | Description |
-|------|-------------|
-| `get_gear_collections` | List all equipment collections |
-| `get_gear_collection` | Collection details (associated gear, activity types) |
-| `create_gear_collection` | Create new collection with activity association |
-| `update_gear_collection` | Update collection (name, gear, activity types) |
-| `delete_gear_collection` | Delete a collection |
-
----
-
-## 🆕 New Tools in v4.2
-
-### Credentials
-These work even when authentication to Garmin is not yet possible: they are how you set
-it up.
+**Listing and search**
 
 | Tool | Description |
 |------|-------------|
-| `setup_credentials` | Save email and password encrypted in the OS vault and verify access immediately |
-| `check_credentials` | Configuration status: active source, storage, session (never the password) |
-| `clear_credentials` | Delete encrypted credentials and OAuth tokens and end the session |
+| `list_recent_activities` | The most recent activities, each with name, type, distance, duration and date |
+| `get_activities_by_date` | Activities in a date range, filterable by type and sortable |
+| `count_activities` | Counts activities, over the whole history or over a date range |
+| `get_activity_types` | The list of activity types Garmin Connect recognises |
+
+**Detail of a single activity**
+
+| Tool | Description |
+|------|-------------|
+| `get_activity_details` | The full detail of one activity: summary metrics, zones, GPS data |
+| `get_activity_splits` | Splits and laps with pace, distance and time for each |
+| `get_activity_typed_splits` | Typed splits, more detailed than the regular ones (bouldering, strength, multisport) |
+| `get_activity_hr_zones` | Time spent in each heart rate zone |
+| `get_activity_exercise_sets` | The exercise sets recorded in a strength training activity |
+| `get_activity_weather` | Weather conditions during the activity |
+| `get_activity_comments` | Comments left on an activity (read only: writing them is not possible through the API, see Known limitations) |
+
+**Creating and editing**
+
+| Tool | Description |
+|------|-------------|
+| `create_manual_activity` ✏️ | Enters an activity by hand: name, type, start, duration; distance and calories optional |
+| `upload_activity` ✏️ | Uploads an activity file in FIT, GPX or TCX format |
+| `download_activity` | Downloads an activity as FIT, TCX, GPX, KML or CSV |
+| `set_activity_name` ✏️ | Renames an activity |
+| `set_activity_type` ✏️ | Changes the type of an activity |
+| `set_activity_privacy` ✏️ | Sets privacy to `public`, `private` or `subscribers` ("connections only"). The current level is in `accessControlRuleDTO` from `get_activity_details` |
+| `delete_activity` ✏️ | Deletes an activity. This cannot be undone |
+
+**Comparisons and period analysis**
+
+| Tool | Description |
+|------|-------------|
+| `compare_activities` | Compares 2 to 5 activities: distance, duration, speed, HR, calories, elevation, steps, training effect |
+| `find_similar_activities` | Finds activities similar in type, distance and duration (20% tolerance), closest first; `searchDepth` widens the history searched |
+| `analyze_training_period` | Analysis of training trends, volume and patterns over a date range |
+| `get_progress_summary` | Aggregates progress between two dates over `distance`, `duration` or `calories` |
+| `get_fitness_stats` | Aggregated statistics between two dates over `distance`, `duration`, `elevationGain` or `movingDuration`, grouped by activity type |
+
+### ❤️ Health and wellness
+
+**Daily summaries**
+
+| Tool | Description |
+|------|-------------|
+| `get_daily_summary` | Compact summary of the day: steps and goal, calories, distance, floors, intensity minutes, resting/min/max HR, stress, Body Battery |
+| `get_user_summary` | User summary for a date: steps, calories, distance, active minutes |
+| `get_health_metrics` | Heart rate and step count for a day in a single response |
+
+**Steps, floors and intensity minutes**
+
+| Tool | Description |
+|------|-------------|
+| `get_steps` | The total step count for a date |
+| `get_steps_data` | The detailed step series for the day, with timestamps |
+| `get_daily_steps` | Daily step counts over a range: beyond 28 days the request is chunked automatically |
+| `get_floors` | Floors climbed and descended; with `includeBreakdown` also the 96 quarter-hour intervals |
+| `get_intensity_minutes` | Moderate and vigorous intensity minutes, for a date or a range, with the weekly total and goal |
+
+**Heart and breathing**
+
+| Tool | Description |
+|------|-------------|
+| `get_heart_rate` | Heart rate for the day: resting, maximum and the value series |
+| `get_rhr_day` | Resting heart rate for a single day |
+| `get_hrv_data` | Heart rate variability (HRV), a recovery indicator |
+| `get_respiration_data` | Respiration rate through the day and during sleep |
+| `get_spo2_data` | Blood oxygen saturation (SpO2) |
+
+**Stress and energy**
+
+| Tool | Description |
+|------|-------------|
+| `get_stress_data` | Stress for the day on the 0-100 scale: average, max, min and seconds per band; with `includeValues` also the individual three-minute samples |
+| `get_all_day_stress` | The raw payload of the same endpoint `get_stress_data` uses, samples included and with no computed statistics. A far larger response: `get_stress_data` is normally the one you want |
+| `get_body_battery` | Body Battery (0-100) over a date range, with charged and drained periods |
+| `get_body_battery_events` | The events that affected Body Battery on a date: sleep, activities, naps |
+| `get_all_day_events` | All events of the day, including auto-detected activities |
+
+**Sleep**
+
+| Tool | Description |
+|------|-------------|
+| `get_sleep_data` | The night: duration, stages, score and summary. The per-minute series are counted rather than included; `includeTimeSeries` inlines them |
+| `get_sleep_movement` | Movement during sleep and restless moments |
+
+**Hydration**
+
+| Tool | Description |
+|------|-------------|
+| `get_hydration` | Hydration recorded on a date |
+| `add_hydration_data` ✏️ | Adds millilitres to the day's hydration; a negative value subtracts them |
+
+**Weight and body composition**
+
+| Tool | Description |
+|------|-------------|
+| `get_body_composition` | Weight, BMI, body fat, muscle and bone mass over `days` days, plus the average for the period |
+| `get_weigh_ins` | Weigh-ins recorded in a date range |
+| `add_weigh_in` ✏️ | Records a weigh-in. Weight and body fat are stored; water, muscle and bone are accepted but Garmin discards them on a manual entry |
+| `delete_weigh_in` ✏️ | Deletes one weigh-in by its id (`samplePk`). `date` is only needed when the weigh-in was back-dated to a day other than the one it was entered on |
+
+**Blood pressure**
+
+| Tool | Description |
+|------|-------------|
+| `get_blood_pressure` | Blood pressure readings in a date range, including the `version` needed to delete one |
+| `set_blood_pressure` ✏️ | Records a reading: systolic, diastolic, pulse, date and time |
+| `delete_blood_pressure` ✏️ | Deletes a reading: needs the date and the `version` returned by `get_blood_pressure` |
+
+**Women's health**
+
+| Tool | Description |
+|------|-------------|
+| `get_menstrual_data` | Menstrual cycle data for a date |
+| `get_pregnancy_summary` | The pregnancy tracking summary |
+
+### 📈 Training and performance
+
+**Fitness state**
+
+| Tool | Description |
+|------|-------------|
+| `get_training_status` | Training status for a date: status and feedback phrase, VO2 max, fitness trend, acute and chronic load, ACWR ratio |
+| `get_training_readiness` | The training readiness score |
+| `get_endurance_score` | The endurance score based on recent training load |
+| `get_fitness_age` | Fitness age estimated from VO2 max and other metrics |
+| `get_max_metrics` | Peak metrics, VO2 max included |
+| `get_hill_score` | The hill score — climbing performance — over a date range |
+| `get_performance_condition` | Performance condition for a date. Garmin records it per activity, so it usually has to be read from `get_activity_details` |
+| `get_race_predictions` | Predicted race times for 5K, 10K, half marathon and marathon |
+
+**Training load**
+
+| Tool | Description |
+|------|-------------|
+| `get_training_load` | The monthly training load balance (low aerobic, high aerobic, anaerobic) against its targets. It is a snapshot at the end date, not an aggregate over the range |
+| `get_load_ratio` | The acute to chronic workload ratio, an injury risk indicator |
+
+**Workouts**
+
+| Tool | Description |
+|------|-------------|
+| `get_workouts` | The list of saved workouts |
+| `get_workout_by_id` | The detail of a single workout |
+| `create_workout` ✏️ | Creates a structured workout with warmup, intervals and cooldown. Valid sports: `running`, `cycling`, `walking`, `swimming`, `strength`, `cardio`, `yoga`, `pilates`, `hiit`, `mobility`, `rucking`, `other` (there is no `hiking`: use `walking` or `rucking`) |
+| `update_workout` ✏️ | Changes the name, description or structure of a workout |
+| `schedule_workout` ✏️ | Puts a workout on the calendar for a date; returns the id needed to remove it |
+| `unschedule_workout` ✏️ | Takes a workout off the calendar. Do this **before** `delete_workout`, or a ghost entry stays behind |
+| `delete_workout` ✏️ | Deletes a workout |
+| `download_workout` | Downloads a workout in FIT format for syncing to the device |
+
+**Plans and courses**
+
+| Tool | Description |
+|------|-------------|
+| `get_training_plans` | The available training plans |
+| `get_training_plan_by_id` | The detail of one training plan |
+| `get_courses` | The routes saved on the account |
+
+### 👟 Gear
+
+**Equipment**
+
+| Tool | Description |
+|------|-------------|
+| `get_all_gear` | All gear with its UUIDs, which every other gear tool needs |
+| `get_gear_stats` | Usage statistics for one piece of gear |
+| `get_gear_activities` | The activities a piece of gear was used in |
+| `update_gear` ✏️ | Updates name, brand, model and distance limit. `brandName` and `modelName` land in the same free-text label, because catalogue brand and model are a vocabulary Garmin validates |
+| `delete_gear` ✏️ | Deletes a piece of gear. This cannot be undone |
+| `link_gear_to_activity` ✏️ | Links a piece of gear to an activity |
+| `remove_gear_from_activity` ✏️ | Unlinks a piece of gear from an activity |
+
+**Garmin catalogues**
+
+| Tool | Description |
+|------|-------------|
+| `get_gear_types` | The gear types Garmin defines (shoes, bike, golf clubs, other) |
+| `get_gear_makes` | The brands Garmin recognises, with the key used in the catalogue |
+
+**Collections**
+
+| Tool | Description |
+|------|-------------|
+| `get_gear_collections` | Collections, the groups of gear used together |
+| `get_gear_collection` | The detail of one collection: the gear in it and the activity types attached |
+| `create_gear_collection` ✏️ | Creates a collection: name and first use date are required |
+| `update_gear_collection` ✏️ | Updates a collection's name, gear and activity types (the lists are replaced, not merged) |
+| `delete_gear_collection` ✏️ | Deletes a collection. The gear inside it is not deleted |
+
+### 🏅 Goals, badges and challenges
+
+**Goals and records**
+
+| Tool | Description |
+|------|-------------|
+| `get_goals` | The goals set; without `status` all three states are queried and merged |
+| `get_personal_records` | Personal records: category, value, date and, where there is one, the activity that set it |
+
+**Badges**
+
+| Tool | Description |
+|------|-------------|
+| `get_earned_badges` | Badges earned, with the date; `includeDetails` returns the full record |
+| `get_available_badges` | Badges available to earn with category, difficulty, points and progress; `includeDetails` for the full record |
+| `get_in_progress_badges` | Badges started but not yet completed |
+
+**Challenges**
+
+| Tool | Description |
+|------|-------------|
+| `get_badge_challenges` | Badge challenges available to join, unpaginated |
+| `get_available_badge_challenges` | The same challenges as `get_badge_challenges` — it is the same endpoint — but paginated (`start`, `limit`) |
+| `get_non_completed_badge_challenges` | Badge challenges not completed yet |
+| `get_adhoc_challenges` | The history of ad-hoc challenges |
+| `get_in_progress_virtual_challenges` | Virtual challenges currently in progress |
+
+### ⚙️ Profile, devices and credentials
+
+**Profile**
+
+| Tool | Description |
+|------|-------------|
+| `get_user_profile` | The profile: display name and both account ids. `profileId` is the one the rest of the data is keyed by (the `ownerId` on an activity, the `userProfilePK` on wellness records); `id` is a separate internal identifier |
+| `request_reload` ✏️ | Asks Garmin to reload the data for a date: useful for older days the service has offloaded |
+
+**Devices**
+
+| Tool | Description |
+|------|-------------|
+| `get_devices` | The Garmin devices registered on the account, with id, model, serial and firmware |
+| `get_device_settings` | The settings of a single device |
+| `get_device_last_used` | The device that uploaded data most recently |
+| `get_device_alarms` | The alarms configured: time, repeat days and whether each is on. Without `deviceId` every device is reported |
+| `get_primary_training_device` | The primary training device and the priority between devices |
+
+**Credentials**
+
+| Tool | Description |
+|------|-------------|
+| `setup_credentials` ✏️ | Stores email and password encrypted in the OS vault and verifies the login straight away |
+| `check_credentials` | The state of the configuration: active source, storage in use, session. Never returns the password |
+| `clear_credentials` ✏️ | Deletes the encrypted credentials and OAuth tokens and ends the session |
 
 ---
 
@@ -281,17 +291,14 @@ it up.
 
 ### Steps:
 
-### 1. Install Keytar (Recommended for maximum security)
+> **The OS vault is already included.** Since v4.3.2 the bundle carries `keytar` binaries
+> for every platform (`darwin-x64`, `darwin-arm64`, `win32-x64`, `win32-ia32`, `linux-x64`,
+> `linux-arm64`), so there is nothing to install besides the extension itself. On
+> architectures without a prebuilt binary, and on Linux sessions with no active keyring,
+> the key goes to a protected file instead; `check_credentials` reports which of the two is
+> in use.
 
-To use the native operating system vault (Windows Credential Manager, macOS Keychain, Linux Secret Service), install `keytar`:
-
-```bash
-npm install keytar
-```
-
-> **Note:** If `keytar` cannot be installed, the system will automatically use an encrypted file as a fallback.
-
-### 2. Download the bundle
+### 1. Download the bundle
 
 Use your browser or:
 
@@ -299,7 +306,7 @@ Use your browser or:
 wget https://github.com/sedoglia/garmin-mcp-ts/releases/latest/download/garmin-mcp-ts.mcpb
 ```
 
-### 3. Verify integrity
+### 2. Verify integrity
 
 Verify the integrity (optional but recommended):
 
@@ -308,7 +315,7 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/latest/download/garmin-m
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 
-### 4. Install the extension in Claude Desktop (Recommended Method)
+### 3. Install the extension in Claude Desktop (Recommended Method)
 
 **Installation via Custom Desktop Extensions:**
 
@@ -317,14 +324,14 @@ sha256sum -c garmin-mcp-ts.mcpb.sha256
 3. Select the **Extensions** tab
 4. Click on **Advanced settings** and find the **Extension Developer** section
 5. Click on **"Install Extension…"**
-6. Select the `.mcpb` file (`garmin-mcp-ts.mcpb` downloaded in step 2)
+6. Select the `.mcpb` file (`garmin-mcp-ts.mcpb` downloaded in step 1)
 7. Follow the on-screen instructions to complete the installation
 
 > **Note:** This is the simplest and most recommended method. The extension will be automatically integrated into Claude Desktop without requiring manual configuration.
 
 ---
 
-### 5. Configure Garmin Credentials
+### 4. Configure Garmin Credentials
 
 During installation Claude Desktop shows two fields, **Garmin Email** and
 **Garmin Password**: fill them in with your Garmin Connect account credentials.
@@ -358,7 +365,7 @@ To check the configuration at any time:
 Check the Garmin credentials status
 ```
 
-### 6. Restart Claude Desktop
+### 5. Restart Claude Desktop
 
 - Close the application completely
 - Reopen Claude Desktop
@@ -379,23 +386,18 @@ cd garmin-mcp-ts
 npm install
 ```
 
-### 3. Install Keytar (Recommended for Maximum Security)
+`keytar` is an optional dependency: `npm install` builds it or fetches its prebuilt
+binary, and the native OS vault is then used with no further steps. If that fails — common
+on a machine without a build toolchain — the server falls back to a protected file and
+keeps working; `npm run check-encryption` reports which of the two is in use.
 
-To use the native OS vault (Windows Credential Manager, macOS Keychain, Linux Secret Service), install `keytar`:
-
-```bash
-npm install keytar
-```
-
-> **Note:** If `keytar` cannot be installed, the system will automatically use an encrypted file as fallback.
-
-### 4. Build the Project
+### 3. Build the Project
 
 ```bash
 npm run build
 ```
 
-### 5. Configure Garmin Credentials (Secure Method - Recommended)
+### 4. Configure Garmin Credentials (Secure Method - Recommended)
 
 Run the setup script to configure credentials securely:
 
@@ -414,7 +416,7 @@ To verify the configuration:
 npm run check-encryption
 ```
 
-### 5b. Alternative Method (Legacy)
+### 4b. Alternative Method (Legacy)
 
 Alternatively, you can create a `.env` file in the project root:
 
@@ -489,37 +491,37 @@ Add the Garmin MCP server to your `claude_desktop_config.json`:
 
 > "Show me my sleep data for December 10th"
 
-### Workout Management (NEW v2.0)
+### Workout Management
 
 > "Show me my planned workouts"
 
 > "Download my latest workout"
 
-### Training Readiness (NEW v2.0)
+### Training Readiness
 
 > "What's my Training Readiness today?"
 
 > "Show me my Endurance Score"
 
-### Progress & Statistics (NEW v2.0)
+### Progress & Statistics
 
 > "How many kilometers did I run this month?"
 
 > "Show me my progress summary for the last month"
 
-### Advanced Health Metrics (NEW v3.0)
+### Advanced Health Metrics
 
 > "What was my resting heart rate today?"
 
 > "Show me my all-day events for stress and body battery"
 
-### Women's Health Tools (NEW v3.0)
+### Women's Health Tools
 
 > "How does my menstrual cycle affect my training performance?"
 
 > "Based on my cycle, what type of workout should I do?"
 
-### Gear Management (NEW v4.0/v4.1)
+### Gear Management
 
 > "Show me all my Garmin gear"
 
@@ -529,19 +531,19 @@ Add the Garmin MCP server to your `claude_desktop_config.json`:
 
 > "Show me my gear collections"
 
-### Comments and Privacy (NEW v4.0)
+### Comments and Privacy
 
 > "Show me comments on my latest activity"
 
 > "Set my last run as private"
 
-### Advanced Training Metrics (NEW v4.0)
+### Advanced Training Metrics
 
 > "How is my training load this month?"
 
 > "What's my acute/chronic ratio? Am I at injury risk?"
 
-### Activity Analysis (NEW v4.0)
+### Activity Analysis
 
 > "Compare my last 3 runs"
 
@@ -557,7 +559,12 @@ Run tests with real data:
 npm test
 ```
 
-The test script validates all the tools with your Garmin account.
+The script exercises **90 of the 109 tools** against your Garmin account: every read-only
+one, plus the full lifecycle of a workout (create → update → schedule → unschedule →
+delete) and of a gear collection. Left out are the three credential tools and the tools
+that write other data to the account — weigh-ins, blood pressure, hydration, manual
+activities, uploads, gear edits — which have to be tried by hand on data you are willing
+to lose.
 
 ## Architecture
 
@@ -566,26 +573,33 @@ garmin-mcp-ts/
 ├── src/
 │   ├── index.ts           # Entry point, stdout/stderr handling
 │   ├── garmin/
-│   │   ├── client.ts      # Garmin Connect API client (2200+ lines)
-│   │   ├── types.ts       # TypeScript type definitions
+│   │   ├── client.ts      # Garmin Connect API client (~3700 lines)
+│   │   ├── auth.ts        # Login, session and OAuth token refresh
 │   │   └── simple-login.ts # Standalone login test utility
 │   ├── mcp/
 │   │   ├── server.ts      # MCP server setup and request handlers
 │   │   ├── tools.ts       # Tool definitions and schemas (109 tools)
 │   │   └── handlers.ts    # Tool implementation logic
-│   └── utils/
-│       ├── constants.ts   # Application constants
-│       ├── errors.ts      # Custom error classes
-│       ├── logger.ts      # Logging utility (stderr only)
-│       └── secure-storage.ts # Secure storage module with encryption
+│   ├── utils/
+│   │   ├── constants.ts   # Application constants, tool names included
+│   │   ├── credentials.ts # Credential resolution across extension, vault and .env
+│   │   ├── errors.ts      # Custom error classes
+│   │   ├── logger.ts      # Logging utility (stderr only)
+│   │   ├── stdio-guard.ts # Stops other code writing to stdout and breaking the protocol
+│   │   └── secure-storage.ts # Encrypted storage and OS vault access
+│   ├── test-tools.ts      # Suite exercising the tools against a real account (npm test)
+│   └── test-oauth.ts      # OAuth flow diagnostics
 ├── scripts/
 │   ├── setup-encryption.ts  # Interactive credentials setup script
 │   ├── check-encryption.ts  # Diagnostic script for encryption verification
 │   ├── sync-manifest.ts     # Regenerates and checks manifest.json from the code
+│   ├── fetch-keytar-prebuilds.mjs # Downloads the keytar binaries for every platform
 │   └── test-keytar.ts       # Keytar integration test script
+├── vendor/keytar/         # Per-platform keytar binaries, shipped in the bundle
 ├── dist/                  # Compiled JavaScript output
 ├── manifest.json          # MCPB bundle manifest (partly generated by sync-manifest)
 ├── PRIVACY.md             # Privacy policy referenced by the manifest
+├── CHANGELOG.md           # Version history (CHANGELOG_EN.md in English)
 ├── package.json
 └── tsconfig.json
 ```
