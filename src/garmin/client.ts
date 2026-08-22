@@ -273,11 +273,30 @@ export class GarminConnectClient {
     };
   }
 
-  async getRecentActivities(limit: number = 10, start: number = 0): Promise<any> {
+  /**
+   * A list of activities, summarised.
+   * The activity list service sends every field it holds on each activity,
+   * including the thirty OAuth scopes in userRoles, three profile image URLs
+   * and an empty dive-gas structure — around 3,800 characters per activity, of
+   * which the metrics are a tenth. A hundred of them is ~94,000 tokens, well
+   * past the cap for a tool result, so the default is the same summary the
+   * comparison tools work from. includeDetails returns the payload untouched
+   * for the caller who needs a field the summary drops.
+   */
+  private summarizeActivities(activities: any, includeDetails: boolean): any {
+    if (includeDetails || !Array.isArray(activities)) return activities;
+    return activities.map((activity) => this.normalizeActivityMetrics(activity));
+  }
+
+  async getRecentActivities(
+    limit: number = 10,
+    start: number = 0,
+    includeDetails: boolean = false
+  ): Promise<any> {
     this.checkInitialized();
     try {
       const activities = await this.gc.getActivities(start, limit);
-      return activities;
+      return this.summarizeActivities(activities, includeDetails);
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error fetching recent activities:', error);
@@ -2352,8 +2371,9 @@ export class GarminConnectClient {
     this.checkInitialized();
     try {
       // Ask the service for the range instead of filtering the last 100
-      // activities, which silently truncated any busier period.
-      const filtered = await this.getActivitiesByDate(startDate, endDate);
+      // activities, which silently truncated any busier period. Uncapped on
+      // purpose: this is a total, not a listing.
+      const filtered = await this.fetchActivitiesByDate(startDate, endDate);
 
       let totalDistance = 0;
       let totalDuration = 0;
@@ -2515,40 +2535,80 @@ export class GarminConnectClient {
   /**
    * Get activities filtered by date range
    */
+  /**
+   * Every activity in a date range, as the service sends them.
+   * maxItems stops the paging early for callers that answer with a list; the
+   * aggregating callers pass nothing, because a total computed over a truncated
+   * range is wrong without saying so — the failure get_progress_summary was
+   * fixed for in v4.3.0.
+   */
+  private async fetchActivitiesByDate(
+    startDate: string,
+    endDate?: string,
+    activityType?: string,
+    sortOrder?: string,
+    maxItems: number = Infinity
+  ): Promise<any[]> {
+    const activities: any[] = [];
+    let start = 0;
+    const pageSize = 20;
+    const url = 'https://connectapi.garmin.com/activitylist-service/activities/search/activities';
+
+    const baseParams: Record<string, string> = {
+      startDate,
+      limit: String(pageSize),
+    };
+
+    if (endDate) baseParams.endDate = endDate;
+    if (activityType) baseParams.activityType = activityType;
+    if (sortOrder) baseParams.sortOrder = sortOrder;
+
+    // Paging one item past maxItems is what tells "there are more" apart from a
+    // range that ends exactly on it. It costs one extra page of 20 at most.
+    while (activities.length <= maxItems) {
+      baseParams.start = String(start);
+      const result = await this.gc.get(url, { params: baseParams });
+      if (result && result.length > 0) {
+        activities.push(...result);
+        start += pageSize;
+      } else {
+        break;
+      }
+    }
+
+    return activities;
+  }
+
+  /**
+   * Activities in a date range, for the tool that lists them.
+   * Unlike getRecentActivities this had no ceiling at all: it paged until the
+   * service ran out, so eight months of this account came back as 387
+   * activities — ~38,000 tokens even summarised, and ~380,000 raw. The range is
+   * the caller's and cannot be narrowed here, so what it gets is a cap and a
+   * flag saying the range holds more than was returned.
+   */
   async getActivitiesByDate(
     startDate: string,
     endDate?: string,
     activityType?: string,
-    sortOrder?: string
-  ): Promise<any[]> {
+    sortOrder?: string,
+    limit: number = 100,
+    includeDetails: boolean = false
+  ): Promise<{ activities: any[]; hasMore: boolean }> {
     this.checkInitialized();
     try {
-      const activities: any[] = [];
-      let start = 0;
-      const limit = 20;
-      const url = 'https://connectapi.garmin.com/activitylist-service/activities/search/activities';
-
-      const baseParams: Record<string, string> = {
+      const activities = await this.fetchActivitiesByDate(
         startDate,
-        limit: String(limit),
+        endDate,
+        activityType,
+        sortOrder,
+        limit
+      );
+
+      return {
+        activities: this.summarizeActivities(activities.slice(0, limit), includeDetails),
+        hasMore: activities.length > limit,
       };
-
-      if (endDate) baseParams.endDate = endDate;
-      if (activityType) baseParams.activityType = activityType;
-      if (sortOrder) baseParams.sortOrder = sortOrder;
-
-      while (true) {
-        baseParams.start = String(start);
-        const result = await this.gc.get(url, { params: baseParams });
-        if (result && result.length > 0) {
-          activities.push(...result);
-          start += limit;
-        } else {
-          break;
-        }
-      }
-
-      return activities;
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error fetching activities by date:', error);
@@ -3606,8 +3666,9 @@ export class GarminConnectClient {
   async analyzeTrainingPeriod(startDate: string, endDate: string): Promise<any> {
     this.checkInitialized();
     try {
-      // Get activities in period
-      const activities = await this.getActivitiesByDate(startDate, endDate);
+      // Get activities in period, uncapped: these are totals over the range,
+      // and a cap would quietly leave activities out of them.
+      const activities = await this.fetchActivitiesByDate(startDate, endDate);
 
       // Calculate statistics
       let totalDistance = 0;

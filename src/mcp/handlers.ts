@@ -406,10 +406,11 @@ export class ToolHandler {
     // Estrai e valida parametri con valori di default
     const limit = this.getNumberParam(args, 'limit', 10, 1, 100);
     const start = this.getNumberParam(args, 'start', 0, 0);
+    const includeDetails = args.includeDetails === true;
 
     logger.info(`Fetching activities: limit=${limit}, start=${start}`);
 
-    const activities = await this.client.getRecentActivities(limit, start);
+    const activities = await this.client.getRecentActivities(limit, start, includeDetails);
 
     // Assicurati che activities sia un array
     const activityList = Array.isArray(activities) ? activities : [];
@@ -1533,19 +1534,36 @@ export class ToolHandler {
     const endDate = this.getStringParam(args, 'endDate', '') || undefined;
     const activityType = this.getStringParam(args, 'activityType', '') || undefined;
     const sortOrder = this.getStringParam(args, 'sortOrder', '') || undefined;
+    const limit = this.getNumberParam(args, 'limit', 100, 1, 200) as number;
+    const includeDetails = args.includeDetails === true;
 
     if (!startDate) {
       throw new Error('Parameter "startDate" is required');
     }
 
     logger.info(`Fetching activities by date from ${startDate}`);
-    const activities = await this.client.getActivitiesByDate(startDate, endDate, activityType, sortOrder);
+    const { activities, hasMore } = await this.client.getActivitiesByDate(
+      startDate,
+      endDate,
+      activityType,
+      sortOrder,
+      limit,
+      includeDetails
+    );
 
     return {
       success: true,
       startDate,
       endDate,
       count: activities.length,
+      // Saying the range holds more, rather than just handing back the first
+      // hundred as if they were all of them. count_activities gives the total.
+      ...(hasMore
+        ? {
+            hasMore: true,
+            note: `Only the first ${limit} activities of the range are listed. Raise limit, narrow the range, or use count_activities for the total.`,
+          }
+        : {}),
       data: activities,
     };
   }

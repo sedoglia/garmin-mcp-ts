@@ -10,6 +10,29 @@ recente alla più vecchia. Il progetto adotta il
 > precedenti sono ricostruite dai messaggi di commit, dai tag di release e dalle
 > versioni storiche dei README.
 
+## [Non ancora rilasciato]
+
+### 🔧 Gli elenchi di attività superavano il tetto di una risposta
+- **`list_recent_activities`** e **`get_activities_by_date`** restituivano il payload
+  dell'activity list service così com'era: circa 3.800 caratteri per attività, di cui le
+  metriche sono un decimo. Il resto sono i trenta scope OAuth di `userRoles`, tre URL
+  dell'immagine del profilo e una struttura di gas per immersione vuota, ripetuti **su
+  ogni attività**. Con `limit: 100` — il massimo documentato — la risposta arrivava a
+  ~94.000 token e non poteva tornare al modello.
+- Ora entrambi restituiscono la sintesi già usata dai tool di confronto: id, nome, tipo,
+  data, distanza, durata, velocità, frequenza cardiaca, calorie, dislivello, passi ed
+  effetto allenante. **Da ~94.000 a ~10.200 token** per cento attività. Il payload
+  completo resta disponibile con `includeDetails`.
+- **`get_activities_by_date` non aveva alcun limite**: paginava finché il servizio aveva
+  attività da dare. Otto mesi di questo account sono 387 attività, cioè ~38.000 token
+  anche in forma sintetica. Ora ne elenca al massimo `limit` (100 di default, 200 il
+  tetto) e, quando l'intervallo ne contiene altre, lo dichiara invece di restituire le
+  prime cento come se fossero tutte.
+- **Gli aggregati restano su tutto l'intervallo**: `get_progress_summary` e
+  `analyze_training_period` leggono l'elenco senza cap e continuano a contare 387 attività
+  su 387. Troncarli avrebbe riportato il bug che la 4.3.0 aveva corretto proprio su
+  `get_progress_summary`.
+
 ## [4.5.6] - 2026-08-23 — Lo stress ora per ora
 
 ### 🔧 `get_all_day_stress` — da payload grezzo a profilo orario

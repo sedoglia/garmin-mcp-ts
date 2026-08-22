@@ -37,8 +37,8 @@ Il server espone **109 strumenti**, raggruppati per argomento. I **26** contrass
 
 | Strumento | Descrizione |
 |-----------|-------------|
-| `list_recent_activities` | Le attività più recenti, ciascuna con nome, tipo, distanza, durata e data |
-| `get_activities_by_date` | Le attività in un intervallo di date, con filtro per tipo e ordinamento |
+| `list_recent_activities` | Le attività più recenti in forma sintetica: nome, tipo, data, distanza, durata, velocità, FC, calorie, dislivello, passi ed effetto allenante. Con `includeDetails` il payload completo |
+| `get_activities_by_date` | Le attività in un intervallo di date, filtrabili per tipo e ordinabili, con la stessa sintesi. Ne elenca al massimo `limit` (100 di default, 200 il tetto) e dichiara se l'intervallo ne contiene altre |
 | `count_activities` | Conta le attività, su tutto lo storico o in un intervallo di date |
 | `get_activity_types` | L'elenco dei tipi di attività riconosciuti da Garmin Connect |
 
