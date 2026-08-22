@@ -1803,11 +1803,11 @@ Example for interval running workout:
         },
         modelName: {
           type: 'string',
-          description: 'New model name',
+          description: 'Model name. Garmin keeps brand and model as one free-text label, so this is combined with brandName.'
         },
         brandName: {
           type: 'string',
-          description: 'New brand name',
+          description: 'Brand name. Garmin keeps brand and model as one free-text label, so this is combined with modelName.'
         },
         maximumMeter: {
           type: 'number',
