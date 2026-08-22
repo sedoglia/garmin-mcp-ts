@@ -9,7 +9,7 @@ follows [semantic versioning](https://semver.org/).
 > Earlier entries are reconstructed from commit messages, release tags and historical
 > versions of the READMEs.
 
-## [Unreleased]
+## [4.5.7] - 2026-08-23 — The activity lists
 
 ### 🔧 The activity lists went past the response cap
 - **`list_recent_activities`** and **`get_activities_by_date`** returned the activity list
@@ -28,6 +28,12 @@ follows [semantic versioning](https://semver.org/).
 - **The aggregates still cover the whole range**: `get_progress_summary` and
   `analyze_training_period` read the list uncapped and still count 387 of 387. Capping them
   would have reintroduced the bug 4.3.0 fixed on `get_progress_summary` itself.
+
+### 📚 Documentation
+- The READMEs now lead to the published release from the top: the version badge, which
+  pointed at the repository root, opens `releases/latest`, and a line under the intro names
+  the bundle, the release notes and the `.sha256`. The release section lists the places the
+  version is declared and notes that the download links are not among them.
 
 ## [4.5.6] - 2026-08-23 — Stress hour by hour
 
