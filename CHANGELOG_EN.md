@@ -30,6 +30,16 @@ follows [semantic versioning](https://semver.org/).
   computed on finer data than the three-minute samples, so the daily maximum can exceed
   every hourly one.
 
+### 🔧 `get_stress_data` — average and maximum aligned with the app
+- Both were re-derived from the three-minute samples, while Garmin computes them on finer
+  data: the maximum came out a few points below what Connect shows (85 against 89 on the
+  day used for testing). Where the service sends them, its figures now win; the samples stay
+  as the fallback for days when it does not.
+- The minimum is still sample-derived, because the service sends no daily minimum, and so
+  are the seconds per band.
+- Without this alignment the two stress tools would have reported two different maxima for
+  the same day.
+
 ## [4.5.5] - 2026-08-22 — Body composition on a weigh-in
 
 - **`add_weigh_in`** accepts body fat, water, muscle and bone percentages, but Garmin keeps

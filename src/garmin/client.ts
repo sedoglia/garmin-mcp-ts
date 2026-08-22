@@ -623,6 +623,15 @@ export class GarminConnectClient {
   // ═══════════════════════════════════════════════════════════════
 
   /**
+   * A day-level figure as Garmin reports it, or null when the day has none.
+   * The wellness service marks a missing figure with -1, the same sentinel it
+   * uses inside the sample arrays.
+   */
+  private reportedLevel(value: unknown): number | null {
+    return typeof value === 'number' && value >= 0 ? value : null;
+  }
+
+  /**
    * Get stress data for a specific date
    * Uses custom GET request to wellness-service API
    */
@@ -653,6 +662,16 @@ export class GarminConnectClient {
           minStress = Math.min(...levels);
         }
       }
+
+      // The average and maximum Garmin reports for the day are computed on data
+      // finer than the three-minute chart samples, so re-deriving them here gave
+      // a maximum a few points below the one the Connect app shows — and, since
+      // getAllDayStress reports Garmin's, below what a sibling tool said about
+      // the same day. Its figures win where it sends them; the samples remain
+      // the fallback, and the minimum stays sample-derived because the service
+      // sends no daily minimum.
+      avgStress = this.reportedLevel(stressData?.avgStressLevel) ?? avgStress;
+      maxStress = this.reportedLevel(stressData?.maxStressLevel) ?? maxStress;
 
       // The dailyStress endpoint sends samples, not the banded durations this
       // tool is expected to report: the fields for them were read straight off
@@ -1545,12 +1564,9 @@ export class GarminConnectClient {
         .map(([, level]) => level);
 
       // The day figures are Garmin's own, so they match what the Connect app
-      // shows. They are computed on data finer than the three-minute chart
-      // samples, which is why the daily maximum can exceed every hourly one
-      // below it; those are necessarily sample-derived. A day with no data
-      // reports these as -1, in which case the samples are all there is.
-      const reported = (value: unknown) =>
-        typeof value === 'number' && value >= 0 ? value : null;
+      // shows and what getStressData reports. They are computed on data finer
+      // than the three-minute chart samples, which is why the daily maximum can
+      // exceed every hourly one below it; those are necessarily sample-derived.
       const computedAvg = measuredLevels.length
         ? Math.round(measuredLevels.reduce((a, b) => a + b, 0) / measuredLevels.length)
         : null;
@@ -1560,8 +1576,8 @@ export class GarminConnectClient {
         calendarDate: stressData?.calendarDate,
         startTimestampLocal: stressData?.startTimestampLocal,
         endTimestampLocal: stressData?.endTimestampLocal,
-        avgStress: reported(stressData?.avgStressLevel) ?? computedAvg,
-        maxStress: reported(stressData?.maxStressLevel)
+        avgStress: this.reportedLevel(stressData?.avgStressLevel) ?? computedAvg,
+        maxStress: this.reportedLevel(stressData?.maxStressLevel)
           ?? (measuredLevels.length ? Math.max(...measuredLevels) : null),
         measuredSampleCount: measuredLevels.length,
         hourly,
