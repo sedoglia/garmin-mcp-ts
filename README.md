@@ -5,10 +5,10 @@
 **[English](README_EN.md)** | **Italiano**
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-22%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.3.3-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.4.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,11 +18,17 @@
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
 
-## 🚧 Non ancora rilasciato
+## 🆕 Novità v4.4.0 - Risposte più snelle e Node 22
 
 - **`get_floors`**: restituisce di default solo i totali giornalieri; il dettaglio a
   intervalli di 15 minuti si ottiene con `includeBreakdown: true`. La risposta passa da
   ~5600 a ~210 caratteri nel caso normale.
+- **Richiesto Node 22**: il manifest chiedeva Node 18, che non riceve più patch di
+  sicurezza dal 30 aprile 2025 (Node 20 dal 30 aprile 2026). Chi è su Node 18 o 20 deve
+  aggiornare, altrimenti Claude Desktop considererà l'estensione incompatibile. Il
+  codice non è cambiato per questo: usa solo API di lunga data.
+- **Sicurezza**: chiusi tutti gli advisory aperti nell'albero delle dipendenze
+  (`hono`, `fast-uri`, `ip-address`, `tmp`). `npm audit` non segnala più nulla.
 
 ## 🆕 Novità v4.3.3 - Icona
 
@@ -457,7 +463,7 @@ per configurarla.
 
 ## Prerequisiti
 
-- **Node.js** 18.0 o superiore
+- **Node.js** 22.0 o superiore
 - **npm** 8.0 o superiore
 - **Claude Desktop** installato
 - Account **Garmin Connect** con credenziali valide
