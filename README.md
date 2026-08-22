@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.5.4-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.5.5-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,25 @@
 ---
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
+
+## 🆕 Novità v4.5.5 - Composizione corporea nelle pesate
+
+- **`add_weigh_in`** accetta grasso corporeo, acqua, massa muscolare e ossea, ma Garmin
+  conserva **solo il grasso corporeo** su una pesata inserita a mano: le altre tre vengono
+  scartate in silenzio. Verificato scrivendole e rileggendo il record, anche con nomi di
+  campo alternativi: sopravvive sempre e solo `bodyFat`.
+- I parametri restano — una bilancia intelligente quei valori li trasmette davvero — ma un
+  parametro accettato e scartato sembra una funzione che c'è. Ora la descrizione dice quali
+  campi vengono effettivamente memorizzati.
+
+## 🆕 Novità v4.5.4 - README allineati
+
+- I README si erano fermati alla v4.4.0 e le tabelle descrivevano tool che nel frattempo
+  avevano guadagnato parametri. Il codice compilato è quello della v4.5.3, a parte la
+  costante con la versione dichiarata nell'handshake.
+- Due voci erano sbagliate, non solo vecchie: `update_gear` era elencato come funzionante
+  (non lo era fino alla v4.5.3), e la creazione gear era attribuita a un 403 dell'API,
+  mentre in realtà l'endpoint è raggiungibile e a bloccarlo è un payload non documentato.
 
 ## 🆕 Novità v4.5.3 - Modifica dell'equipaggiamento
 
