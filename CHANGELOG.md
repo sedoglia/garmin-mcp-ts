@@ -10,7 +10,7 @@ recente alla più vecchia. Il progetto adotta il
 > precedenti sono ricostruite dai messaggi di commit, dai tag di release e dalle
 > versioni storiche dei README.
 
-## [Non ancora rilasciato]
+## [4.5.6] - 2026-08-23 — Lo stress ora per ora
 
 ### 🔧 `get_all_day_stress` — da payload grezzo a profilo orario
 - Il tool restituiva la risposta dell'endpoint `dailyStress` così com'era: i ~480 campioni
@@ -41,6 +41,23 @@ recente alla più vecchia. Il progetto adotta il
   servizio non lo manda, e così restano i secondi per fascia.
 - Senza questo allineamento i due tool sullo stress avrebbero dato due massimi diversi per
   lo stesso giorno.
+
+### 📚 Documentazione
+- **La cronologia delle versioni è uscita dai README** ed è finita in `CHANGELOG.md` e
+  `CHANGELOG_EN.md`. In testa ai due file c'erano 272 righe di note di rilascio: per sapere
+  cosa fa il server bisognava scorrere quattordici versioni prima di arrivare all'elenco dei
+  tool. I changelog raccolgono tutte le 25 versioni pubblicate, dalla 1.0.0 in poi,
+  ricostruendo dai tag e dai commit anche quelle che dai README erano state cancellate.
+- **I tool non sono più elencati per versione ma per argomento**: attività, salute,
+  allenamento, equipaggiamento, badge, profilo. Prima l'equipaggiamento era diviso fra
+  quattro sezioni e la salute fra cinque, e un titolo come "Nuovi Strumenti v2.0" non dice
+  nulla su cosa faccia un tool. I 26 che scrivono sull'account sono ora contrassegnati.
+- **Correzioni emerse dal confronto con il codice**: `request_reload` non era documentato da
+  nessuna parte (109 tool, 108 descritti); `get_health_metrics` prometteva il VO2 max, che
+  non restituisce; l'installazione del bundle chiedeva di installare `keytar` a mano, cosa
+  che dalla 4.3.2 non serve e che comunque non aveva effetto sull'estensione installata;
+  `npm test` era dato per esaustivo mentre esercita 90 tool su 109; l'albero
+  dell'architettura elencava un file inesistente e ne ometteva sei.
 
 ## [4.5.5] - 2026-08-22 — Composizione corporea nelle pesate
 

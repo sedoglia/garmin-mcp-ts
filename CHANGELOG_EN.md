@@ -9,7 +9,7 @@ follows [semantic versioning](https://semver.org/).
 > Earlier entries are reconstructed from commit messages, release tags and historical
 > versions of the READMEs.
 
-## [Unreleased]
+## [4.5.6] - 2026-08-23 — Stress hour by hour
 
 ### 🔧 `get_all_day_stress` — from raw payload to hourly profile
 - The tool returned the `dailyStress` response verbatim: the ~480 stress samples **plus**
@@ -39,6 +39,23 @@ follows [semantic versioning](https://semver.org/).
   are the seconds per band.
 - Without this alignment the two stress tools would have reported two different maxima for
   the same day.
+
+### 📚 Documentation
+- **The version history moved out of the READMEs** into `CHANGELOG.md` and
+  `CHANGELOG_EN.md`. The top of both files held 272 lines of release notes: finding out what
+  the server does meant scrolling past fourteen versions to reach the tool list. The
+  changelogs carry all 25 published versions from 1.0.0 on, including the ones that had been
+  deleted from the READMEs, reconstructed from tags and commits.
+- **Tools are grouped by subject rather than by release**: activities, health, training,
+  gear, badges, profile. Gear used to be split across four sections and health across five,
+  and a heading like "Nuovi Strumenti v2.0" says nothing about what a tool does. The 26 that
+  write to the account are now marked.
+- **Corrections found by checking the text against the code**: `request_reload` was
+  documented nowhere (109 tools, 108 described); `get_health_metrics` promised VO2 max,
+  which it does not return; the bundle install asked users to install `keytar` by hand,
+  unnecessary since 4.3.2 and without effect on the installed extension anyway; `npm test`
+  was described as exhaustive while it exercises 90 of 109 tools; the architecture tree
+  listed a file that does not exist and omitted six that do.
 
 ## [4.5.5] - 2026-08-22 — Body composition on a weigh-in
 
