@@ -764,7 +764,8 @@ Example for interval running workout:
     name: MCP_TOOL_NAMES.GET_FLOORS,
     title: 'Get Floors',
     description:
-      'Get floors climbed and descended for a specific date, with the 15-minute breakdown.',
+      'Get the floors climbed and descended on a date. Returns the daily totals; ' +
+      'set includeBreakdown to also get the 96 quarter-hour intervals behind them.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -773,6 +774,12 @@ Example for interval running workout:
           type: 'string',
           description: 'Date in YYYY-MM-DD format.',
           pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        includeBreakdown: {
+          type: 'boolean',
+          description:
+            'Include the 15-minute interval data behind the totals (default false). ' +
+            'Only worth requesting to see when during the day the floors were climbed.',
         },
       },
     },
