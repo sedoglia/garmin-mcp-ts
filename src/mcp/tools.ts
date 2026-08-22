@@ -98,7 +98,10 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     name: MCP_TOOL_NAMES.LIST_RECENT_ACTIVITIES,
     title: 'List Recent Activities',
-    description: 'Get a list of recent activities from Garmin Connect. Returns activity summaries including name, type, distance, duration, and date.',
+    description:
+      'Get a list of recent activities from Garmin Connect. Each one is summarised: name, type, ' +
+      'date, distance, duration, speed, heart rate, calories, elevation, steps and training ' +
+      'effect. Use get_activity_details for one activity in full.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -113,6 +116,13 @@ export const toolDefinitions: ToolDefinition[] = [
           type: 'number',
           description: 'Starting index for pagination (0-based)',
           minimum: 0,
+        },
+        includeDetails: {
+          type: 'boolean',
+          description:
+            'Return every field the activity list service sends rather than the summary ' +
+            '(default false). Roughly ten times larger, and past the response limit beyond ' +
+            'about 25 activities.',
         },
       },
     },
@@ -1356,7 +1366,9 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.GET_ACTIVITIES_BY_DATE,
     title: 'Get Activities by Date',
-    description: 'Get all activities within a date range with optional filtering by type.',
+    description:
+      'Get all activities within a date range, optionally filtered by type. Each one is ' +
+      'summarised the same way list_recent_activities summarises them.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
@@ -1378,6 +1390,22 @@ Example for interval running workout:
         sortOrder: {
           type: 'string',
           description: 'Sort order: asc (oldest first) or desc (newest first, default)',
+        },
+        limit: {
+          type: 'number',
+          description:
+            'Maximum number of activities to list (1-200, default 100). The response says ' +
+            'when the range holds more; count_activities gives the total without listing them, ' +
+            'and get_progress_summary or analyze_training_period aggregate the whole range.',
+          minimum: 1,
+          maximum: 200,
+        },
+        includeDetails: {
+          type: 'boolean',
+          description:
+            'Return every field the activity list service sends rather than the summary ' +
+            '(default false). Roughly ten times larger; a range holding more than about 25 ' +
+            'activities will not fit in a response.',
         },
       },
       required: ['startDate'],

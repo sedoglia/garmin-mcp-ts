@@ -9,6 +9,26 @@ follows [semantic versioning](https://semver.org/).
 > Earlier entries are reconstructed from commit messages, release tags and historical
 > versions of the READMEs.
 
+## [Unreleased]
+
+### 🔧 The activity lists went past the response cap
+- **`list_recent_activities`** and **`get_activities_by_date`** returned the activity list
+  service payload verbatim: around 3,800 characters per activity, of which the metrics are
+  a tenth. The rest is the thirty OAuth scopes in `userRoles`, three profile image URLs and
+  an empty dive-gas structure, repeated **on every activity**. At `limit: 100` — the
+  documented maximum — the response reached ~94,000 tokens and could not come back.
+- Both now return the summary the comparison tools already work from: id, name, type, date,
+  distance, duration, speed, heart rate, calories, elevation, steps and training effect.
+  **From ~94,000 to ~10,200 tokens** for a hundred activities. The full payload is still
+  available through `includeDetails`.
+- **`get_activities_by_date` had no ceiling at all**: it paged until the service ran out.
+  Eight months of this account is 387 activities, ~38,000 tokens even summarised. It now
+  lists at most `limit` of them (100 by default, 200 the ceiling) and says so when the
+  range holds more, rather than handing back the first hundred as if they were all of them.
+- **The aggregates still cover the whole range**: `get_progress_summary` and
+  `analyze_training_period` read the list uncapped and still count 387 of 387. Capping them
+  would have reintroduced the bug 4.3.0 fixed on `get_progress_summary` itself.
+
 ## [4.5.6] - 2026-08-23 — Stress hour by hour
 
 ### 🔧 `get_all_day_stress` — from raw payload to hourly profile

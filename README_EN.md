@@ -37,8 +37,8 @@ The server exposes **109 tools**, grouped by subject. The **26** marked ✏️ w
 
 | Tool | Description |
 |------|-------------|
-| `list_recent_activities` | The most recent activities, each with name, type, distance, duration and date |
-| `get_activities_by_date` | Activities in a date range, filterable by type and sortable |
+| `list_recent_activities` | The most recent activities, summarised: name, type, date, distance, duration, speed, HR, calories, elevation, steps and training effect. `includeDetails` returns the full payload |
+| `get_activities_by_date` | Activities in a date range, filterable by type and sortable, summarised the same way. Lists at most `limit` of them (100 by default, 200 the ceiling) and says when the range holds more |
 | `count_activities` | Counts activities, over the whole history or over a date range |
 | `get_activity_types` | The list of activity types Garmin Connect recognises |
 
