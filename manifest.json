@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "garmin-mcp-ts",
   "display_name": "Garmin Connect",
-  "version": "4.5.1",
+  "version": "4.5.2",
   "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
   "long_description": "Connects Claude to a personal Garmin Connect account. It exposes activities, health and wellness metrics, sleep, training status, workouts, gear and device data as MCP tools, and can also write back to the account (workouts, manual activities, weigh-ins, gear links) when explicitly asked.\n\nThe server runs entirely on the user's machine and talks to no service other than connect.garmin.com over HTTPS. Credentials are encrypted at rest with AES-256-GCM, with the encryption key held in the operating system's native vault (Windows Credential Manager, macOS Keychain, Linux Secret Service).",
   "author": {
