@@ -3052,14 +3052,26 @@ export class GarminConnectClient {
   }): Promise<any> {
     this.checkInitialized();
     try {
-      // Get existing gear first
-      const existing = await this.getGearStats(gearUUID);
-
       const url = `https://connectapi.garmin.com/gear-service/gear/${gearUUID}`;
-      const payload = {
-        ...existing,
-        ...updates,
-      };
+
+      // The base object has to be the gear itself. This used to read
+      // getGearStats, which answers with distance and activity counts and none
+      // of the fields the service requires back, so every update died on a
+      // NullPointerException.
+      const existing = await this.gc.get(url);
+
+      // The friendly parameter names are not the ones the service stores, and
+      // passing them through unmapped left the payload valid but the edit
+      // ignored. gearMakeName and gearModelName are a paired vocabulary the
+      // service validates (writing a free model name earns a
+      // DataIntegrityViolationException), so brand and model are written to
+      // customMakeModel, the single free-text label Garmin actually shows.
+      const payload: Record<string, unknown> = { ...existing };
+      if (updates.displayName !== undefined) payload.displayName = updates.displayName;
+      if (updates.maximumMeter !== undefined) payload.maximumMeters = updates.maximumMeter;
+
+      const label = [updates.brandName, updates.modelName].filter((x) => x !== undefined && x !== '');
+      if (label.length > 0) payload.customMakeModel = label.join(' ');
 
       const result = await this.gc.put(url, payload);
       return {
