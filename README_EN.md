@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.5.4-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.5.5-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,25 @@
 ---
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
+
+## 🆕 What's New in v4.5.5 - Body composition on a weigh-in
+
+- **`add_weigh_in`** accepts body fat, water, muscle and bone percentages, but Garmin keeps
+  **only body fat** on a manually entered weigh-in — the other three are discarded silently.
+  Verified by writing them and reading the record back, including under alternative field
+  names: only `bodyFat` ever survives.
+- The parameters stay, since a smart scale upload does carry those values. But a parameter
+  that is accepted and dropped reads as a working feature, so the description now says which
+  fields are actually stored.
+
+## 🆕 What's New in v4.5.4 - READMEs brought up to date
+
+- The READMEs had stopped at v4.4.0, and their tool tables described tools that had since
+  gained parameters. The compiled server is the v4.5.3 one apart from the constant holding
+  the version reported in the handshake.
+- Two entries were wrong rather than merely stale: `update_gear` was listed as working
+  (it was not, until v4.5.3), and gear creation was blamed on a 403 from the API when the
+  endpoint is in fact reachable and an undocumented payload is what blocks it.
 
 ## 🆕 What's New in v4.5.3 - Editing gear
 
