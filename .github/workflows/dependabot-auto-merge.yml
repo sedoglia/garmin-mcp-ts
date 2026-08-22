@@ -50,10 +50,11 @@ jobs:
         run: npm audit --audit-level=high
         continue-on-error: true
 
-      - name: Approve and merge
+      # No approving review here: GITHUB_TOKEN is barred from approving pull
+      # requests, so the step could only ever fail and leave the merge unrun.
+      # main requires no review anyway - the build above is what gates this.
+      - name: Merge
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --squash --delete-branch "$PR_URL"
+        run: gh pr merge --squash --delete-branch "$PR_URL"
