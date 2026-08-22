@@ -504,6 +504,11 @@ export class ToolHandler {
       success: true,
       data: {
         id: (safeProfile as any).id ?? null,
+        // The account is keyed by profileId everywhere else in the API — it is
+        // the ownerId on an activity and the userProfilePK on the wellness
+        // records — while `id` appears nowhere else. Dropping it from the
+        // projection left the one identifier callers need unreachable.
+        profileId: (safeProfile as any).profileId ?? null,
         displayName: (safeProfile as any).displayName ?? null,
         userName: (safeProfile as any).userName ?? null,
         fullName: (safeProfile as any).fullName ?? null,
