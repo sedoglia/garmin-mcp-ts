@@ -107,7 +107,7 @@ The server exposes **109 tools**, grouped by subject. The **26** marked ✏️ w
 | Tool | Description |
 |------|-------------|
 | `get_stress_data` | Stress for the day on the 0-100 scale: average, max, min and seconds per band; with `includeValues` also the individual three-minute samples |
-| `get_all_day_stress` | The raw payload of the same endpoint `get_stress_data` uses, samples included and with no computed statistics. A far larger response: `get_stress_data` is normally the one you want |
+| `get_all_day_stress` | Stress hour by hour: average, maximum and band for each hour, plus the totals for the day. It answers *when* stress rose, where `get_stress_data` answers *how much* there was |
 | `get_body_battery` | Body Battery (0-100) over a date range, with charged and drained periods |
 | `get_body_battery_events` | The events that affected Body Battery on a date: sleep, activities, naps |
 | `get_all_day_events` | All events of the day, including auto-detected activities |

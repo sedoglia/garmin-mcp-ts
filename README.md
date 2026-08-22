@@ -107,7 +107,7 @@ Il server espone **109 strumenti**, raggruppati per argomento. I **26** contrass
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_stress_data` | Stress del giorno sulla scala 0-100: medio, massimo, minimo e secondi per fascia; con `includeValues` anche i singoli campioni da 3 minuti |
-| `get_all_day_stress` | Il payload grezzo dello stesso endpoint di `get_stress_data`, campioni compresi e senza statistiche calcolate. Risposta molto più grande: di norma conviene `get_stress_data` |
+| `get_all_day_stress` | Lo stress ora per ora: media, massimo e fascia di ogni ora, più i totali del giorno. Risponde a *quando* lo stress è salito, dove `get_stress_data` risponde a *quanto* è stato |
 | `get_body_battery` | Body Battery (0-100) su un intervallo di date, con i periodi di ricarica e di consumo |
 | `get_body_battery_events` | Gli eventi che hanno inciso sulla Body Battery di una data: sonno, attività, pisolini |
 | `get_all_day_events` | Tutti gli eventi della giornata, comprese le attività rilevate automaticamente |

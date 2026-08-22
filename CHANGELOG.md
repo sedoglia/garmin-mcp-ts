@@ -10,6 +10,28 @@ recente alla più vecchia. Il progetto adotta il
 > precedenti sono ricostruite dai messaggi di commit, dai tag di release e dalle
 > versioni storiche dei README.
 
+## [Non ancora rilasciato]
+
+### 🔧 `get_all_day_stress` — da payload grezzo a profilo orario
+- Il tool restituiva la risposta dell'endpoint `dailyStress` così com'era: i ~480 campioni
+  di stress **più** i ~480 di Body Battery che viaggiano nello stesso payload. Circa 28.000
+  token, oltre il tetto di un risultato: come i quattro tool sistemati nella 4.5.0, non
+  riusciva a rispondere affatto. Era anche un doppione di `get_stress_data`, che legge lo
+  stesso indirizzo.
+- Ora i campioni vengono aggregati per **ora locale**: media, massimo e fascia di ciascuna
+  ora, più i totali del giorno. La risposta passa da ~28.000 a ~450 token. I due tool
+  rispondono adesso a domande diverse: `get_stress_data` a quanto stress c'è stato nella
+  giornata, `get_all_day_stress` a quando è salito.
+- **Ora locale, non GMT**: i campioni hanno timestamp GMT, quindi raggrupparli così com'erano
+  avrebbe prodotto un giorno spostato del fuso dell'account. L'offset si ricava dai due
+  timestamp che il payload porta già, uno locale e uno GMT.
+- **I buchi restano buchi**: i valori `-1` e `-2` marcano i tratti che l'orologio non ha
+  misurato. Non entrano nella media, e l'ora che ne contiene riporta anche `sampleSlots`,
+  così un'ora passata senza orologio si legge come dato mancante e non come calma.
+- **Media e massimo del giorno sono quelli di Garmin**, gli stessi che mostra l'app. Sono
+  calcolati su dati più fini dei campioni da tre minuti, quindi il massimo del giorno può
+  superare quello di ogni singola ora.
+
 ## [4.5.5] - 2026-08-22 — Composizione corporea nelle pesate
 
 - **`add_weigh_in`** accetta grasso corporeo, acqua, massa muscolare e ossea, ma Garmin
