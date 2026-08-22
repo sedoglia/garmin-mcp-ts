@@ -5,10 +5,10 @@
 **English** | **[Italiano](README.md)**
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-22%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.3.3-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.4.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,10 +18,16 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
 
-## 🚧 Unreleased
+## 🆕 What's New in v4.4.0 - Leaner responses and Node 22
 
 - **`get_floors`**: returns the daily totals only; the 15-minute breakdown is available
   with `includeBreakdown: true`. The normal response drops from ~5600 to ~210 characters.
+- **Node 22 required**: the manifest asked for Node 18, which stopped receiving security
+  patches on 30 April 2025 (Node 20 on 30 April 2026). If you are on Node 18 or 20 you
+  need to update, or Claude Desktop will treat the extension as incompatible. No server
+  code changed for this - it only uses long-standing APIs.
+- **Security**: every open advisory in the dependency tree is closed (`hono`,
+  `fast-uri`, `ip-address`, `tmp`). `npm audit` reports nothing.
 
 ## 🆕 What's New in v4.3.3 - Icon
 
@@ -457,7 +463,7 @@ it up.
 
 ## Prerequisites
 
-- **Node.js** 18.0 or higher
+- **Node.js** 22.0 or higher
 - **npm** 8.0 or higher
 - **Claude Desktop** installed
 - **Garmin Connect** account with valid credentials
