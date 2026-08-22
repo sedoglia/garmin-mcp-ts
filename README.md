@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.5.6-green.svg)](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)
+[![Version](https://img.shields.io/badge/Version-4.5.7-green.svg)](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,7 +18,7 @@
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
 
-> 📦 **Ultima release: [v4.5.6](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)**
+> 📦 **Ultima release: [v4.5.7](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)**
 > — bundle `.mcpb` pronto da installare, con le note di rilascio e il file `.sha256` per
 > verificarlo.
 >

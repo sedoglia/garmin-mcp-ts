@@ -10,7 +10,7 @@ recente alla più vecchia. Il progetto adotta il
 > precedenti sono ricostruite dai messaggi di commit, dai tag di release e dalle
 > versioni storiche dei README.
 
-## [Non ancora rilasciato]
+## [4.5.7] - 2026-08-23 — Elenchi di attività
 
 ### 🔧 Gli elenchi di attività superavano il tetto di una risposta
 - **`list_recent_activities`** e **`get_activities_by_date`** restituivano il payload
@@ -32,6 +32,13 @@ recente alla più vecchia. Il progetto adotta il
   `analyze_training_period` leggono l'elenco senza cap e continuano a contare 387 attività
   su 387. Troncarli avrebbe riportato il bug che la 4.3.0 aveva corretto proprio su
   `get_progress_summary`.
+
+### 📚 Documentazione
+- I README portano in cima un rimando alla release pubblicata: il badge della versione,
+  che puntava alla root del repository, ora apre `releases/latest`, e sotto l'introduzione
+  c'è una riga con bundle, note di rilascio e file `.sha256`. La sezione sul rilascio
+  elenca i punti in cui la versione è dichiarata e ricorda che i link di download non sono
+  fra questi.
 
 ## [4.5.6] - 2026-08-23 — Lo stress ora per ora
 
