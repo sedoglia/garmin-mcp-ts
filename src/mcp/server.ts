@@ -70,7 +70,7 @@ export async function createMCPServer(auth: AuthManager): Promise<Server> {
         content: [
           {
             type: 'text' as const,
-            text: JSON.stringify(result, null, 2),
+            text: JSON.stringify(result),
           },
         ],
       };
@@ -82,15 +82,11 @@ export async function createMCPServer(auth: AuthManager): Promise<Server> {
         content: [
           {
             type: 'text' as const,
-            text: JSON.stringify(
-              {
-                success: false,
-                error,
-                tool: toolName,
-              },
-              null,
-              2
-            ),
+            text: JSON.stringify({
+              success: false,
+              error,
+              tool: toolName,
+            }),
           },
         ],
         isError: true,

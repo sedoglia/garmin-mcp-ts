@@ -180,7 +180,7 @@ export class ToolHandler {
         case 'get_badge_challenges':
           return await this.handleGetBadgeChallenges();
         case 'get_earned_badges':
-          return await this.handleGetEarnedBadges();
+          return await this.handleGetEarnedBadges(safeArgs);
         case 'get_personal_records':
           return await this.handleGetPersonalRecords();
         case 'get_race_predictions':
@@ -226,7 +226,7 @@ export class ToolHandler {
         case 'add_hydration_data':
           return await this.handleAddHydrationData(safeArgs);
         case 'get_available_badges':
-          return await this.handleGetAvailableBadges();
+          return await this.handleGetAvailableBadges(safeArgs);
         case 'get_in_progress_badges':
           return await this.handleGetInProgressBadges();
         case 'get_available_badge_challenges':
@@ -457,7 +457,7 @@ export class ToolHandler {
 
     logger.info(`Fetching sleep data for date: ${date}`);
 
-    const sleep = await this.client.getSleepData(date);
+    const sleep = await this.client.getSleepData(date, args.includeTimeSeries === true);
 
     return {
       success: true,
@@ -676,7 +676,7 @@ export class ToolHandler {
 
     logger.info(`Fetching stress data for date: ${date}`);
 
-    const stressData = await this.client.getStressData(date);
+    const stressData = await this.client.getStressData(date, args.includeValues === true);
 
     return {
       success: true,
@@ -1358,10 +1358,10 @@ export class ToolHandler {
     };
   }
 
-  private async handleGetEarnedBadges(): Promise<unknown> {
+  private async handleGetEarnedBadges(args: Record<string, unknown>): Promise<unknown> {
     logger.info('Fetching earned badges');
 
-    const badges = await this.client.getEarnedBadges();
+    const badges = await this.client.getEarnedBadges(args.includeDetails === true);
 
     return {
       success: true,
@@ -1642,9 +1642,9 @@ export class ToolHandler {
     };
   }
 
-  private async handleGetAvailableBadges(): Promise<unknown> {
+  private async handleGetAvailableBadges(args: Record<string, unknown>): Promise<unknown> {
     logger.info('Fetching available badges');
-    const data = await this.client.getAvailableBadges();
+    const data = await this.client.getAvailableBadges(args.includeDetails === true);
 
     return {
       success: true,

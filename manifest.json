@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "garmin-mcp-ts",
   "display_name": "Garmin Connect",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
   "long_description": "Connects Claude to a personal Garmin Connect account. It exposes activities, health and wellness metrics, sleep, training status, workouts, gear and device data as MCP tools, and can also write back to the account (workouts, manual activities, weigh-ins, gear links) when explicitly asked.\n\nThe server runs entirely on the user's machine and talks to no service other than connect.garmin.com over HTTPS. Credentials are encrypted at rest with AES-256-GCM, with the encryption key held in the operating system's native vault (Windows Credential Manager, macOS Keychain, Linux Secret Service).",
   "author": {
@@ -59,7 +59,7 @@
     },
     {
       "name": "get_sleep_data",
-      "description": "Get detailed sleep information including duration, sleep stages, and quality score."
+      "description": "Get a night of sleep: duration, sleep stages, quality score and the nightly summary. The per-minute series behind it (movement, heart rate, stress, body battery, HRV, respiration) are reported as counts only; set includeTimeSeries to inline them, or use the dedicated tool for the one series you need."
     },
     {
       "name": "get_body_composition",
@@ -99,7 +99,7 @@
     },
     {
       "name": "get_stress_data",
-      "description": "Get stress level data for a specific date. Returns stress levels throughout the day (0-100 scale), with 0-25 resting, 26-50 low, 51-75 medium, 76-100 high stress. Includes overall stress level, durations by category, and detailed timestamp values."
+      "description": "Get stress for a date on the 0-100 scale (0-25 resting, 26-50 low, 51-75 medium, 76-100 high). Returns average/max/min and the seconds spent in each band; set includeValues to also get the ~460 three-minute samples those figures are derived from."
     },
     {
       "name": "get_body_battery",
@@ -255,7 +255,7 @@
     },
     {
       "name": "get_earned_badges",
-      "description": "Get all badges earned by the user."
+      "description": "Get all badges earned by the user, as id, key, name, category, difficulty, points and the date earned. Set includeDetails for the full badge records."
     },
     {
       "name": "get_personal_records",
@@ -323,7 +323,7 @@
     },
     {
       "name": "get_available_badges",
-      "description": "Get all badges available to earn."
+      "description": "Get all badges available to earn, as id, key, name, category, difficulty, points and, where set, the active window and progress. Set includeDetails for the full badge records."
     },
     {
       "name": "get_in_progress_badges",
