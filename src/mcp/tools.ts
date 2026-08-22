@@ -214,7 +214,10 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     name: MCP_TOOL_NAMES.GET_USER_PROFILE,
     title: 'Get User Profile',
-    description: 'Get user profile information including display name and account details.',
+    description:
+      'Get user profile information: display name, user name, full name and both account ids. '
+      + 'profileId is the one other Garmin data is keyed by (the ownerId on an activity, the userProfilePK '
+      + 'on wellness records); id is a separate internal identifier.',
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: 'object',
