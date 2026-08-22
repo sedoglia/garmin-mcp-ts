@@ -491,7 +491,7 @@ Example for interval running workout:
         },
         sportType: {
           type: 'string',
-          description: 'Sport type: running, cycling, swimming, strength, cardio, walking, hiking, yoga',
+          description: 'Sport type. One of: running, cycling, walking, swimming, strength, cardio, yoga, pilates, hiit, mobility, rucking, other. The workout service has no hiking type; use walking or rucking.',
         },
         description: {
           type: 'string',
@@ -958,8 +958,9 @@ Example for interval running workout:
     name: MCP_TOOL_NAMES.DELETE_WEIGH_IN,
     title: 'Delete Weigh-In',
     description:
-      'Permanently delete a single weigh-in record from Garmin Connect, identified by its weigh-in ID. '
-      + 'The ID comes from get_body_composition or get_weigh_ins. The measurement cannot be recovered afterwards.',
+      'Permanently delete a single weigh-in record, identified by its weigh-in ID (the samplePk '
+      + 'from get_weigh_ins or get_body_composition). The measurement cannot be recovered afterwards. '
+      + 'Pass date when the weigh-in was back-dated to a day other than the one it was entered on.',
     annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
@@ -967,6 +968,13 @@ Example for interval running workout:
         weighInId: {
           type: 'string',
           description: 'The unique weigh-in identifier (required)',
+        },
+        date: {
+          type: 'string',
+          description:
+            'Date of the weigh-in in YYYY-MM-DD format. Defaults to the day the weigh-in id encodes, '
+            + 'which is the day it was recorded.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
         },
       },
       required: ['weighInId'],

@@ -215,7 +215,7 @@
     },
     {
       "name": "delete_weigh_in",
-      "description": "Permanently delete a single weigh-in record from Garmin Connect, identified by its weigh-in ID. The ID comes from get_body_composition or get_weigh_ins. The measurement cannot be recovered afterwards."
+      "description": "Permanently delete a single weigh-in record, identified by its weigh-in ID (the samplePk from get_weigh_ins or get_body_composition). The measurement cannot be recovered afterwards. Pass date when the weigh-in was back-dated to a day other than the one it was entered on."
     },
     {
       "name": "get_blood_pressure",

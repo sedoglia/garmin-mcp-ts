@@ -1199,7 +1199,8 @@ export class ToolHandler {
 
     logger.info(`Deleting weigh-in: ${weighInId}`);
 
-    const result = await this.client.deleteWeighIn(weighInId);
+    const date = this.getStringParam(args, 'date', '');
+    const result = await this.client.deleteWeighIn(weighInId, date || undefined);
 
     return {
       success: true,

@@ -1148,18 +1148,40 @@ export class GarminConnectClient {
   }
 
   // Helper per mappare sport types
+  /**
+   * The workout service keys a workout by sportTypeId and ignores the key sent
+   * alongside it, so a wrong id silently produces a workout of another sport.
+   * These ids were read back from the service itself; the previous table had
+   * swimming and strength swapped, and walking, hiking, cardio and yoga wrong
+   * (walking's id 9 is hiit, and 17 and 43 are not workout sports at all).
+   * The workout taxonomy has no hiking, which is why it is absent here.
+   */
+  private static readonly WORKOUT_SPORT_TYPES: Record<string, { sportTypeId: number; sportTypeKey: string }> = {
+    running: { sportTypeId: 1, sportTypeKey: 'running' },
+    cycling: { sportTypeId: 2, sportTypeKey: 'cycling' },
+    other: { sportTypeId: 3, sportTypeKey: 'other' },
+    swimming: { sportTypeId: 4, sportTypeKey: 'swimming' },
+    strength: { sportTypeId: 5, sportTypeKey: 'strength_training' },
+    strength_training: { sportTypeId: 5, sportTypeKey: 'strength_training' },
+    cardio: { sportTypeId: 6, sportTypeKey: 'cardio_training' },
+    cardio_training: { sportTypeId: 6, sportTypeKey: 'cardio_training' },
+    yoga: { sportTypeId: 7, sportTypeKey: 'yoga' },
+    pilates: { sportTypeId: 8, sportTypeKey: 'pilates' },
+    hiit: { sportTypeId: 9, sportTypeKey: 'hiit' },
+    mobility: { sportTypeId: 11, sportTypeKey: 'mobility' },
+    walking: { sportTypeId: 12, sportTypeKey: 'walking' },
+    rucking: { sportTypeId: 13, sportTypeKey: 'rucking' },
+  };
+
   private mapSportType(sport: string): { sportTypeId: number; sportTypeKey: string } {
-    const sportMap: Record<string, { sportTypeId: number; sportTypeKey: string }> = {
-      running: { sportTypeId: 1, sportTypeKey: 'running' },
-      cycling: { sportTypeId: 2, sportTypeKey: 'cycling' },
-      swimming: { sportTypeId: 5, sportTypeKey: 'swimming' },
-      strength: { sportTypeId: 4, sportTypeKey: 'strength_training' },
-      cardio: { sportTypeId: 3, sportTypeKey: 'fitness_equipment' },
-      walking: { sportTypeId: 9, sportTypeKey: 'walking' },
-      hiking: { sportTypeId: 17, sportTypeKey: 'hiking' },
-      yoga: { sportTypeId: 43, sportTypeKey: 'yoga' },
-    };
-    return sportMap[sport.toLowerCase()] || sportMap.running;
+    const match = GarminConnectClient.WORKOUT_SPORT_TYPES[sport.toLowerCase()];
+    // Falling back to running turned an unsupported sport into a running
+    // workout without saying so; an unknown sport is now refused by name.
+    if (!match) {
+      const valid = Object.keys(GarminConnectClient.WORKOUT_SPORT_TYPES).join(', ');
+      throw new Error(`Unknown workout sport type "${sport}". Valid types: ${valid}.`);
+    }
+    return match;
   }
 
   // Helper per mappare step types
@@ -1746,16 +1768,37 @@ export class GarminConnectClient {
   }
 
   /**
-   * Delete a weigh-in
+   * A weigh-in's sample id is the epoch-millisecond timestamp it was recorded
+   * at, so it yields the calendar date the weight service files it under.
    */
-  async deleteWeighIn(weighInId: string): Promise<any> {
+  private static dateFromSamplePk(weighInId: string): string {
+    const ms = Number(weighInId);
+    if (!Number.isFinite(ms)) {
+      throw new Error(`Cannot derive a date from weigh-in id "${weighInId}"; pass date explicitly.`);
+    }
+    const d = new Date(ms);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+
+  /**
+   * Delete a weigh-in.
+   * The weight service deletes by date and version, not by id alone:
+   * /user-weight/{id} answers 404 for every id, so this tool could never
+   * delete anything. The date defaults to the day the sample id encodes,
+   * which is the day it was recorded — pass it explicitly for a weigh-in
+   * that was back-dated to a different day than the one it was entered on.
+   */
+  async deleteWeighIn(weighInId: string, date?: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/weight-service/user-weight/${weighInId}`;
+      const calendarDate = date || GarminConnectClient.dateFromSamplePk(weighInId);
+      const url = `https://connectapi.garmin.com/weight-service/weight/${calendarDate}/byversion/${weighInId}`;
       await this.gc.client.delete(url);
       return {
         success: true,
         weighInId,
+        date: calendarDate,
         message: 'Weigh-in deleted successfully',
       };
     } catch (err) {
@@ -1771,7 +1814,10 @@ export class GarminConnectClient {
   async getBloodPressure(startDate: string, endDate: string): Promise<any> {
     this.checkInitialized();
     try {
-      const url = `https://connectapi.garmin.com/bloodpressure-service/bloodpressure/range/${startDate}/${endDate}`;
+      // Without includeAll the range endpoint answers with day summaries whose
+      // measurements array is empty, and the per-reading `version` lives only in
+      // there — so delete_blood_pressure had no way to learn what to delete.
+      const url = `https://connectapi.garmin.com/bloodpressure-service/bloodpressure/range/${startDate}/${endDate}?includeAll=true`;
       const data = await this.gc.get(url);
       return {
         startDate,
