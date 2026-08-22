@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.4.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.5.3-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,66 @@
 ---
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
+
+## 🆕 What's New in v4.5.3 - Editing gear
+
+- **`update_gear`** could not change anything. It built the PUT payload from
+  `getGearStats`, which answers with distance covered and an activity count and none of
+  the fields the service wants back, so every call died on a `NullPointerException`. It
+  now reads the gear from the same address it writes to.
+- **Parameters mapped onto the stored fields**: the distance cap is `maximumMeters` (the
+  tool sent `maximumMeter`), and there is no free model field at all. `gearMakeName` and
+  `gearModelName` are a paired vocabulary Garmin validates, so `brandName` and
+  `modelName` are written to `customMakeModel`, the single free-text label the app shows:
+  `brandName: "Nike"` with `modelName: "Pegasus 41"` reads back as **Nike Pegasus 41**.
+- `link_gear_to_activity`, `remove_gear_from_activity` and `delete_gear` were exercised
+  against real gear in the same pass and needed no changes.
+
+## 🆕 What's New in v4.5.2 - The profile identifier
+
+- **`get_user_profile`** returned only `id`, an internal identifier no other Garmin
+  endpoint accepts, and omitted `profileId` — the value the rest of your data is keyed by.
+  It is the `ownerId` on every activity and the `userProfilePK` on the wellness records.
+  Asking this tool for the account id gave back the one number that matches nothing. Both
+  are returned now.
+
+## 🆕 What's New in v4.5.1 - Three writing tools repaired
+
+Found by exercising the tools that write to the account, not only the ones that read.
+
+- **`delete_weigh_in`** deleted nothing. It used `/weight-service/user-weight/{id}`,
+  which answers 404 for every id; the service deletes by date and version instead. The date
+  is derived from the weigh-in id, and `date` can be passed explicitly for a weigh-in
+  logged for a day other than the one it was entered on.
+- **`delete_blood_pressure`** was unusable. It needs a reading's `version`, and the only
+  tool that could supply it — `get_blood_pressure` — called the endpoint without
+  `includeAll`, so the measurements list always came back empty. You could see a reading
+  (`numOfMeasurements: 1`) and not delete it.
+- **`create_workout`** had six of its eight sport types wrong. The service identifies a
+  sport by id and ignores the key sent beside it, so workouts were quietly filed under a
+  different sport — **swimming and strength were each other's**, `walking` produced HIIT,
+  `cardio` produced "other", and `hiking` and `yoga` used ids that are not workout sports.
+  An unrecognised sport used to fall back to **running without saying so**; it is now refused
+  by name. The types the service genuinely offers are reachable too: `pilates`, `hiit`,
+  `mobility`, `rucking`, `other`. The workout taxonomy has no `hiking` — use `walking`
+  or `rucking`.
+- **`get_stress_data`** read its banded durations from fields the `dailyStress` endpoint
+  does not send, so they were always absent. They are now derived from the samples.
+
+## 🆕 What's New in v4.5.0 - Four tools that could not answer
+
+- **Responses over the limit**: `get_available_badges` (~85,000 tokens), `get_sleep_data`
+  (~44,000), `get_earned_badges` (~41,000) and `get_stress_data` (~28,000) handed back the
+  raw Garmin payload, exceeding the token limit on a single tool result — so the answer never
+  reached the model at all. They were not slow, they were **unusable**.
+- **Summary by default, detail on request**: following the pattern `get_floors` already
+  used, they now return a summary and keep the full payload behind an explicit flag —
+  `includeTimeSeries`, `includeValues`, `includeDetails`. `get_sleep_data` drops from
+  ~44,000 to ~1,400 tokens and reports how many points it left out of each series, since
+  every one of them has its own tool.
+- **Compact serialization**: results were pretty-printed with two-space indentation.
+  Indentation is for people reading files, not for a model: removing it cut about **58% from
+  every response across all 109 tools**.
 
 ## 🆕 What's New in v4.4.0 - Leaner responses and Node 22
 
@@ -230,7 +290,7 @@ This MCP server provides **109 powerful tools** to interact with your Garmin Con
 | Tool | Description |
 |------|-------------|
 | `get_health_metrics` | Get daily health metrics (steps, heart rate, VO2 max) |
-| `get_sleep_data` | Get detailed sleep information (duration, quality, stages) |
+| `get_sleep_data` | Get a night of sleep: duration, stages, score and nightly summary; `includeTimeSeries` adds the per-minute series |
 | `get_body_composition` | Get body composition measurements (weight, BMI, body fat, muscle mass) over a `days` window, plus the average |
 | `get_steps` | Get step count for a specific date |
 | `get_heart_rate` | Get detailed heart rate data for a specific date |
@@ -239,7 +299,7 @@ This MCP server provides **109 powerful tools** to interact with your Garmin Con
 ### Wellness Metrics (v1.2)
 | Tool | Description |
 |------|-------------|
-| `get_stress_data` | Get stress levels throughout the day (0-100 scale) |
+| `get_stress_data` | Get the day's stress (0-100 scale): average/max/min and seconds per band; `includeValues` adds the individual samples |
 | `get_body_battery` | Get Body Battery energy levels (0-100) |
 | `get_hrv_data` | Get Heart Rate Variability (HRV) data |
 | `get_respiration_data` | Get respiration/breathing rate data |
@@ -249,7 +309,7 @@ This MCP server provides **109 powerful tools** to interact with your Garmin Con
 | Tool | Description |
 |------|-------------|
 | `get_devices` | Get the list of registered Garmin devices (id, model, serial, firmware) |
-| `get_user_profile` | Get user profile information |
+| `get_user_profile` | Get the user profile. `profileId` is the id the rest of the data is keyed by (an activity's `ownerId`); `id` is a separate internal identifier |
 | `get_training_status` | Get the training status for a date: status, VO2 max, acute/chronic load, ACWR |
 
 ---
@@ -261,7 +321,7 @@ This MCP server provides **109 powerful tools** to interact with your Garmin Con
 |------|-------------|
 | `get_workout_by_id` | Get details of a specific workout |
 | `download_workout` | Download workout in FIT format for device sync |
-| `create_workout` | **Create structured workouts** with warmup, intervals, cooldown |
+| `create_workout` | **Create structured workouts** with warmup, intervals, cooldown. Valid sports: `running`, `cycling`, `walking`, `swimming`, `strength`, `cardio`, `yoga`, `pilates`, `hiit`, `mobility`, `rucking`, `other` |
 | `update_workout` | Modify an existing workout |
 | `delete_workout` | Delete a workout |
 | `schedule_workout` | Schedule a workout on a specific date |
@@ -300,7 +360,7 @@ This MCP server provides **109 powerful tools** to interact with your Garmin Con
 |------|-------------|
 | `get_weigh_ins` | Get weigh-ins for a date range |
 | `add_weigh_in` | Add weigh-in with body composition data |
-| `delete_weigh_in` | Delete a weigh-in |
+| `delete_weigh_in` | Delete a weigh-in; `date` is only needed when the weigh-in is filed under a different day than it was entered on |
 | `get_blood_pressure` | Get blood pressure readings |
 | `set_blood_pressure` | Record blood pressure measurement |
 | `delete_blood_pressure` | Delete blood pressure measurement |
@@ -318,7 +378,7 @@ This MCP server provides **109 powerful tools** to interact with your Garmin Con
 | `get_goals` | Get goals; without `status` every status is queried and the results merged |
 | `get_adhoc_challenges` | Get ad-hoc challenges |
 | `get_badge_challenges` | Get available badge challenges |
-| `get_earned_badges` | Get earned badges |
+| `get_earned_badges` | Get earned badges with the date each was won; `includeDetails` returns the full record |
 | `get_personal_records` | Get personal records (typeId, value, date and the activity they were set in) |
 | `get_race_predictions` | Get race time predictions (5K, 10K, HM, M) |
 
@@ -326,7 +386,7 @@ This MCP server provides **109 powerful tools** to interact with your Garmin Con
 | Tool | Description |
 |------|-------------|
 | `get_all_gear` | Complete list of all equipment with UUIDs |
-| `update_gear` | Update existing equipment |
+| `update_gear` | Update existing equipment. `brandName` and `modelName` share one free-text label, because catalogue make and model are a vocabulary Garmin validates |
 | `delete_gear` | Delete equipment |
 | `get_gear_stats` | Get gear usage statistics |
 | `link_gear_to_activity` | Link gear to an activity |
@@ -362,7 +422,7 @@ This MCP server provides **109 powerful tools** to interact with your Garmin Con
 ### Advanced Badges & Challenges
 | Tool | Description |
 |------|-------------|
-| `get_available_badges` | Get all available badges |
+| `get_available_badges` | Get available badges (id, name, category, difficulty, points); `includeDetails` returns the full record |
 | `get_in_progress_badges` | Get badges in progress |
 | `get_available_badge_challenges` | Get available badge challenges |
 | `get_non_completed_badge_challenges` | Get non-completed badge challenges |
@@ -886,8 +946,8 @@ Some endpoints and features are not available through Garmin's public OAuth API:
 
 #### Gear Management
 - ✅ **List gear** (`get_all_gear`): Working (via `filterGear` endpoint)
-- ✅ **Update/delete gear** (`update_gear`, `delete_gear`): Working
-- ❌ **Create gear** (`create_gear`): **REMOVED** - OAuth API returns 403 Forbidden
+- ✅ **Update/delete gear** (`update_gear`, `delete_gear`): Working (`update_gear` was broken until v4.5.3)
+- ❌ **Create gear** (`create_gear`): **NOT AVAILABLE** - the endpoint exists but its payload is undocumented: it answers 500 without naming the field it rejects
   - Gear can only be created through:
     - [Garmin Connect](https://connect.garmin.com/modern/gear) web interface
     - Garmin Connect mobile app

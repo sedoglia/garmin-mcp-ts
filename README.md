@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.4.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.5.3-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
 
 [![PayPal](https://img.shields.io/badge/Supporta%20il%20Progetto-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -17,6 +17,64 @@
 ---
 
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
+
+## 🆕 Novità v4.5.3 - Modifica dell'equipaggiamento
+
+- **`update_gear`**: non riusciva a modificare nulla. Costruiva il payload della PUT a
+  partire da `getGearStats`, che restituisce distanza percorsa e numero di attività e
+  nessuno dei campi che il servizio richiede indietro: ogni chiamata falliva con
+  `NullPointerException`. Ora rilegge l'attrezzatura dallo stesso indirizzo su cui scrive.
+- **Parametri mappati sui campi reali**: il limite di distanza è `maximumMeters` (il tool
+  inviava `maximumMeter`), e non esiste un campo modello libero. `gearMakeName` e
+  `gearModelName` sono un vocabolario accoppiato che Garmin valida, quindi `brandName` e
+  `modelName` vengono scritti in `customMakeModel`, l'unica etichetta libera che l'app
+  mostra: `brandName: "Nike"` + `modelName: "Pegasus 41"` dà **Nike Pegasus 41**.
+- `link_gear_to_activity`, `remove_gear_from_activity` e `delete_gear` sono stati
+  verificati su equipaggiamento reale e non richiedevano modifiche.
+
+## 🆕 Novità v4.5.2 - Identificativo del profilo
+
+- **`get_user_profile`**: restituiva solo `id` (un identificativo interno che nessun altro
+  endpoint Garmin accetta) e ometteva `profileId`, che è invece il valore con cui è indicizzato
+  tutto il resto: è l'`ownerId` di ogni attività e lo `userProfilePK` dei dati di benessere.
+  Chi chiedeva "l'id dell'utente" otteneva l'unico numero inutilizzabile. Ora ci sono entrambi.
+
+## 🆕 Novità v4.5.1 - Tre tool di scrittura riparati
+
+Emersi esercitando i tool che scrivono sull'account, non solo quelli che leggono.
+
+- **`delete_weigh_in`**: non cancellava niente. Usava `/weight-service/user-weight/{id}`,
+  che risponde 404 per qualsiasi id; il servizio cancella per data e versione. La data viene
+  dedotta dall'id della pesata; si può passare esplicitamente con `date` per una pesata
+  registrata in un giorno diverso da quello a cui si riferisce.
+- **`delete_blood_pressure`**: era inutilizzabile. Richiede la `version` della misurazione,
+  e l'unico tool che poteva fornirla — `get_blood_pressure` — chiamava l'endpoint senza
+  `includeAll`, quindi l'elenco delle misurazioni tornava sempre vuoto. La lettura si vedeva
+  (`numOfMeasurements: 1`) ma non era cancellabile.
+- **`create_workout`**: sbagliava sei tipi di sport su otto. Il servizio identifica lo sport
+  dall'id e ignora la chiave inviata accanto, quindi creava in silenzio workout di uno sport
+  diverso — **swimming e strength erano invertiti fra loro**, `walking` produceva HIIT,
+  `cardio` produceva "other", `hiking` e `yoga` usavano id inesistenti. Uno sport non
+  riconosciuto ripiegava su **running senza dirlo**: ora viene rifiutato per nome. Sono
+  raggiungibili anche i tipi che il servizio offre davvero: `pilates`, `hiit`, `mobility`,
+  `rucking`, `other`. La tassonomia dei workout non ha `hiking`: usare `walking` o `rucking`.
+- **`get_stress_data`**: leggeva le durate per fascia da campi che l'endpoint `dailyStress`
+  non invia, quindi erano sempre assenti. Ora sono calcolate dai campioni.
+
+## 🆕 Novità v4.5.0 - Quattro tool che non potevano rispondere
+
+- **Risposte oltre il limite**: `get_available_badges` (~85.000 token), `get_sleep_data`
+  (~44.000), `get_earned_badges` (~41.000) e `get_stress_data` (~28.000) restituivano il
+  payload Garmin grezzo, superando il tetto di token di un risultato: la risposta non
+  arrivava affatto al modello. Non erano lenti, erano **inutilizzabili**.
+- **Riepilogo di default, dettaglio a richiesta**: seguendo il modello già usato da
+  `get_floors`, ora restituiscono un riepilogo e tengono il payload completo dietro un
+  parametro esplicito — `includeTimeSeries`, `includeValues`, `includeDetails`.
+  `get_sleep_data` scende da ~44.000 a ~1.400 token e dichiara quante misurazioni ha omesso
+  per ciascuna serie, dato che ognuna ha già un tool dedicato.
+- **Serializzazione compatta**: i risultati venivano indentati con due spazi. L'indentazione
+  serve a chi legge un file, non a un modello: rimuoverla ha tolto circa il **58% da ogni
+  risposta di tutti i 109 tool**.
 
 ## 🆕 Novità v4.4.0 - Risposte più snelle e Node 22
 
@@ -230,7 +288,7 @@ Questo server MCP fornisce **109 potenti strumenti** per interagire con i tuoi d
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_health_metrics` | Ottiene metriche di salute giornaliere (passi, frequenza cardiaca, VO2 max) |
-| `get_sleep_data` | Ottiene informazioni dettagliate sul sonno (durata, qualità, fasi) |
+| `get_sleep_data` | Ottiene sonno: durata, fasi, punteggio e riepilogo notturno; con `includeTimeSeries` anche le serie al minuto |
 | `get_body_composition` | Ottiene misurazioni della composizione corporea (peso, BMI, grasso, massa muscolare) su un periodo di `days` giorni, con la media |
 | `get_steps` | Ottiene il conteggio passi per una data specifica |
 | `get_heart_rate` | Ottiene dati dettagliati sulla frequenza cardiaca |
@@ -239,7 +297,7 @@ Questo server MCP fornisce **109 potenti strumenti** per interagire con i tuoi d
 ### Metriche Wellness (v1.2)
 | Strumento | Descrizione |
 |-----------|-------------|
-| `get_stress_data` | Ottiene i livelli di stress durante il giorno (scala 0-100) |
+| `get_stress_data` | Ottiene lo stress del giorno (scala 0-100): medio/max/min e secondi per fascia; con `includeValues` anche i singoli campioni |
 | `get_body_battery` | Ottiene i livelli di energia Body Battery (0-100) |
 | `get_hrv_data` | Ottiene dati di variabilità cardiaca (HRV) |
 | `get_respiration_data` | Ottiene dati sulla frequenza respiratoria |
@@ -249,7 +307,7 @@ Questo server MCP fornisce **109 potenti strumenti** per interagire con i tuoi d
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_devices` | Ottiene la lista dei dispositivi Garmin registrati (id, modello, seriale, firmware) |
-| `get_user_profile` | Ottiene informazioni sul profilo utente |
+| `get_user_profile` | Ottiene il profilo utente. `profileId` è l'id con cui è indicizzato il resto dei dati (`ownerId` delle attività); `id` è un identificativo interno separato |
 | `get_training_status` | Ottiene lo stato di allenamento per una data: status, VO2 max, carico acuto/cronico, rapporto ACWR |
 
 ---
@@ -261,7 +319,7 @@ Questo server MCP fornisce **109 potenti strumenti** per interagire con i tuoi d
 |-----------|-------------|
 | `get_workout_by_id` | Ottiene dettagli di un workout specifico |
 | `download_workout` | Scarica workout in formato FIT per sync su device |
-| `create_workout` | **Crea workout strutturati** con warmup, intervalli, cooldown |
+| `create_workout` | **Crea workout strutturati** con warmup, intervalli, cooldown. Sport validi: `running`, `cycling`, `walking`, `swimming`, `strength`, `cardio`, `yoga`, `pilates`, `hiit`, `mobility`, `rucking`, `other` |
 | `update_workout` | Modifica un workout esistente |
 | `delete_workout` | Elimina un workout |
 | `schedule_workout` | Schedula un workout su una data specifica |
@@ -300,7 +358,7 @@ Questo server MCP fornisce **109 potenti strumenti** per interagire con i tuoi d
 |-----------|-------------|
 | `get_weigh_ins` | Ottiene pesate in un range di date |
 | `add_weigh_in` | Aggiunge pesata con dati composizione corporea |
-| `delete_weigh_in` | Elimina una pesata |
+| `delete_weigh_in` | Elimina una pesata; `date` serve solo se la pesata è riferita a un giorno diverso da quello di registrazione |
 | `get_blood_pressure` | Ottiene misurazioni pressione sanguigna |
 | `set_blood_pressure` | Registra misurazione pressione |
 | `delete_blood_pressure` | Elimina misurazione pressione |
@@ -318,7 +376,7 @@ Questo server MCP fornisce **109 potenti strumenti** per interagire con i tuoi d
 | `get_goals` | Ottiene obiettivi; senza `status` interroga tutti gli stati e unisce i risultati |
 | `get_adhoc_challenges` | Ottiene sfide ad-hoc |
 | `get_badge_challenges` | Ottiene sfide badge disponibili |
-| `get_earned_badges` | Ottiene badge guadagnati |
+| `get_earned_badges` | Ottiene i badge guadagnati con la data di conquista; con `includeDetails` il record completo |
 | `get_personal_records` | Ottiene i record personali (typeId, valore, data e attività di riferimento) |
 | `get_race_predictions` | Ottiene previsioni tempi gara (5K, 10K, HM, M) |
 
@@ -326,7 +384,7 @@ Questo server MCP fornisce **109 potenti strumenti** per interagire con i tuoi d
 | Strumento | Descrizione |
 |-----------|-------------|
 | `get_all_gear` | Lista completa di tutto l'equipaggiamento con UUID |
-| `update_gear` | Aggiorna equipaggiamento esistente |
+| `update_gear` | Aggiorna equipaggiamento esistente. `brandName` e `modelName` finiscono nella stessa etichetta libera, perché marca e modello di catalogo sono un vocabolario che Garmin valida |
 | `delete_gear` | Elimina equipaggiamento |
 | `get_gear_stats` | Ottiene statistiche uso gear |
 | `link_gear_to_activity` | Collega gear a un'attività |
@@ -362,7 +420,7 @@ Questo server MCP fornisce **109 potenti strumenti** per interagire con i tuoi d
 ### Badges & Challenges Avanzati
 | Strumento | Descrizione |
 |-----------|-------------|
-| `get_available_badges` | Ottiene tutti i badge disponibili |
+| `get_available_badges` | Ottiene i badge disponibili (id, nome, categoria, difficoltà, punti); con `includeDetails` il record completo |
 | `get_in_progress_badges` | Ottiene badge in corso di completamento |
 | `get_available_badge_challenges` | Ottiene sfide badge disponibili |
 | `get_non_completed_badge_challenges` | Ottiene sfide badge non completate |
@@ -886,8 +944,8 @@ Alcuni endpoint e funzionalità non sono disponibili tramite l'API OAuth pubblic
 
 #### Gear Management
 - ✅ **Lista gear** (`get_all_gear`): Funzionante (via endpoint `filterGear`)
-- ✅ **Aggiorna/elimina gear** (`update_gear`, `delete_gear`): Funzionante
-- ❌ **Creazione gear** (`create_gear`): **RIMOSSO** - l'API OAuth restituisce 403 Forbidden
+- ✅ **Aggiorna/elimina gear** (`update_gear`, `delete_gear`): Funzionante (`update_gear` era rotto fino alla v4.5.3)
+- ❌ **Creazione gear** (`create_gear`): **NON DISPONIBILE** - l'endpoint esiste ma il suo payload non è documentato: risponde 500 senza indicare quale campo rifiuti
   - I gear possono essere creati solo tramite:
     - Web interface di [Garmin Connect](https://connect.garmin.com/modern/gear)
     - App mobile Garmin Connect
