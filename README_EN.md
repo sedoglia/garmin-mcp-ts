@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.5.6-green.svg)](https://github.com/sedoglia/garmin-mcp-ts)
+[![Version](https://img.shields.io/badge/Version-4.5.6-green.svg)](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,6 +18,10 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
 
+> 📦 **Latest release: [v4.5.6](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)**
+> — the `.mcpb` bundle ready to install, with the release notes and the `.sha256` file to
+> verify it.
+>
 > 📜 **Version history**: every detailed change of every release — new tools, fixes,
 > upgrade notes — lives in the **[CHANGELOG](CHANGELOG_EN.md)**.
 
@@ -624,7 +628,13 @@ requests. Fixing the text of a release that is already out is a matter of editin
 and running the workflow again; the assets are left alone.
 
 Either way the workflow refuses to go on when the tag disagrees with the version the
-manifest declares. To build the bundle locally:
+manifest declares. The version is declared in five places, all of which have to be raised
+together before tagging: `package.json`, `manifest.json`, `SERVER_VERSION` in
+`src/utils/constants.ts` (the one the server announces in the MCP handshake) and, in both
+READMEs, the badge and the release line near the top. The download links point at
+`releases/latest` instead and never need touching.
+
+To build the bundle locally:
 
 ```bash
 npm ci
