@@ -3,7 +3,7 @@
 // Identità dichiarata al client MCP nell'handshake. La versione segue quella
 // di package.json / manifest.json: scripts/sync-manifest.ts la verifica.
 export const SERVER_NAME = 'garmin-mcp-ts';
-export const SERVER_VERSION = '4.5.0';
+export const SERVER_VERSION = '4.5.1';
 
 export const GARMIN_API_BASE_URL = 'https://connect.garmin.com/api';
 
