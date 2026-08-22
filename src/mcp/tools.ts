@@ -923,7 +923,10 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.ADD_WEIGH_IN,
     title: 'Add Weigh-In',
-    description: 'Add a new weigh-in record with optional body composition data.',
+    description:
+      'Add a new weigh-in record. Weight and body fat are stored; the water, muscle and bone '
+      + 'percentages are accepted but Garmin discards them on a manual entry, keeping them only '
+      + 'for measurements a smart scale uploads.',
     annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
@@ -943,15 +946,15 @@ Example for interval running workout:
         },
         bodyWaterPercent: {
           type: 'number',
-          description: 'Body water percentage (optional)',
+          description: 'Body water percentage (optional). Not retained by Garmin on a manual weigh-in.',
         },
         muscleMassPercent: {
           type: 'number',
-          description: 'Muscle mass percentage (optional)',
+          description: 'Muscle mass percentage (optional). Not retained by Garmin on a manual weigh-in.',
         },
         boneMassPercent: {
           type: 'number',
-          description: 'Bone mass percentage (optional)',
+          description: 'Bone mass percentage (optional). Not retained by Garmin on a manual weigh-in.',
         },
       },
       required: ['weight', 'date'],

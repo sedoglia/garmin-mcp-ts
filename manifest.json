@@ -211,7 +211,7 @@
     },
     {
       "name": "add_weigh_in",
-      "description": "Add a new weigh-in record with optional body composition data."
+      "description": "Add a new weigh-in record. Weight and body fat are stored; the water, muscle and bone percentages are accepted but Garmin discards them on a manual entry, keeping them only for measurements a smart scale uploads."
     },
     {
       "name": "delete_weigh_in",
