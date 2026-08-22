@@ -33,6 +33,17 @@ if (SERVER_VERSION !== pkg.version) {
 if (manifest.name !== pkg.name) {
   problems.push(`manifest.json name ${manifest.name} != package.json name ${pkg.name}`);
 }
+
+// The supported Node floor is written twice - engines for npm, compatibility
+// for the MCP Directory - and nothing used to compare them, so they could
+// drift apart and only the directory would notice.
+const engineFloor = pkg.engines?.node;
+const runtimeFloor = manifest.compatibility?.runtimes?.node;
+if (engineFloor !== runtimeFloor) {
+  problems.push(
+    `manifest.json compatibility.runtimes.node ${runtimeFloor} != package.json engines.node ${engineFloor}`,
+  );
+}
 if (typeof manifest.icon === 'string' && !manifest.icon.startsWith('https://')) {
   const iconPath = path.join(root, manifest.icon);
   if (manifest.icon.includes('\\') || manifest.icon.startsWith('./') || manifest.icon.startsWith('.\\')) {
