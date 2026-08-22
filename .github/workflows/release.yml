@@ -180,13 +180,20 @@ jobs:
 
       # Editing the notes file and re-running is how a published release gets
       # its text fixed; the assets are not touched.
+      #
+      # tag_name is resent even though only the body changes. A draft holds its
+      # tag as a pending association rather than a real git ref, and a PATCH that
+      # leaves the field out clears it: the release then answers to untagged-<sha>
+      # and every link built from the tag breaks. That is what happened to v4.4.0,
+      # and the publish step below carries the same field for the same reason.
       - name: Update the release notes
         if: steps.release.outputs.id != '' && steps.notes.outputs.file != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NOTES: ${{ steps.notes.outputs.file }}
+          TAG: ${{ steps.tag.outputs.name }}
         run: |
-          jq -n --rawfile body "$NOTES" '{body: $body}' \
+          jq -n --arg tag "$TAG" --rawfile body "$NOTES" '{tag_name: $tag, body: $body}' \
             | gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/${{ steps.release.outputs.id }}" \
               --input - --jq .html_url
 
@@ -206,4 +213,4 @@ jobs:
             exit 1
           fi
           gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \
-            -F draft=false -f make_latest=true --jq .html_url
+            -f tag_name="$TAG" -F draft=false -f make_latest=true --jq .html_url
