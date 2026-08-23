@@ -33,6 +33,7 @@ export class GarminConnectClient {
   private initialized: boolean = false;
   private displayName: string | null = null;
   private userProfilePk: number | null = null;
+  private activityTypesCache: any[] | null = null;
 
   constructor() {
     // Non inizializzare qui, lo faremo in initialize()
@@ -2533,6 +2534,102 @@ export class GarminConnectClient {
   }
 
   /**
+   * The activity type catalogue, fetched once per session.
+   * Every entry carries typeId, typeKey and parentTypeId, which is what tells a
+   * top-level type apart from a sub type. A failure is not fatal: the caller
+   * falls back to sending the key it was given.
+   */
+  private async loadActivityTypes(): Promise<any[]> {
+    if (this.activityTypesCache) return this.activityTypesCache;
+    try {
+      const url = 'https://connectapi.garmin.com/activity-service/activity/activityTypes';
+      const types = await this.gc.get(url);
+      this.activityTypesCache = Array.isArray(types) ? types : [];
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching activity types:', error);
+      this.activityTypesCache = [];
+    }
+    return this.activityTypesCache;
+  }
+
+  /**
+   * Turn a requested activity type into one the activity list service accepts.
+   *
+   * The service filters by top-level types only: `strength_training` answers
+   * 400 "Activity type cannot be an activity sub type", even though it is the
+   * key every activity in the list carries. So the request goes out under the
+   * ancestor that sits directly beneath the catalogue root ("all"), and the
+   * requested type — with its own descendants — is matched back here.
+   *
+   * Returns the key to send and, when the two differ, the set of keys the
+   * caller must filter the results down to. A key the catalogue does not hold
+   * is refused here rather than at the service; if the catalogue itself could
+   * not be read the key is passed through untouched, which leaves the previous
+   * behaviour.
+   */
+  private async resolveActivityTypeFilter(
+    activityType: string
+  ): Promise<{ queryType: string; matchKeys: Set<string> | null }> {
+    const types = await this.loadActivityTypes();
+    const requested = activityType.trim().toLowerCase();
+    const passthrough = { queryType: activityType, matchKeys: null };
+    if (types.length === 0) return passthrough;
+
+    const byId = new Map<number, any>();
+    const childrenOf = new Map<number, any[]>();
+    let root: any = null;
+
+    for (const type of types) {
+      if (typeof type?.typeId !== 'number' || typeof type?.typeKey !== 'string') continue;
+      byId.set(type.typeId, type);
+      if (type.parentTypeId == null) root = type;
+      else {
+        const siblings = childrenOf.get(type.parentTypeId);
+        if (siblings) siblings.push(type);
+        else childrenOf.set(type.parentTypeId, [type]);
+      }
+    }
+
+    // An unknown key is worth a message rather than the round trip that answers
+    // "Activity type specified is invalid" and nothing else.
+    const entry = types.find((t) => t?.typeKey?.toLowerCase() === requested);
+    if (!entry) {
+      throw new Error(
+        `Garmin has no activity type "${activityType}". get_activity_types lists every valid ` +
+          `key — running, cycling, walking, swimming, fitness_equipment, strength_training and ` +
+          `the rest.`
+      );
+    }
+
+    // Climb to the child of the root; the guard is for a catalogue that ever
+    // ships a cycle.
+    let top = entry;
+    for (let hops = 0; hops < types.length; hops++) {
+      if (top.parentTypeId == null || top.parentTypeId === root?.typeId) break;
+      const parent = byId.get(top.parentTypeId);
+      if (!parent) break;
+      top = parent;
+    }
+
+    if (top.typeKey === entry.typeKey) return { queryType: entry.typeKey, matchKeys: null };
+
+    const matchKeys = new Set<string>();
+    const pending = [entry];
+    while (pending.length > 0) {
+      const current = pending.pop();
+      if (!current || matchKeys.has(current.typeKey)) continue;
+      matchKeys.add(current.typeKey);
+      pending.push(...(childrenOf.get(current.typeId) ?? []));
+    }
+
+    logger.info(
+      `Activity type "${entry.typeKey}" is a sub type: querying "${top.typeKey}" and filtering locally`
+    );
+    return { queryType: top.typeKey, matchKeys };
+  }
+
+  /**
    * Get activities filtered by date range
    */
   /**
@@ -2559,24 +2656,75 @@ export class GarminConnectClient {
       limit: String(pageSize),
     };
 
+    let matchKeys: Set<string> | null = null;
+    if (activityType) {
+      const resolved = await this.resolveActivityTypeFilter(activityType);
+      baseParams.activityType = resolved.queryType;
+      matchKeys = resolved.matchKeys;
+    }
+
     if (endDate) baseParams.endDate = endDate;
-    if (activityType) baseParams.activityType = activityType;
     if (sortOrder) baseParams.sortOrder = sortOrder;
 
     // Paging one item past maxItems is what tells "there are more" apart from a
     // range that ends exactly on it. It costs one extra page of 20 at most.
+    // A page that survives the sub-type filter empty still has to advance the
+    // cursor, so paging follows what the service sent, not what was kept.
     while (activities.length <= maxItems) {
       baseParams.start = String(start);
-      const result = await this.gc.get(url, { params: baseParams });
-      if (result && result.length > 0) {
-        activities.push(...result);
-        start += pageSize;
-      } else {
-        break;
+      let result: any;
+      try {
+        result = await this.gc.get(url, { params: baseParams });
+      } catch (err) {
+        throw this.describeActivityTypeRejection(err, activityType, baseParams.activityType);
       }
+      if (!result || result.length === 0) break;
+      start += pageSize;
+      activities.push(
+        ...(matchKeys
+          ? result.filter((activity: any) =>
+              matchKeys!.has(
+                activity?.activityType?.typeKey ?? activity?.activityTypeDTO?.typeKey ?? ''
+              )
+            )
+          : result)
+      );
     }
 
     return activities;
+  }
+
+  /**
+   * Say what a rejected activity-type filter means.
+   * The resolution above normally prevents this, but the catalogue can be
+   * unreachable, so the raw "(400), Bad Request, {...}" is replaced with the
+   * one thing the caller can act on.
+   */
+  private describeActivityTypeRejection(err: unknown, requested?: string, sent?: string): unknown {
+    const message = err instanceof Error ? err.message : String(err);
+    if (!requested) return err;
+    const lowered = message.toLowerCase();
+    const unreadCatalogue = this.activityTypesCache?.length
+      ? ''
+      : ' The activity type catalogue could not be read, so this could not be resolved automatically.';
+
+    if (lowered.includes('sub type')) {
+      return new Error(
+        `Garmin's activity list does not filter by "${sent ?? requested}": it accepts top-level ` +
+          `activity types only, not sub types such as "${requested}". Query the parent type ` +
+          `(get_activity_types shows each type's parentTypeId) and pick the sub type out of the ` +
+          `results, which still carry it.${unreadCatalogue}`
+      );
+    }
+
+    if (lowered.includes('activity type specified is invalid')) {
+      return new Error(
+        `Garmin has no activity type "${sent ?? requested}". get_activity_types lists every ` +
+          `valid key.${unreadCatalogue}`
+      );
+    }
+
+    return err;
   }
 
   /**
@@ -3030,9 +3178,11 @@ export class GarminConnectClient {
   async getActivityTypes(): Promise<any> {
     this.checkInitialized();
     try {
+      if (this.activityTypesCache?.length) return this.activityTypesCache;
       const url = 'https://connectapi.garmin.com/activity-service/activity/activityTypes';
       const types = await this.gc.get(url);
-      return types || [];
+      this.activityTypesCache = Array.isArray(types) ? types : [];
+      return this.activityTypesCache;
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error fetching activity types:', error);

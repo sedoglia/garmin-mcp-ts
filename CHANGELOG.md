@@ -10,6 +10,24 @@ recente alla più vecchia. Il progetto adotta il
 > precedenti sono ricostruite dai messaggi di commit, dai tag di release e dalle
 > versioni storiche dei README.
 
+## [4.5.8] - 2026-08-23 — Filtro per tipo di attività
+
+### 🔧 `get_activities_by_date` rifiutava i sotto-tipi
+- L'activity list service filtra **solo per tipi di primo livello**: `activityType:
+  "strength_training"` — la chiave che ogni allenamento con i pesi porta con sé nella
+  risposta — restituiva `400 "Activity type cannot be an activity sub type"`. Lo stesso
+  valeva per `trail_running`, `indoor_cycling`, `casual_walking` e ogni altro sotto-tipo.
+- Ora il tipo richiesto viene risolto sul catalogo di Garmin (`activityTypes`, letto una
+  volta per sessione e messo in cache): la richiesta parte con il tipo padre — per
+  `strength_training` è `fitness_equipment` — e i risultati vengono ristretti al
+  sotto-tipo chiesto e ai suoi discendenti. Il chiamante riceve quello che ha domandato.
+- Il **400 grezzo non viene più propagato**. Un tipo inesistente si ferma prima della
+  richiesta con un messaggio che rimanda a `get_activity_types`, e se il catalogo non è
+  raggiungibile il rifiuto del servizio viene tradotto in un messaggio che dice quale
+  tipo padre usare, invece di `ERROR: (400), Bad Request, {...}`.
+- La descrizione del parametro `activityType` diceva solo «running, cycling, swimming,
+  hiking, walking, etc.», senza alcun accenno al vincolo: ora lo dichiara.
+
 ## [4.5.7] - 2026-08-23 — Elenchi di attività
 
 ### 🔧 Gli elenchi di attività superavano il tetto di una risposta
