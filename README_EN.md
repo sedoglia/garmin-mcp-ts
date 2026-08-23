@@ -638,8 +638,15 @@ To build the bundle locally:
 
 ```bash
 npm ci
-npm run pack        # build + manifest check + validation + mcpb pack
+npm run pack        # build + manifest check + validation + pack
 ```
+
+The bundle lands in the repository root as `garmin-mcp-ts.mcpb`, with its `.sha256`
+beside it, and is the same one the release publishes. `mcpb pack` archives `node_modules`
+as it finds it, so packing a development tree directly would carry TypeScript, tsx and
+esbuild along with it: some fifteen megabytes no user ever loads. To keep them out,
+`scripts/pack.mjs` copies the production dependencies alone — the same set the workflow
+installs with `npm ci --omit=dev` — into a temporary directory and packs that.
 
 After changing, adding or removing a tool, regenerate the list the manifest declares:
 

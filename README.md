@@ -639,8 +639,15 @@ Per costruire il bundle in locale:
 
 ```bash
 npm ci
-npm run pack        # build + controllo manifest + validazione + mcpb pack
+npm run pack        # build + controllo manifest + validazione + pack
 ```
+
+Il bundle esce nella radice del repository come `garmin-mcp-ts.mcpb`, con il suo `.sha256`
+accanto, ed è lo stesso che pubblica la release. `mcpb pack` archivia `node_modules` così
+come lo trova, quindi impacchettare l'albero di sviluppo direttamente ci infilerebbe anche
+TypeScript, tsx ed esbuild: una quindicina di MB che nessun utente carica mai. Per evitarlo
+`scripts/pack.mjs` copia in una directory temporanea le sole dipendenze di produzione — le
+stesse che il workflow installa con `npm ci --omit=dev` — e impacchetta quella.
 
 Se cambi, aggiungi o rimuovi un tool, rigenera l'elenco dichiarato nel manifest:
 
