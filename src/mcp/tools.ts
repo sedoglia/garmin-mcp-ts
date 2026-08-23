@@ -1385,7 +1385,11 @@ Example for interval running workout:
         },
         activityType: {
           type: 'string',
-          description: 'Filter by activity type: running, cycling, swimming, hiking, walking, etc.',
+          description:
+            'Filter by activity type: running, cycling, swimming, hiking, walking, ' +
+            'fitness_equipment, etc. A sub type such as strength_training or trail_running is ' +
+            'accepted too — Garmin filters by top-level type only, so it is queried under its ' +
+            'parent and narrowed back down here. get_activity_types lists every key.',
         },
         sortOrder: {
           type: 'string',

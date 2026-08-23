@@ -9,6 +9,24 @@ follows [semantic versioning](https://semver.org/).
 > Earlier entries are reconstructed from commit messages, release tags and historical
 > versions of the READMEs.
 
+## [4.5.8] - 2026-08-23 — The activity type filter
+
+### 🔧 `get_activities_by_date` rejected sub types
+- The activity list service filters by **top-level types only**: `activityType:
+  "strength_training"` — the very key every weights session carries in the response —
+  answered `400 "Activity type cannot be an activity sub type"`. The same held for
+  `trail_running`, `indoor_cycling`, `casual_walking` and every other sub type.
+- The requested type is now resolved against Garmin's own catalogue (`activityTypes`,
+  read once per session and cached): the request goes out under the parent type — for
+  `strength_training` that is `fitness_equipment` — and the results are narrowed back to
+  the requested sub type and its descendants. The caller gets what it asked for.
+- The **raw 400 is no longer propagated**. An unknown type stops before the request with
+  a message pointing at `get_activity_types`, and when the catalogue cannot be read the
+  service's rejection is translated into a message naming the parent type to use, rather
+  than `ERROR: (400), Bad Request, {...}`.
+- The `activityType` parameter description said only "running, cycling, swimming, hiking,
+  walking, etc.", with no hint of the constraint. It now states it.
+
 ## [4.5.7] - 2026-08-23 — The activity lists
 
 ### 🔧 The activity lists went past the response cap

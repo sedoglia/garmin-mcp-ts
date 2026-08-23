@@ -258,6 +258,10 @@ async function main() {
   const twoWeeksAgo = new Date(Date.now() - 14 * 86400000).toISOString().split('T')[0];
   results.push(await testTool(handler, 'get_daily_steps', { startDate: twoWeeksAgo, endDate: today }));
   results.push(await testTool(handler, 'get_activities_by_date', { startDate: lastMonth, endDate: today }));
+  // The activity list service filters by top-level types only: a sub type used to
+  // answer 400 "Activity type cannot be an activity sub type". It is resolved to
+  // its parent now, so this must succeed whether or not the range holds any.
+  results.push(await testTool(handler, 'get_activities_by_date', { startDate: lastMonth, endDate: today, activityType: 'strength_training' }));
 
   // Activity typed splits (using activityId if available)
   if (activityId) {
