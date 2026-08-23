@@ -24,3 +24,9 @@ node_modules/keytar/build/
 config.json
 oauth1_token.json
 oauth2_token.json
+
+# A bundle left at the root by an earlier pack. scripts/pack.mjs stages the
+# tree elsewhere and never copies these, but a bare `mcpb pack .` would nest
+# the previous release inside the next one.
+*.mcpb
+*.mcpb.sha256
