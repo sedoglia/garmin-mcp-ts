@@ -146,15 +146,28 @@ async function main() {
       description: 'Updated description',
     }));
 
-    // Schedule for next week
+    // Schedule for next week and the week after
     const nextWeek = new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0];
+    const weekAfter = new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0];
     const scheduleResult = await testTool(handler, 'schedule_workout', {
       workoutId: newWorkoutId,
       date: nextWeek,
     });
     results.push(scheduleResult);
+    results.push(await testTool(handler, 'schedule_workout', {
+      workoutId: newWorkoutId,
+      date: weekAfter,
+    }));
 
-    // IMPORTANT: Unschedule before deleting to avoid ghost scheduled workouts
+    results.push(await testTool(handler, 'get_scheduled_workouts', {
+      startDate: nextWeek,
+      endDate: weekAfter,
+    }));
+
+    // The first date is freed by hand; the second is left to delete_workout,
+    // which unschedules before deleting. Deleting a workout that is still on
+    // the calendar strands the entry: Garmin drops it from the calendar but
+    // keeps showing it on the home page, and then refuses to remove it.
     if (scheduleResult.success && scheduleResult.result?.data?.workoutScheduleId) {
       const scheduleId = String(scheduleResult.result.data.workoutScheduleId);
       console.log(`\n📍 Unscheduling workout (scheduleId: ${scheduleId})...\n`);

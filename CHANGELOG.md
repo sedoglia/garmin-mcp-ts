@@ -10,6 +10,33 @@ recente alla più vecchia. Il progetto adotta il
 > precedenti sono ricostruite dai messaggi di commit, dai tag di release e dalle
 > versioni storiche dei README.
 
+## [4.5.9] - 2026-08-24 — Voci fantasma in calendario
+
+### 🔧 `delete_workout` lasciava in calendario una voce impossibile da togliere
+- Cancellare un workout ancora programmato **abbandona la sua voce di calendario**.
+  Garmin la toglie dal calendar service — `get_scheduled_workouts` e la pagina Calendario
+  non la mostrano più — ma continua a proporla nella home di Connect come «Allenamento
+  pianificato»: aprirla risponde *«Non è stato possibile elaborare la richiesta»*, perché
+  il workout dietro non esiste più.
+- **Da quel punto non si torna indietro.** La DELETE sulla programmazione risolve prima il
+  workout, e senza workout risponde `404 "No workout found for workout schedule = N"`:
+  né il server né l'interfaccia di Garmin possono più rimuovere la voce, che resta lì
+  fino a quando la sua data non è passata.
+- Ora `delete_workout` **toglie prima dal calendario tutte le date future** del workout e
+  solo dopo lo elimina, dicendo nella risposta quali date ha liberato. Se il calendario
+  non è leggibile, o se una programmazione non si lascia rimuovere, **il workout non viene
+  cancellato**: meglio un'eliminazione da ripetere che una voce fantasma per sempre.
+- Le date passate restano intatte: sono il registro di ciò che era stato pianificato.
+
+### ✨ `get_scheduled_workouts`
+- Nuovo strumento di sola lettura: elenca i workout in calendario in un intervallo di date
+  con il `workoutScheduleId` che serve a `unschedule_workout`. Senza parametri copre i
+  prossimi 12 mesi.
+- Serviva: il workout service **non ha un endpoint che elenchi le programmazioni di un
+  workout** — ogni `/workout-service/workout/{id}/…` risponde con una lista vuota — e
+  l'unico posto dove l'id compare è il calendario. Chi non aveva annotato l'id restituito
+  da `schedule_workout` non aveva modo di ritrovarlo.
+
 ## [4.5.8] - 2026-08-23 — Filtro per tipo di attività
 
 ### 🔧 `get_activities_by_date` rifiutava i sotto-tipi

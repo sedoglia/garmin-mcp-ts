@@ -29,7 +29,7 @@ Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Conn
 
 ## Strumenti
 
-Il server espone **109 strumenti**, raggruppati per argomento. I **26** contrassegnati con ✏️ scrivono sull'account Garmin; tutti gli altri leggono soltanto.
+Il server espone **110 strumenti**, raggruppati per argomento. I **26** contrassegnati con ✏️ scrivono sull'account Garmin; tutti gli altri leggono soltanto.
 
 ### 🏃 Attività
 
@@ -185,8 +185,9 @@ Il server espone **109 strumenti**, raggruppati per argomento. I **26** contrass
 | `create_workout` ✏️ | Crea un workout strutturato con riscaldamento, intervalli e defaticamento. Sport ammessi: `running`, `cycling`, `walking`, `swimming`, `strength`, `cardio`, `yoga`, `pilates`, `hiit`, `mobility`, `rucking`, `other` (non esiste `hiking`: usare `walking` o `rucking`) |
 | `update_workout` ✏️ | Modifica nome, descrizione o struttura di un workout |
 | `schedule_workout` ✏️ | Mette un workout in calendario a una data; restituisce l'id da usare per rimuoverlo |
-| `unschedule_workout` ✏️ | Toglie un workout dal calendario. Va fatto **prima** di `delete_workout`, altrimenti resta una voce fantasma |
-| `delete_workout` ✏️ | Elimina un workout |
+| `unschedule_workout` ✏️ | Toglie un workout dal calendario liberando la data, senza cancellare il workout |
+| `get_scheduled_workouts` | I workout in calendario in un intervallo di date, con l'id che serve a rimuoverli |
+| `delete_workout` ✏️ | Elimina un workout, dopo averlo tolto dal calendario dove fosse già programmato |
 | `download_workout` | Scarica un workout in formato FIT per sincronizzarlo sul dispositivo |
 
 **Piani e percorsi**
@@ -564,7 +565,7 @@ Esegui i test con dati reali:
 npm test
 ```
 
-Lo script esercita **90 dei 109 tool** contro il tuo account Garmin: tutti quelli di sola
+Lo script esercita **91 dei 110 tool** contro il tuo account Garmin: tutti quelli di sola
 lettura, più il ciclo di vita completo di un workout (crea → modifica → schedula → togli
 dal calendario → elimina) e quello di una collezione gear. Restano fuori i tre tool delle
 credenziali e i tool che scrivono altri dati sull'account — pesate, pressione,
@@ -583,7 +584,7 @@ garmin-mcp-ts/
 │   │   └── simple-login.ts # Utility standalone per provare il login
 │   ├── mcp/
 │   │   ├── server.ts      # Setup server MCP e gestori richieste
-│   │   ├── tools.ts       # Definizioni strumenti e schemi (109 tool)
+│   │   ├── tools.ts       # Definizioni strumenti e schemi (110 tool)
 │   │   └── handlers.ts    # Logica implementazione strumenti
 │   ├── utils/
 │   │   ├── constants.ts   # Costanti dell'applicazione, nomi dei tool compresi

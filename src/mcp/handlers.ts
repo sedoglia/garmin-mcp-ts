@@ -102,6 +102,8 @@ export class ToolHandler {
           return await this.handleScheduleWorkout(safeArgs);
         case 'unschedule_workout':
           return await this.handleUnscheduleWorkout(safeArgs);
+        case 'get_scheduled_workouts':
+          return await this.handleGetScheduledWorkouts(safeArgs);
 
         // ═══════════════════════════════════════════════════════════════
         // v2.0 - PRIORITÀ 2: ACTIVITY MANAGEMENT
@@ -885,6 +887,23 @@ export class ToolHandler {
     logger.info(`Unscheduling workout with scheduleId: ${scheduleId}`);
 
     const result = await this.client.unscheduleWorkout(scheduleId);
+
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  private async handleGetScheduledWorkouts(args: Record<string, unknown>): Promise<unknown> {
+    const startDate = this.getStringParam(args, 'startDate', '');
+    const endDate = this.getStringParam(args, 'endDate', '');
+
+    logger.info(`Fetching scheduled workouts (${startDate || 'today'} → ${endDate || '+12 months'})`);
+
+    const result = await this.client.getScheduledWorkouts(
+      startDate || undefined,
+      endDate || undefined
+    );
 
     return {
       success: true,

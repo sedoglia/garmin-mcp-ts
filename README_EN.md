@@ -29,7 +29,7 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Con
 
 ## Tools
 
-The server exposes **109 tools**, grouped by subject. The **26** marked ✏️ write to the Garmin account; every other one only reads.
+The server exposes **110 tools**, grouped by subject. The **26** marked ✏️ write to the Garmin account; every other one only reads.
 
 ### 🏃 Activities
 
@@ -185,8 +185,9 @@ The server exposes **109 tools**, grouped by subject. The **26** marked ✏️ w
 | `create_workout` ✏️ | Creates a structured workout with warmup, intervals and cooldown. Valid sports: `running`, `cycling`, `walking`, `swimming`, `strength`, `cardio`, `yoga`, `pilates`, `hiit`, `mobility`, `rucking`, `other` (there is no `hiking`: use `walking` or `rucking`) |
 | `update_workout` ✏️ | Changes the name, description or structure of a workout |
 | `schedule_workout` ✏️ | Puts a workout on the calendar for a date; returns the id needed to remove it |
-| `unschedule_workout` ✏️ | Takes a workout off the calendar. Do this **before** `delete_workout`, or a ghost entry stays behind |
-| `delete_workout` ✏️ | Deletes a workout |
+| `unschedule_workout` ✏️ | Takes a workout off the calendar, freeing the date without deleting the workout |
+| `get_scheduled_workouts` | The workouts on the calendar in a date range, with the id needed to remove them |
+| `delete_workout` ✏️ | Deletes a workout, after taking it off the calendar if it was scheduled |
 | `download_workout` | Downloads a workout in FIT format for syncing to the device |
 
 **Plans and courses**
@@ -563,7 +564,7 @@ Run tests with real data:
 npm test
 ```
 
-The script exercises **90 of the 109 tools** against your Garmin account: every read-only
+The script exercises **91 of the 110 tools** against your Garmin account: every read-only
 one, plus the full lifecycle of a workout (create → update → schedule → unschedule →
 delete) and of a gear collection. Left out are the three credential tools and the tools
 that write other data to the account — weigh-ins, blood pressure, hydration, manual
@@ -582,7 +583,7 @@ garmin-mcp-ts/
 │   │   └── simple-login.ts # Standalone login test utility
 │   ├── mcp/
 │   │   ├── server.ts      # MCP server setup and request handlers
-│   │   ├── tools.ts       # Tool definitions and schemas (109 tools)
+│   │   ├── tools.ts       # Tool definitions and schemas (110 tools)
 │   │   └── handlers.ts    # Tool implementation logic
 │   ├── utils/
 │   │   ├── constants.ts   # Application constants, tool names included

@@ -83,6 +83,7 @@ export const MCP_TOOL_NAMES = {
   DELETE_WORKOUT: 'delete_workout',
   SCHEDULE_WORKOUT: 'schedule_workout',
   UNSCHEDULE_WORKOUT: 'unschedule_workout',
+  GET_SCHEDULED_WORKOUTS: 'get_scheduled_workouts',
 
   // ═══════════════════════════════════════════════════════════════
   // NUOVI TOOL v2.0 - PRIORITÀ 2: Activity Management
