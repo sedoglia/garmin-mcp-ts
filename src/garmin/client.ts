@@ -1122,17 +1122,144 @@ export class GarminConnectClient {
   }
 
   /**
-   * Delete a workout
+   * How far ahead the calendar is read when a workout is deleted or when the
+   * scheduled workouts are listed without an explicit end date.
+   */
+  private static readonly SCHEDULE_LOOKAHEAD_MONTHS = 12;
+
+  /**
+   * Reads the workout entries of the calendar between two days.
+   *
+   * The calendar is the only place a schedule id is exposed: the workout
+   * service has no endpoint that lists the schedules of a workout (every
+   * `/workout-service/workout/{id}/…` path answers an empty array), so the
+   * month pages have to be walked. A month page also carries the days of the
+   * neighbouring months it displays, hence the de-duplication by entry id.
+   */
+  private async fetchScheduledWorkouts(from: Date, to: Date): Promise<any[]> {
+    const entries = new Map<number, any>();
+    const cursor = new Date(from.getFullYear(), from.getMonth(), 1);
+    const last = new Date(to.getFullYear(), to.getMonth(), 1);
+
+    while (cursor <= last) {
+      // The calendar service numbers months from zero.
+      const url = `https://connectapi.garmin.com/calendar-service/year/${cursor.getFullYear()}/month/${cursor.getMonth()}`;
+      const page = await this.gc.get(url);
+      for (const item of page?.calendarItems || []) {
+        if (item?.itemType === 'workout' && item?.id) {
+          entries.set(item.id, item);
+        }
+      }
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    const fromDay = toLocalDateString(from);
+    const toDay = toLocalDateString(to);
+    return [...entries.values()]
+      .filter((item) => item.date >= fromDay && item.date <= toDay)
+      .sort((a, b) => String(a.date).localeCompare(String(b.date)))
+      .map((item) => ({
+        workoutScheduleId: item.id,
+        workoutId: item.workoutId ?? null,
+        workoutName: item.title ?? null,
+        date: item.date,
+        sportType: item.sportTypeKey ?? null,
+        trainingPlanId: item.trainingPlanId || null,
+      }));
+  }
+
+  /**
+   * List the workouts scheduled on the calendar in a date range.
+   * Defaults to today through SCHEDULE_LOOKAHEAD_MONTHS months ahead.
+   */
+  async getScheduledWorkouts(startDate?: string, endDate?: string): Promise<any> {
+    this.checkInitialized();
+    try {
+      const from = startDate ? parseLocalDate(startDate) : new Date();
+      const to = endDate
+        ? parseLocalDate(endDate)
+        : new Date(from.getFullYear(), from.getMonth() + GarminConnectClient.SCHEDULE_LOOKAHEAD_MONTHS, from.getDate());
+
+      if (to < from) {
+        throw new Error('endDate must not be earlier than startDate');
+      }
+
+      const scheduled = await this.fetchScheduledWorkouts(from, to);
+      return {
+        startDate: toLocalDateString(from),
+        endDate: toLocalDateString(to),
+        count: scheduled.length,
+        scheduled,
+      };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error fetching scheduled workouts:', error);
+      throw err;
+    }
+  }
+
+  /**
+   * Delete a workout, after taking it off the calendar.
+   *
+   * Deleting a scheduled workout strands its calendar entries. The schedule
+   * disappears from the calendar service but still surfaces on the Connect home
+   * page as a planned workout, where opening it fails, and it can no longer be
+   * removed: DELETE on the schedule resolves the workout first and answers 404
+   * "No workout found for workout schedule = N". There is no way back from
+   * that, so every future schedule is removed before the workout itself. Past
+   * entries are left alone: they are the record of what was planned.
    */
   async deleteWorkout(workoutId: string): Promise<any> {
     this.checkInitialized();
+
+    const today = new Date();
+    const horizon = new Date(
+      today.getFullYear(),
+      today.getMonth() + GarminConnectClient.SCHEDULE_LOOKAHEAD_MONTHS,
+      today.getDate()
+    );
+
+    let scheduled: any[];
+    try {
+      const all = await this.fetchScheduledWorkouts(today, horizon);
+      scheduled = all.filter((entry) => String(entry.workoutId) === String(workoutId));
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      logger.error('Error reading the calendar before deleting a workout:', error);
+      throw new Error(
+        `Could not check whether workout ${workoutId} is scheduled (${error}). ` +
+          'The workout was NOT deleted: deleting a scheduled workout leaves a calendar ' +
+          'entry that Garmin can no longer remove. Please retry.'
+      );
+    }
+
+    const unscheduled: any[] = [];
+    for (const entry of scheduled) {
+      try {
+        await this.unscheduleWorkout(String(entry.workoutScheduleId));
+        unscheduled.push({ workoutScheduleId: entry.workoutScheduleId, date: entry.date });
+      } catch (err) {
+        const error = err instanceof Error ? err.message : String(err);
+        throw new Error(
+          `Could not unschedule workout ${workoutId} from ${entry.date} (${error}). ` +
+            'The workout was NOT deleted, because deleting it now would leave a calendar ' +
+            'entry that Garmin can no longer remove.'
+        );
+      }
+    }
+
     try {
       // Use the library's deleteWorkout method
       await this.gc.deleteWorkout({ workoutId });
       return {
         success: true,
         workoutId,
-        message: 'Workout deleted successfully',
+        unscheduled,
+        message:
+          unscheduled.length > 0
+            ? `Workout deleted successfully, after removing ${unscheduled.length} scheduled ` +
+              `date(s): ${unscheduled.map((entry) => entry.date).join(', ')}`
+            : 'Workout deleted successfully',
       };
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
@@ -1182,6 +1309,18 @@ export class GarminConnectClient {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       logger.error('Error unscheduling workout:', error);
+      // Garmin answers this 404 for any schedule id it cannot resolve to a
+      // workout: an id that never existed, one already unscheduled, and one
+      // whose workout was deleted first. The last case cannot be undone, so
+      // spell the three out instead of repeating a bare 404.
+      if (error.includes('No workout found for workout schedule')) {
+        throw new Error(
+          `Garmin does not recognise schedule ${scheduleId}. Either it is not a valid ` +
+            'workoutScheduleId, or it was already unscheduled, or its workout was deleted ' +
+            'first — in which case the calendar entry can no longer be removed at all. ' +
+            'Use get_scheduled_workouts to list the schedules that still exist.'
+        );
+      }
       throw err;
     }
   }

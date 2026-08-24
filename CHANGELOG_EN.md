@@ -9,6 +9,33 @@ follows [semantic versioning](https://semver.org/).
 > Earlier entries are reconstructed from commit messages, release tags and historical
 > versions of the READMEs.
 
+## [4.5.9] - 2026-08-24 — Ghost calendar entries
+
+### 🔧 `delete_workout` left a calendar entry nothing could remove
+- Deleting a workout that was still scheduled **strands its calendar entry**. Garmin drops
+  it from the calendar service — `get_scheduled_workouts` and the Calendar page no longer
+  show it — but keeps offering it on the Connect home page as a planned workout: opening
+  it answers *"We were unable to process your request"*, because the workout behind it is
+  gone.
+- **There is no way back from that.** The DELETE on the schedule resolves the workout
+  first, and without a workout it answers `404 "No workout found for workout schedule =
+  N"`: neither this server nor Garmin's own interface can remove the entry any more, and
+  it sits there until its date has passed.
+- `delete_workout` now **takes every future date off the calendar first** and only then
+  deletes the workout, reporting in its answer which dates it freed. If the calendar
+  cannot be read, or a schedule refuses to go, **the workout is not deleted**: a deletion
+  worth retrying beats a ghost entry that lasts for ever.
+- Past dates are left untouched: they are the record of what was planned.
+
+### ✨ `get_scheduled_workouts`
+- New read-only tool: lists the workouts on the calendar in a date range together with the
+  `workoutScheduleId` that `unschedule_workout` needs. With no arguments it covers the
+  next 12 months.
+- It was missing: the workout service **has no endpoint listing the schedules of a
+  workout** — every `/workout-service/workout/{id}/…` path answers an empty list — and the
+  calendar is the only place the id appears. Anyone who had not written down the id
+  returned by `schedule_workout` had no way to find it again.
+
 ## [4.5.8] - 2026-08-23 — The activity type filter
 
 ### 🔧 `get_activities_by_date` rejected sub types

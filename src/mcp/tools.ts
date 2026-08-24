@@ -588,17 +588,38 @@ Example for interval running workout:
   {
     name: MCP_TOOL_NAMES.UNSCHEDULE_WORKOUT,
     title: 'Unschedule Workout',
-    description: 'Remove a scheduled workout from the calendar. IMPORTANT: Always unschedule before deleting a workout to avoid ghost entries.',
+    description: 'Remove a scheduled workout from the calendar. Use get_scheduled_workouts to look up a workoutScheduleId. delete_workout unschedules on its own, so this is only needed to free a date while keeping the workout.',
     annotations: { destructiveHint: true },
     inputSchema: {
       type: 'object',
       properties: {
         scheduleId: {
           type: 'string',
-          description: 'The workout schedule ID (workoutScheduleId returned from schedule_workout)',
+          description: 'The workout schedule ID (workoutScheduleId returned from schedule_workout or get_scheduled_workouts)',
         },
       },
       required: ['scheduleId'],
+    },
+  },
+  {
+    name: MCP_TOOL_NAMES.GET_SCHEDULED_WORKOUTS,
+    title: 'Get Scheduled Workouts',
+    description: 'List the workouts scheduled on the Garmin calendar in a date range, with the workoutScheduleId needed to unschedule them. Defaults to the next 12 months.',
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        startDate: {
+          type: 'string',
+          description: 'First day to look at, YYYY-MM-DD. Defaults to today.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+        endDate: {
+          type: 'string',
+          description: 'Last day to look at, YYYY-MM-DD. Defaults to 12 months after startDate.',
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$',
+        },
+      },
     },
   },
 

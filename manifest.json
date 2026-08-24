@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "garmin-mcp-ts",
   "display_name": "Garmin Connect",
-  "version": "4.5.8",
+  "version": "4.5.9",
   "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
   "long_description": "Connects Claude to a personal Garmin Connect account. It exposes activities, health and wellness metrics, sleep, training status, workouts, gear and device data as MCP tools, and can also write back to the account (workouts, manual activities, weigh-ins, gear links) when explicitly asked.\n\nThe server runs entirely on the user's machine and talks to no service other than connect.garmin.com over HTTPS. Credentials are encrypted at rest with AES-256-GCM, with the encryption key held in the operating system's native vault (Windows Credential Manager, macOS Keychain, Linux Secret Service).",
   "author": {
@@ -143,7 +143,11 @@
     },
     {
       "name": "unschedule_workout",
-      "description": "Remove a scheduled workout from the calendar. IMPORTANT: Always unschedule before deleting a workout to avoid ghost entries."
+      "description": "Remove a scheduled workout from the calendar. Use get_scheduled_workouts to look up a workoutScheduleId. delete_workout unschedules on its own, so this is only needed to free a date while keeping the workout."
+    },
+    {
+      "name": "get_scheduled_workouts",
+      "description": "List the workouts scheduled on the Garmin calendar in a date range, with the workoutScheduleId needed to unschedule them. Defaults to the next 12 months."
     },
     {
       "name": "upload_activity",

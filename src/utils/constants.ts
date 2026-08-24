@@ -3,7 +3,7 @@
 // Identità dichiarata al client MCP nell'handshake. La versione segue quella
 // di package.json / manifest.json: scripts/sync-manifest.ts la verifica.
 export const SERVER_NAME = 'garmin-mcp-ts';
-export const SERVER_VERSION = '4.5.8';
+export const SERVER_VERSION = '4.5.9';
 
 export const GARMIN_API_BASE_URL = 'https://connect.garmin.com/api';
 
@@ -83,6 +83,7 @@ export const MCP_TOOL_NAMES = {
   DELETE_WORKOUT: 'delete_workout',
   SCHEDULE_WORKOUT: 'schedule_workout',
   UNSCHEDULE_WORKOUT: 'unschedule_workout',
+  GET_SCHEDULED_WORKOUTS: 'get_scheduled_workouts',
 
   // ═══════════════════════════════════════════════════════════════
   // NUOVI TOOL v2.0 - PRIORITÀ 2: Activity Management
