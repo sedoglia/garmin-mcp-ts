@@ -9,6 +9,30 @@ follows [semantic versioning](https://semver.org/).
 > Earlier entries are reconstructed from commit messages, release tags and historical
 > versions of the READMEs.
 
+## [4.5.10] - 2026-09-12 — Updated dependencies
+
+No change to the server code, which still declares 110 tools. The bundle is
+rebuilt with the dependencies updated by the August and September security
+advisories.
+
+### 🔒 Security patches (transitive dependencies of the MCP SDK)
+- **hono** 4.13.3 → 4.13.7: closes `parseBody()` to unbounded dot-notation nesting
+  (memory exhaustion), stops the query parser reading parameters past the URL
+  fragment, and completes the `toSSG()` fix (CVE-2026-39408).
+- **qs** 6.15.2 → 6.16.0: array-limit bypass through bracket keys with commas;
+  DoS via an attacker-controlled `isBuffer`.
+- **fast-uri** 4.1.2 → 4.1.4: five host-confusion and SSRF advisories in IPv6,
+  percent-encoding and scheme-relative normalisation. The override in
+  `package.json` moves up to `>=4.1.4`.
+
+### 📦 Version updates
+- **axios** 1.19.0 → 1.20.0: hardens option reads against prototype pollution and
+  normalises interceptors. The only deprecated aliases (`PayloadTooLarge`,
+  `UnprocessableEntity`) do not appear in the code.
+- **@types/node** 26.2.0 → 26.4.1, **tsx** 4.23.12 → 4.23.13 (dev only).
+
+`npm audit` on this version reports no vulnerabilities.
+
 ## [4.5.9] - 2026-08-24 — Ghost calendar entries
 
 ### 🔧 `delete_workout` left a calendar entry nothing could remove
