@@ -10,6 +10,30 @@ recente alla più vecchia. Il progetto adotta il
 > precedenti sono ricostruite dai messaggi di commit, dai tag di release e dalle
 > versioni storiche dei README.
 
+## [4.5.10] - 2026-09-12 — Dipendenze aggiornate
+
+Nessuna modifica al codice del server, che continua a dichiarare 110 strumenti.
+Il bundle viene ricostruito con le dipendenze aggiornate dagli avvisi di
+sicurezza di agosto e settembre.
+
+### 🔒 Patch di sicurezza (dipendenze transitive dell'SDK MCP)
+- **hono** 4.13.3 → 4.13.7: chiude `parseBody()` all'annidamento illimitato in
+  notazione a punti (esaurimento memoria), il parser delle query che leggeva parametri
+  oltre il frammento dell'URL, e completa la correzione di `toSSG()` (CVE-2026-39408).
+- **qs** 6.15.2 → 6.16.0: aggira il limite sugli array tramite chiavi con parentesi
+  e virgole; DoS via `isBuffer` controllato dall'attaccante.
+- **fast-uri** 4.1.2 → 4.1.4: cinque avvisi di confusione dell'host e SSRF nella
+  normalizzazione di IPv6, percent-encoding e riferimenti relativi allo schema.
+  L'override in `package.json` sale a `>=4.1.4`.
+
+### 📦 Aggiornamenti di versione
+- **axios** 1.19.0 → 1.20.0: irrobustisce la lettura delle opzioni contro il
+  prototype pollution e normalizza gli intercettori. Gli unici alias deprecati
+  (`PayloadTooLarge`, `UnprocessableEntity`) non compaiono nel codice.
+- **@types/node** 26.2.0 → 26.4.1, **tsx** 4.23.12 → 4.23.13 (solo sviluppo).
+
+`npm audit` su questa versione non segnala vulnerabilità.
+
 ## [4.5.9] - 2026-08-24 — Voci fantasma in calendario
 
 ### 🔧 `delete_workout` lasciava in calendario una voce impossibile da togliere
