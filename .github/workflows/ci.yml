@@ -48,6 +48,12 @@ jobs:
       - name: Validate manifest against the MCPB schema
         run: npm run validate:manifest
 
+      # sbom.cdx.json is generated from package-lock.json and committed, so a
+      # dependency bump that forgets to regenerate it would publish a bill of
+      # materials describing the previous release.
+      - name: Check SBOM is in sync
+        run: npm run check:sbom
+
       # Reported, not enforced: a fresh advisory should not turn unrelated
       # pull requests red.
       - name: Audit

@@ -19,8 +19,8 @@
 Un server Model Context Protocol (MCP) che connette Claude Desktop a Garmin Connect, permettendo di interrogare in linguaggio naturale i tuoi dati di attività fisica, metriche di salute, sonno e altro ancora.
 
 > 📦 **Ultima release: [v4.5.10](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)**
-> — bundle `.mcpb` pronto da installare, con le note di rilascio e il file `.sha256` per
-> verificarlo.
+> — bundle `.mcpb` pronto da installare, con le note di rilascio, il file `.sha256` per
+> verificarlo e l'[SBOM](#-sbom-software-bill-of-materials) in formato CycloneDX.
 >
 > 📜 **Cronologia delle versioni**: tutte le modifiche dettagliate di ogni release —
 > nuovi tool, correzioni, note di aggiornamento — sono nel **[CHANGELOG](CHANGELOG.md)**.
@@ -320,6 +320,10 @@ wget https://github.com/sedoglia/garmin-mcp-ts/releases/latest/download/garmin-m
 sha256sum -c garmin-mcp-ts.mcpb.sha256
 ```
 
+Accanto al bundle ogni release pubblica anche `garmin-mcp-ts.sbom.cdx.json`, l'elenco
+completo delle dipendenze contenute nel bundle: vedi
+[SBOM (Software Bill of Materials)](#-sbom-software-bill-of-materials).
+
 ### 3. Installa l'estensione in Claude Desktop (Metodo Consigliato)
 
 **Installazione tramite Custom Desktop Extensions:**
@@ -612,8 +616,8 @@ garmin-mcp-ts/
 
 ## 📦 Costruire il bundle .mcpb
 
-Il bundle pubblicato viene costruito dal workflow `Release`, che allega `.mcpb` e
-`.sha256` a una release in bozza. Si attiva in due modi:
+Il bundle pubblicato viene costruito dal workflow `Release`, che allega `.mcpb`,
+`.sha256` e l'SBOM CycloneDX a una release in bozza. Si attiva in due modi:
 
 - **dal tag**: `git tag v4.3.1 && git push origin v4.3.1`;
 - **a mano**: Actions → Release → *Run workflow*, indicando il tag da pubblicare. Se non
@@ -634,7 +638,9 @@ versione dichiarata nel manifest. La versione è dichiarata in cinque punti, che
 alzati insieme prima di taggare: `package.json`, `manifest.json`, `SERVER_VERSION` in
 `src/utils/constants.ts` (è quella che il server annuncia nell'handshake MCP) e, in
 entrambi i README, il badge e la riga della release qui sopra. I link di download puntano
-invece a `releases/latest` e non vanno mai toccati.
+invece a `releases/latest` e non vanno mai toccati. Alzata la versione, rigenera anche
+l'SBOM con `npm run sbom`: il componente radice ne riporta il numero, e `check:sbom`
+fallirebbe in CI.
 
 Per costruire il bundle in locale:
 
@@ -659,6 +665,58 @@ npm run sync:manifest
 `npm run check:manifest` fa fallire la CI quando manifest e codice divergono: la directory
 MCP legge il manifest e la risposta di `tools/list`, e un disallineamento fra i due si
 scopre altrimenti solo in fase di review.
+
+## 📋 SBOM (Software Bill of Materials)
+
+Un SBOM è l'inventario formale di tutto ciò che compone un software: ogni dipendenza,
+diretta e transitiva, con versione, licenza e provenienza. Serve a rispondere in fretta a
+domande come «questa release contiene la libreria X nella versione vulnerabile?» senza
+dover ricostruire l'albero delle dipendenze a mano. GitHub ne dà una buona introduzione in
+[What is an SBOM?](https://github.com/resources/articles/what-is-an-sbom-software-bill-of-materials).
+
+Questo progetto pubblica il proprio SBOM in formato **[CycloneDX](https://cyclonedx.org/)
+1.6 (JSON)**, lo standard OWASP / ECMA-424 letto dalla maggior parte degli strumenti di
+analisi:
+
+- **[`sbom.cdx.json`](sbom.cdx.json)** nella radice del repository, che descrive il ramo
+  `main` corrente;
+- **`garmin-mcp-ts.sbom.cdx.json`** allegato a ogni release, che descrive esattamente il
+  bundle pubblicato accanto:
+
+  ```bash
+  wget https://github.com/sedoglia/garmin-mcp-ts/releases/latest/download/garmin-mcp-ts.sbom.cdx.json
+  ```
+
+L'SBOM elenca le sole dipendenze che finiscono nel bundle `.mcpb` — quelle di produzione,
+più `keytar` che è opzionale — risolte da `package-lock.json`. Per ogni componente riporta
+nome, versione, licenza dichiarata, [Package URL](https://github.com/package-url/purl-spec)
+(`pkg:npm/axios@1.20.0`) e l'hash SHA-512 del tarball npm; la sezione `dependencies`
+conserva l'albero, così si vede da quale dipendenza diretta arriva ciascuna transitiva. Le
+dipendenze di sviluppo (TypeScript, tsx, il packer, il generatore stesso) non compaiono,
+per la stessa ragione per cui non sono nel bundle: nessun utente le carica.
+
+Il file è generato con [`@cyclonedx/cyclonedx-npm`](https://github.com/CycloneDX/cyclonedx-node-npm)
+in modalità riproducibile: niente numero di serie né timestamp, quindi cambia solo quando
+cambia una dipendenza. Si rigenera con:
+
+```bash
+npm run sbom
+```
+
+`npm run check:sbom` fa fallire la CI quando `sbom.cdx.json` non corrisponde più al
+lockfile, esattamente come `check:manifest` per il manifest; anche il workflow di release
+lo verifica prima di allegarlo.
+
+Per interrogarlo, qualunque strumento che legga CycloneDX va bene. Due esempi con scanner
+di vulnerabilità che lavorano direttamente sull'SBOM, senza bisogno di `node_modules`:
+
+```bash
+grype sbom:sbom.cdx.json
+```
+
+```bash
+trivy sbom sbom.cdx.json
+```
 
 ## 🔐 Architettura di Sicurezza
 
