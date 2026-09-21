@@ -627,6 +627,18 @@ The release starts as a draft. The *publish* checkbox publishes it: running the 
 again on the same tag with that box ticked publishes the existing draft, leaving its
 assets untouched.
 
+Once the release is out, bring what users download back to the local machine:
+
+```bash
+npm run fetch:release            # the latest published release
+npm run fetch:release -- v4.6.0  # a specific tag
+```
+
+The assets land in `releases/` (ignored by git), taken from the release itself rather
+than from a local pack, and the `.mcpb` is verified against its `.sha256`. That is the
+file to hand to the MCP directory, or to open in Claude Desktop to try the shipped build;
+the script only sees published releases, a draft does not count.
+
 Release notes live in `.github/release-notes/<tag>.md`. When that file exists the workflow
 uses it as the release body, otherwise it falls back to the generated list of pull
 requests. Fixing the text of a release that is already out is a matter of editing the file

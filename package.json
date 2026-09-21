@@ -25,6 +25,7 @@
     "sbom": "node scripts/sbom.mjs",
     "check:sbom": "node scripts/sbom.mjs --check",
     "pack": "npm run build && npm run check:manifest && npm run validate:manifest && npm run fetch:keytar && node scripts/pack.mjs",
+    "fetch:release": "node scripts/fetch-release.mjs",
     "start": "node dist/index.js",
     "login": "node dist/garmin/simple-login.js",
     "dev": "tsx watch src/index.ts",
