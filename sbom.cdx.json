@@ -1389,8 +1389,8 @@
     {
       "type": "library",
       "name": "dotenv",
-      "version": "17.4.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|dotenv@17.4.2",
+      "version": "18.0.0",
+      "bom-ref": "garmin-mcp-ts@4.5.10|dotenv@18.0.0",
       "licenses": [
         {
           "license": {
@@ -1399,15 +1399,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/dotenv@17.4.2",
+      "purl": "pkg:npm/dotenv@18.0.0",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/dotenv/-/dotenv-17.4.2.tgz",
+          "url": "https://registry.npmjs.org/dotenv/-/dotenv-18.0.0.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "9c8e14dd3a2db4a01c003f4b2ee77809bedbd90ced40c5047c76ef8531f4f5ba974f19d289ef169e33c02d5fd6302ac967a515fea1c9e8bd373aa3b72dc75867"
+              "content": "d7a61252fb0ab4a6f0ad36c44afb53499cf3254ba0ea374576a881160f50e81935258f6bd2102daed4e25b1748f58aec80e4e69236517605349f72e7c06a440b"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -5477,7 +5477,7 @@
       "dependsOn": [
         "garmin-mcp-ts@4.5.10|@modelcontextprotocol/sdk@1.30.0",
         "garmin-mcp-ts@4.5.10|axios@1.20.0",
-        "garmin-mcp-ts@4.5.10|dotenv@17.4.2",
+        "garmin-mcp-ts@4.5.10|dotenv@18.0.0",
         "garmin-mcp-ts@4.5.10|garmin-connect@1.6.2",
         "garmin-mcp-ts@4.5.10|keytar@7.9.0"
       ]
@@ -5689,7 +5689,7 @@
       "ref": "garmin-mcp-ts@4.5.10|detect-libc@2.1.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|dotenv@17.4.2"
+      "ref": "garmin-mcp-ts@4.5.10|dotenv@18.0.0"
     },
     {
       "ref": "garmin-mcp-ts@4.5.10|dunder-proto@1.0.1",
