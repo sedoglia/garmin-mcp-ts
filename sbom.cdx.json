@@ -96,8 +96,8 @@
     "component": {
       "type": "application",
       "name": "garmin-mcp-ts",
-      "version": "4.5.10",
-      "bom-ref": "garmin-mcp-ts@4.5.10",
+      "version": "4.6.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0",
       "description": "Garmin Connect MCP Server in TypeScript with Secure Encryption",
       "licenses": [
         {
@@ -107,7 +107,7 @@
           }
         }
       ],
-      "purl": "pkg:npm/garmin-mcp-ts@4.5.10?vcs_url=git%2Bhttps%3A%2F%2Fgithub.com%2Fsedoglia%2Fgarmin-mcp-ts.git",
+      "purl": "pkg:npm/garmin-mcp-ts@4.6.0?vcs_url=git%2Bhttps%3A%2F%2Fgithub.com%2Fsedoglia%2Fgarmin-mcp-ts.git",
       "externalReferences": [
         {
           "url": "https://github.com/sedoglia/garmin-mcp-ts/issues",
@@ -149,7 +149,7 @@
       "name": "node-server",
       "group": "@hono",
       "version": "2.0.11",
-      "bom-ref": "garmin-mcp-ts@4.5.10|@hono/node-server@2.0.11",
+      "bom-ref": "garmin-mcp-ts@4.6.0|@hono/node-server@2.0.11",
       "licenses": [
         {
           "license": {
@@ -184,7 +184,7 @@
       "name": "sdk",
       "group": "@modelcontextprotocol",
       "version": "1.30.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|@modelcontextprotocol/sdk@1.30.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.30.0",
       "licenses": [
         {
           "license": {
@@ -218,7 +218,7 @@
           "type": "library",
           "name": "pkce-challenge",
           "version": "5.0.1",
-          "bom-ref": "garmin-mcp-ts@4.5.10|@modelcontextprotocol/sdk@1.30.0|pkce-challenge@5.0.1",
+          "bom-ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.30.0|pkce-challenge@5.0.1",
           "licenses": [
             {
               "license": {
@@ -254,7 +254,7 @@
       "type": "library",
       "name": "accepts",
       "version": "2.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|accepts@2.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|accepts@2.0.0",
       "licenses": [
         {
           "license": {
@@ -288,7 +288,7 @@
           "type": "library",
           "name": "mime-db",
           "version": "1.54.0",
-          "bom-ref": "garmin-mcp-ts@4.5.10|accepts@2.0.0|mime-db@1.54.0",
+          "bom-ref": "garmin-mcp-ts@4.6.0|accepts@2.0.0|mime-db@1.54.0",
           "licenses": [
             {
               "license": {
@@ -322,7 +322,7 @@
           "type": "library",
           "name": "mime-types",
           "version": "3.0.2",
-          "bom-ref": "garmin-mcp-ts@4.5.10|accepts@2.0.0|mime-types@3.0.2",
+          "bom-ref": "garmin-mcp-ts@4.6.0|accepts@2.0.0|mime-types@3.0.2",
           "licenses": [
             {
               "license": {
@@ -358,7 +358,7 @@
       "type": "library",
       "name": "agent-base",
       "version": "6.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|agent-base@6.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|agent-base@6.0.2",
       "licenses": [
         {
           "license": {
@@ -392,7 +392,7 @@
       "type": "library",
       "name": "ajv-formats",
       "version": "3.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|ajv-formats@3.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ajv-formats@3.0.1",
       "licenses": [
         {
           "license": {
@@ -426,7 +426,7 @@
       "type": "library",
       "name": "ajv",
       "version": "8.18.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|ajv@8.18.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ajv@8.18.0",
       "licenses": [
         {
           "license": {
@@ -460,7 +460,7 @@
       "type": "library",
       "name": "app-root-path",
       "version": "3.1.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|app-root-path@3.1.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|app-root-path@3.1.0",
       "licenses": [
         {
           "license": {
@@ -494,7 +494,7 @@
       "type": "library",
       "name": "asynckit",
       "version": "0.4.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|asynckit@0.4.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|asynckit@0.4.0",
       "licenses": [
         {
           "license": {
@@ -528,7 +528,7 @@
       "type": "library",
       "name": "axios",
       "version": "1.20.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|axios@1.20.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|axios@1.20.0",
       "licenses": [
         {
           "license": {
@@ -562,7 +562,7 @@
       "type": "library",
       "name": "base64-js",
       "version": "1.5.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|base64-js@1.5.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|base64-js@1.5.1",
       "scope": "optional",
       "licenses": [
         {
@@ -597,7 +597,7 @@
       "type": "library",
       "name": "bl",
       "version": "4.1.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|bl@4.1.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|bl@4.1.0",
       "scope": "optional",
       "licenses": [
         {
@@ -632,7 +632,7 @@
           "type": "library",
           "name": "buffer",
           "version": "5.7.1",
-          "bom-ref": "garmin-mcp-ts@4.5.10|bl@4.1.0|buffer@5.7.1",
+          "bom-ref": "garmin-mcp-ts@4.6.0|bl@4.1.0|buffer@5.7.1",
           "scope": "optional",
           "licenses": [
             {
@@ -667,7 +667,7 @@
           "type": "library",
           "name": "readable-stream",
           "version": "3.6.2",
-          "bom-ref": "garmin-mcp-ts@4.5.10|bl@4.1.0|readable-stream@3.6.2",
+          "bom-ref": "garmin-mcp-ts@4.6.0|bl@4.1.0|readable-stream@3.6.2",
           "scope": "optional",
           "licenses": [
             {
@@ -704,7 +704,7 @@
       "type": "library",
       "name": "body-parser",
       "version": "2.3.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|body-parser@2.3.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|body-parser@2.3.0",
       "licenses": [
         {
           "license": {
@@ -738,7 +738,7 @@
           "type": "library",
           "name": "content-type",
           "version": "2.0.0",
-          "bom-ref": "garmin-mcp-ts@4.5.10|body-parser@2.3.0|content-type@2.0.0",
+          "bom-ref": "garmin-mcp-ts@4.6.0|body-parser@2.3.0|content-type@2.0.0",
           "licenses": [
             {
               "license": {
@@ -774,7 +774,7 @@
       "type": "library",
       "name": "bytes",
       "version": "3.1.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|bytes@3.1.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|bytes@3.1.2",
       "licenses": [
         {
           "license": {
@@ -808,7 +808,7 @@
       "type": "library",
       "name": "call-bind-apply-helpers",
       "version": "1.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|call-bind-apply-helpers@1.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|call-bind-apply-helpers@1.0.2",
       "licenses": [
         {
           "license": {
@@ -842,7 +842,7 @@
       "type": "library",
       "name": "call-bound",
       "version": "1.0.4",
-      "bom-ref": "garmin-mcp-ts@4.5.10|call-bound@1.0.4",
+      "bom-ref": "garmin-mcp-ts@4.6.0|call-bound@1.0.4",
       "licenses": [
         {
           "license": {
@@ -876,7 +876,7 @@
       "type": "library",
       "name": "chownr",
       "version": "1.1.4",
-      "bom-ref": "garmin-mcp-ts@4.5.10|chownr@1.1.4",
+      "bom-ref": "garmin-mcp-ts@4.6.0|chownr@1.1.4",
       "scope": "optional",
       "licenses": [
         {
@@ -911,7 +911,7 @@
       "type": "library",
       "name": "combined-stream",
       "version": "1.0.8",
-      "bom-ref": "garmin-mcp-ts@4.5.10|combined-stream@1.0.8",
+      "bom-ref": "garmin-mcp-ts@4.6.0|combined-stream@1.0.8",
       "licenses": [
         {
           "license": {
@@ -945,7 +945,7 @@
       "type": "library",
       "name": "content-disposition",
       "version": "1.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|content-disposition@1.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|content-disposition@1.0.1",
       "licenses": [
         {
           "license": {
@@ -979,7 +979,7 @@
       "type": "library",
       "name": "content-type",
       "version": "1.0.5",
-      "bom-ref": "garmin-mcp-ts@4.5.10|content-type@1.0.5",
+      "bom-ref": "garmin-mcp-ts@4.6.0|content-type@1.0.5",
       "licenses": [
         {
           "license": {
@@ -1013,7 +1013,7 @@
       "type": "library",
       "name": "cookie-signature",
       "version": "1.2.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|cookie-signature@1.2.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|cookie-signature@1.2.2",
       "licenses": [
         {
           "license": {
@@ -1047,7 +1047,7 @@
       "type": "library",
       "name": "cookie",
       "version": "0.7.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|cookie@0.7.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|cookie@0.7.2",
       "licenses": [
         {
           "license": {
@@ -1081,7 +1081,7 @@
       "type": "library",
       "name": "cors",
       "version": "2.8.5",
-      "bom-ref": "garmin-mcp-ts@4.5.10|cors@2.8.5",
+      "bom-ref": "garmin-mcp-ts@4.6.0|cors@2.8.5",
       "licenses": [
         {
           "license": {
@@ -1115,7 +1115,7 @@
       "type": "library",
       "name": "cross-spawn",
       "version": "7.0.6",
-      "bom-ref": "garmin-mcp-ts@4.5.10|cross-spawn@7.0.6",
+      "bom-ref": "garmin-mcp-ts@4.6.0|cross-spawn@7.0.6",
       "licenses": [
         {
           "license": {
@@ -1149,7 +1149,7 @@
       "type": "library",
       "name": "crypto",
       "version": "1.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|crypto@1.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|crypto@1.0.1",
       "licenses": [
         {
           "license": {
@@ -1183,7 +1183,7 @@
       "type": "library",
       "name": "debug",
       "version": "4.4.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|debug@4.4.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|debug@4.4.3",
       "licenses": [
         {
           "license": {
@@ -1217,7 +1217,7 @@
       "type": "library",
       "name": "decompress-response",
       "version": "6.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|decompress-response@6.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|decompress-response@6.0.0",
       "scope": "optional",
       "licenses": [
         {
@@ -1252,7 +1252,7 @@
       "type": "library",
       "name": "deep-extend",
       "version": "0.6.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|deep-extend@0.6.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|deep-extend@0.6.0",
       "scope": "optional",
       "licenses": [
         {
@@ -1287,7 +1287,7 @@
       "type": "library",
       "name": "delayed-stream",
       "version": "1.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|delayed-stream@1.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|delayed-stream@1.0.0",
       "licenses": [
         {
           "license": {
@@ -1321,7 +1321,7 @@
       "type": "library",
       "name": "depd",
       "version": "2.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|depd@2.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|depd@2.0.0",
       "licenses": [
         {
           "license": {
@@ -1355,7 +1355,7 @@
       "type": "library",
       "name": "detect-libc",
       "version": "2.1.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|detect-libc@2.1.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|detect-libc@2.1.2",
       "scope": "optional",
       "licenses": [
         {
@@ -1390,7 +1390,7 @@
       "type": "library",
       "name": "dotenv",
       "version": "18.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|dotenv@18.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.0",
       "licenses": [
         {
           "license": {
@@ -1424,7 +1424,7 @@
       "type": "library",
       "name": "dunder-proto",
       "version": "1.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|dunder-proto@1.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|dunder-proto@1.0.1",
       "licenses": [
         {
           "license": {
@@ -1458,7 +1458,7 @@
       "type": "library",
       "name": "ee-first",
       "version": "1.1.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|ee-first@1.1.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ee-first@1.1.1",
       "licenses": [
         {
           "license": {
@@ -1492,7 +1492,7 @@
       "type": "library",
       "name": "encodeurl",
       "version": "2.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|encodeurl@2.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|encodeurl@2.0.0",
       "licenses": [
         {
           "license": {
@@ -1526,7 +1526,7 @@
       "type": "library",
       "name": "end-of-stream",
       "version": "1.4.5",
-      "bom-ref": "garmin-mcp-ts@4.5.10|end-of-stream@1.4.5",
+      "bom-ref": "garmin-mcp-ts@4.6.0|end-of-stream@1.4.5",
       "scope": "optional",
       "licenses": [
         {
@@ -1561,7 +1561,7 @@
       "type": "library",
       "name": "es-define-property",
       "version": "1.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|es-define-property@1.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|es-define-property@1.0.1",
       "licenses": [
         {
           "license": {
@@ -1595,7 +1595,7 @@
       "type": "library",
       "name": "es-errors",
       "version": "1.3.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|es-errors@1.3.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|es-errors@1.3.0",
       "licenses": [
         {
           "license": {
@@ -1629,7 +1629,7 @@
       "type": "library",
       "name": "es-object-atoms",
       "version": "1.1.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|es-object-atoms@1.1.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|es-object-atoms@1.1.1",
       "licenses": [
         {
           "license": {
@@ -1663,7 +1663,7 @@
       "type": "library",
       "name": "es-set-tostringtag",
       "version": "2.1.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|es-set-tostringtag@2.1.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|es-set-tostringtag@2.1.0",
       "licenses": [
         {
           "license": {
@@ -1697,7 +1697,7 @@
       "type": "library",
       "name": "escape-html",
       "version": "1.0.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|escape-html@1.0.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|escape-html@1.0.3",
       "licenses": [
         {
           "license": {
@@ -1731,7 +1731,7 @@
       "type": "library",
       "name": "etag",
       "version": "1.8.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|etag@1.8.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|etag@1.8.1",
       "licenses": [
         {
           "license": {
@@ -1765,7 +1765,7 @@
       "type": "library",
       "name": "eventsource-parser",
       "version": "3.0.6",
-      "bom-ref": "garmin-mcp-ts@4.5.10|eventsource-parser@3.0.6",
+      "bom-ref": "garmin-mcp-ts@4.6.0|eventsource-parser@3.0.6",
       "licenses": [
         {
           "license": {
@@ -1799,7 +1799,7 @@
       "type": "library",
       "name": "eventsource",
       "version": "3.0.7",
-      "bom-ref": "garmin-mcp-ts@4.5.10|eventsource@3.0.7",
+      "bom-ref": "garmin-mcp-ts@4.6.0|eventsource@3.0.7",
       "licenses": [
         {
           "license": {
@@ -1833,7 +1833,7 @@
       "type": "library",
       "name": "expand-template",
       "version": "2.0.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|expand-template@2.0.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|expand-template@2.0.3",
       "scope": "optional",
       "licenses": [
         {
@@ -1866,7 +1866,7 @@
       "type": "library",
       "name": "express-rate-limit",
       "version": "8.3.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|express-rate-limit@8.3.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|express-rate-limit@8.3.0",
       "licenses": [
         {
           "license": {
@@ -1900,7 +1900,7 @@
       "type": "library",
       "name": "express",
       "version": "5.2.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|express@5.2.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|express@5.2.1",
       "licenses": [
         {
           "license": {
@@ -1934,7 +1934,7 @@
           "type": "library",
           "name": "mime-db",
           "version": "1.54.0",
-          "bom-ref": "garmin-mcp-ts@4.5.10|express@5.2.1|mime-db@1.54.0",
+          "bom-ref": "garmin-mcp-ts@4.6.0|express@5.2.1|mime-db@1.54.0",
           "licenses": [
             {
               "license": {
@@ -1968,7 +1968,7 @@
           "type": "library",
           "name": "mime-types",
           "version": "3.0.2",
-          "bom-ref": "garmin-mcp-ts@4.5.10|express@5.2.1|mime-types@3.0.2",
+          "bom-ref": "garmin-mcp-ts@4.6.0|express@5.2.1|mime-types@3.0.2",
           "licenses": [
             {
               "license": {
@@ -2004,7 +2004,7 @@
       "type": "library",
       "name": "fast-deep-equal",
       "version": "3.1.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|fast-deep-equal@3.1.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|fast-deep-equal@3.1.3",
       "licenses": [
         {
           "license": {
@@ -2038,7 +2038,7 @@
       "type": "library",
       "name": "fast-uri",
       "version": "4.1.4",
-      "bom-ref": "garmin-mcp-ts@4.5.10|fast-uri@4.1.4",
+      "bom-ref": "garmin-mcp-ts@4.6.0|fast-uri@4.1.4",
       "licenses": [
         {
           "license": {
@@ -2072,7 +2072,7 @@
       "type": "library",
       "name": "finalhandler",
       "version": "2.1.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|finalhandler@2.1.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|finalhandler@2.1.1",
       "licenses": [
         {
           "license": {
@@ -2106,7 +2106,7 @@
       "type": "library",
       "name": "follow-redirects",
       "version": "1.16.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|follow-redirects@1.16.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|follow-redirects@1.16.0",
       "licenses": [
         {
           "license": {
@@ -2140,7 +2140,7 @@
       "type": "library",
       "name": "form-data",
       "version": "4.0.6",
-      "bom-ref": "garmin-mcp-ts@4.5.10|form-data@4.0.6",
+      "bom-ref": "garmin-mcp-ts@4.6.0|form-data@4.0.6",
       "licenses": [
         {
           "license": {
@@ -2174,7 +2174,7 @@
           "type": "library",
           "name": "hasown",
           "version": "2.0.4",
-          "bom-ref": "garmin-mcp-ts@4.5.10|form-data@4.0.6|hasown@2.0.4",
+          "bom-ref": "garmin-mcp-ts@4.6.0|form-data@4.0.6|hasown@2.0.4",
           "licenses": [
             {
               "license": {
@@ -2210,7 +2210,7 @@
       "type": "library",
       "name": "forwarded",
       "version": "0.2.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|forwarded@0.2.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|forwarded@0.2.0",
       "licenses": [
         {
           "license": {
@@ -2244,7 +2244,7 @@
       "type": "library",
       "name": "fresh",
       "version": "2.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|fresh@2.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|fresh@2.0.0",
       "licenses": [
         {
           "license": {
@@ -2278,7 +2278,7 @@
       "type": "library",
       "name": "fs-constants",
       "version": "1.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|fs-constants@1.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|fs-constants@1.0.0",
       "scope": "optional",
       "licenses": [
         {
@@ -2313,7 +2313,7 @@
       "type": "library",
       "name": "function-bind",
       "version": "1.1.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|function-bind@1.1.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|function-bind@1.1.2",
       "licenses": [
         {
           "license": {
@@ -2347,7 +2347,7 @@
       "type": "library",
       "name": "garmin-connect",
       "version": "1.6.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|garmin-connect@1.6.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|garmin-connect@1.6.2",
       "licenses": [
         {
           "license": {
@@ -2381,7 +2381,7 @@
       "type": "library",
       "name": "get-intrinsic",
       "version": "1.3.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|get-intrinsic@1.3.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|get-intrinsic@1.3.0",
       "licenses": [
         {
           "license": {
@@ -2415,7 +2415,7 @@
       "type": "library",
       "name": "get-proto",
       "version": "1.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|get-proto@1.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|get-proto@1.0.1",
       "licenses": [
         {
           "license": {
@@ -2449,7 +2449,7 @@
       "type": "library",
       "name": "github-from-package",
       "version": "0.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|github-from-package@0.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|github-from-package@0.0.0",
       "scope": "optional",
       "licenses": [
         {
@@ -2484,7 +2484,7 @@
       "type": "library",
       "name": "gopd",
       "version": "1.2.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|gopd@1.2.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|gopd@1.2.0",
       "licenses": [
         {
           "license": {
@@ -2518,7 +2518,7 @@
       "type": "library",
       "name": "has-symbols",
       "version": "1.1.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|has-symbols@1.1.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|has-symbols@1.1.0",
       "licenses": [
         {
           "license": {
@@ -2552,7 +2552,7 @@
       "type": "library",
       "name": "has-tostringtag",
       "version": "1.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|has-tostringtag@1.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|has-tostringtag@1.0.2",
       "licenses": [
         {
           "license": {
@@ -2586,7 +2586,7 @@
       "type": "library",
       "name": "hasown",
       "version": "2.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|hasown@2.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|hasown@2.0.2",
       "licenses": [
         {
           "license": {
@@ -2620,7 +2620,7 @@
       "type": "library",
       "name": "hono",
       "version": "4.13.7",
-      "bom-ref": "garmin-mcp-ts@4.5.10|hono@4.13.7",
+      "bom-ref": "garmin-mcp-ts@4.6.0|hono@4.13.7",
       "licenses": [
         {
           "license": {
@@ -2654,7 +2654,7 @@
       "type": "library",
       "name": "http-errors",
       "version": "2.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|http-errors@2.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|http-errors@2.0.1",
       "licenses": [
         {
           "license": {
@@ -2688,7 +2688,7 @@
       "type": "library",
       "name": "https-proxy-agent",
       "version": "5.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|https-proxy-agent@5.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|https-proxy-agent@5.0.1",
       "licenses": [
         {
           "license": {
@@ -2722,7 +2722,7 @@
       "type": "library",
       "name": "iconv-lite",
       "version": "0.7.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|iconv-lite@0.7.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|iconv-lite@0.7.2",
       "licenses": [
         {
           "license": {
@@ -2756,7 +2756,7 @@
       "type": "library",
       "name": "ieee754",
       "version": "1.2.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|ieee754@1.2.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ieee754@1.2.1",
       "scope": "optional",
       "licenses": [
         {
@@ -2791,7 +2791,7 @@
       "type": "library",
       "name": "inherits",
       "version": "2.0.4",
-      "bom-ref": "garmin-mcp-ts@4.5.10|inherits@2.0.4",
+      "bom-ref": "garmin-mcp-ts@4.6.0|inherits@2.0.4",
       "licenses": [
         {
           "license": {
@@ -2825,7 +2825,7 @@
       "type": "library",
       "name": "ini",
       "version": "1.3.8",
-      "bom-ref": "garmin-mcp-ts@4.5.10|ini@1.3.8",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ini@1.3.8",
       "scope": "optional",
       "licenses": [
         {
@@ -2860,7 +2860,7 @@
       "type": "library",
       "name": "ip-address",
       "version": "10.5.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|ip-address@10.5.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ip-address@10.5.0",
       "licenses": [
         {
           "license": {
@@ -2894,7 +2894,7 @@
       "type": "library",
       "name": "ipaddr.js",
       "version": "1.9.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|ipaddr.js@1.9.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ipaddr.js@1.9.1",
       "licenses": [
         {
           "license": {
@@ -2928,7 +2928,7 @@
       "type": "library",
       "name": "is-promise",
       "version": "4.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|is-promise@4.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|is-promise@4.0.0",
       "licenses": [
         {
           "license": {
@@ -2962,7 +2962,7 @@
       "type": "library",
       "name": "isexe",
       "version": "2.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|isexe@2.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|isexe@2.0.0",
       "licenses": [
         {
           "license": {
@@ -2996,7 +2996,7 @@
       "type": "library",
       "name": "jose",
       "version": "6.1.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|jose@6.1.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|jose@6.1.3",
       "licenses": [
         {
           "license": {
@@ -3030,7 +3030,7 @@
       "type": "library",
       "name": "json-schema-traverse",
       "version": "1.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|json-schema-traverse@1.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|json-schema-traverse@1.0.0",
       "licenses": [
         {
           "license": {
@@ -3064,7 +3064,7 @@
       "type": "library",
       "name": "json-schema-typed",
       "version": "8.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|json-schema-typed@8.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|json-schema-typed@8.0.2",
       "licenses": [
         {
           "license": {
@@ -3098,7 +3098,7 @@
       "type": "library",
       "name": "keytar",
       "version": "7.9.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|keytar@7.9.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|keytar@7.9.0",
       "scope": "optional",
       "licenses": [
         {
@@ -3133,7 +3133,7 @@
       "type": "library",
       "name": "lodash",
       "version": "4.18.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|lodash@4.18.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|lodash@4.18.1",
       "licenses": [
         {
           "license": {
@@ -3167,7 +3167,7 @@
       "type": "library",
       "name": "luxon",
       "version": "3.7.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|luxon@3.7.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|luxon@3.7.2",
       "licenses": [
         {
           "license": {
@@ -3201,7 +3201,7 @@
       "type": "library",
       "name": "math-intrinsics",
       "version": "1.1.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|math-intrinsics@1.1.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|math-intrinsics@1.1.0",
       "licenses": [
         {
           "license": {
@@ -3235,7 +3235,7 @@
       "type": "library",
       "name": "media-typer",
       "version": "1.1.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|media-typer@1.1.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|media-typer@1.1.0",
       "licenses": [
         {
           "license": {
@@ -3269,7 +3269,7 @@
       "type": "library",
       "name": "merge-descriptors",
       "version": "2.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|merge-descriptors@2.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|merge-descriptors@2.0.0",
       "licenses": [
         {
           "license": {
@@ -3303,7 +3303,7 @@
       "type": "library",
       "name": "mime-db",
       "version": "1.52.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|mime-db@1.52.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|mime-db@1.52.0",
       "licenses": [
         {
           "license": {
@@ -3337,7 +3337,7 @@
       "type": "library",
       "name": "mime-types",
       "version": "2.1.35",
-      "bom-ref": "garmin-mcp-ts@4.5.10|mime-types@2.1.35",
+      "bom-ref": "garmin-mcp-ts@4.6.0|mime-types@2.1.35",
       "licenses": [
         {
           "license": {
@@ -3371,7 +3371,7 @@
       "type": "library",
       "name": "mimic-response",
       "version": "3.1.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|mimic-response@3.1.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|mimic-response@3.1.0",
       "scope": "optional",
       "licenses": [
         {
@@ -3406,7 +3406,7 @@
       "type": "library",
       "name": "minimist",
       "version": "1.2.8",
-      "bom-ref": "garmin-mcp-ts@4.5.10|minimist@1.2.8",
+      "bom-ref": "garmin-mcp-ts@4.6.0|minimist@1.2.8",
       "scope": "optional",
       "licenses": [
         {
@@ -3441,7 +3441,7 @@
       "type": "library",
       "name": "mkdirp-classic",
       "version": "0.5.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|mkdirp-classic@0.5.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|mkdirp-classic@0.5.3",
       "scope": "optional",
       "licenses": [
         {
@@ -3476,7 +3476,7 @@
       "type": "library",
       "name": "ms",
       "version": "2.1.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|ms@2.1.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ms@2.1.3",
       "licenses": [
         {
           "license": {
@@ -3510,7 +3510,7 @@
       "type": "library",
       "name": "napi-build-utils",
       "version": "2.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|napi-build-utils@2.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|napi-build-utils@2.0.0",
       "scope": "optional",
       "licenses": [
         {
@@ -3545,7 +3545,7 @@
       "type": "library",
       "name": "negotiator",
       "version": "1.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|negotiator@1.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|negotiator@1.0.0",
       "licenses": [
         {
           "license": {
@@ -3579,7 +3579,7 @@
       "type": "library",
       "name": "node-abi",
       "version": "3.85.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|node-abi@3.85.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|node-abi@3.85.0",
       "scope": "optional",
       "licenses": [
         {
@@ -3614,7 +3614,7 @@
       "type": "library",
       "name": "node-addon-api",
       "version": "4.3.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|node-addon-api@4.3.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|node-addon-api@4.3.0",
       "scope": "optional",
       "licenses": [
         {
@@ -3649,7 +3649,7 @@
       "type": "library",
       "name": "oauth-1.0a",
       "version": "2.2.6",
-      "bom-ref": "garmin-mcp-ts@4.5.10|oauth-1.0a@2.2.6",
+      "bom-ref": "garmin-mcp-ts@4.6.0|oauth-1.0a@2.2.6",
       "licenses": [
         {
           "license": {
@@ -3683,7 +3683,7 @@
       "type": "library",
       "name": "object-assign",
       "version": "4.1.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|object-assign@4.1.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|object-assign@4.1.1",
       "licenses": [
         {
           "license": {
@@ -3717,7 +3717,7 @@
       "type": "library",
       "name": "object-inspect",
       "version": "1.13.4",
-      "bom-ref": "garmin-mcp-ts@4.5.10|object-inspect@1.13.4",
+      "bom-ref": "garmin-mcp-ts@4.6.0|object-inspect@1.13.4",
       "licenses": [
         {
           "license": {
@@ -3751,7 +3751,7 @@
       "type": "library",
       "name": "on-finished",
       "version": "2.4.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|on-finished@2.4.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|on-finished@2.4.1",
       "licenses": [
         {
           "license": {
@@ -3785,7 +3785,7 @@
       "type": "library",
       "name": "once",
       "version": "1.4.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|once@1.4.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|once@1.4.0",
       "licenses": [
         {
           "license": {
@@ -3819,7 +3819,7 @@
       "type": "library",
       "name": "parseurl",
       "version": "1.3.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|parseurl@1.3.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|parseurl@1.3.3",
       "licenses": [
         {
           "license": {
@@ -3853,7 +3853,7 @@
       "type": "library",
       "name": "path-key",
       "version": "3.1.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|path-key@3.1.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|path-key@3.1.1",
       "licenses": [
         {
           "license": {
@@ -3887,7 +3887,7 @@
       "type": "library",
       "name": "path-to-regexp",
       "version": "8.4.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|path-to-regexp@8.4.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|path-to-regexp@8.4.2",
       "licenses": [
         {
           "license": {
@@ -3921,7 +3921,7 @@
       "type": "library",
       "name": "prebuild-install",
       "version": "7.1.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|prebuild-install@7.1.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|prebuild-install@7.1.3",
       "scope": "optional",
       "licenses": [
         {
@@ -3956,7 +3956,7 @@
       "type": "library",
       "name": "proxy-addr",
       "version": "2.0.7",
-      "bom-ref": "garmin-mcp-ts@4.5.10|proxy-addr@2.0.7",
+      "bom-ref": "garmin-mcp-ts@4.6.0|proxy-addr@2.0.7",
       "licenses": [
         {
           "license": {
@@ -3990,7 +3990,7 @@
       "type": "library",
       "name": "proxy-from-env",
       "version": "2.1.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|proxy-from-env@2.1.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|proxy-from-env@2.1.0",
       "licenses": [
         {
           "license": {
@@ -4024,7 +4024,7 @@
       "type": "library",
       "name": "pump",
       "version": "3.0.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|pump@3.0.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|pump@3.0.3",
       "scope": "optional",
       "licenses": [
         {
@@ -4059,7 +4059,7 @@
       "type": "library",
       "name": "qs",
       "version": "6.16.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|qs@6.16.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|qs@6.16.0",
       "licenses": [
         {
           "license": {
@@ -4093,7 +4093,7 @@
       "type": "library",
       "name": "range-parser",
       "version": "1.2.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|range-parser@1.2.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|range-parser@1.2.1",
       "licenses": [
         {
           "license": {
@@ -4127,7 +4127,7 @@
       "type": "library",
       "name": "raw-body",
       "version": "3.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|raw-body@3.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|raw-body@3.0.2",
       "licenses": [
         {
           "license": {
@@ -4161,7 +4161,7 @@
       "type": "library",
       "name": "rc",
       "version": "1.2.8",
-      "bom-ref": "garmin-mcp-ts@4.5.10|rc@1.2.8",
+      "bom-ref": "garmin-mcp-ts@4.6.0|rc@1.2.8",
       "scope": "optional",
       "licenses": [
         {
@@ -4194,7 +4194,7 @@
           "type": "library",
           "name": "strip-json-comments",
           "version": "2.0.1",
-          "bom-ref": "garmin-mcp-ts@4.5.10|rc@1.2.8|strip-json-comments@2.0.1",
+          "bom-ref": "garmin-mcp-ts@4.6.0|rc@1.2.8|strip-json-comments@2.0.1",
           "scope": "optional",
           "licenses": [
             {
@@ -4231,7 +4231,7 @@
       "type": "library",
       "name": "require-from-string",
       "version": "2.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|require-from-string@2.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|require-from-string@2.0.2",
       "licenses": [
         {
           "license": {
@@ -4265,7 +4265,7 @@
       "type": "library",
       "name": "router",
       "version": "2.2.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|router@2.2.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|router@2.2.0",
       "licenses": [
         {
           "license": {
@@ -4299,7 +4299,7 @@
       "type": "library",
       "name": "safe-buffer",
       "version": "5.2.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|safe-buffer@5.2.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|safe-buffer@5.2.1",
       "scope": "optional",
       "licenses": [
         {
@@ -4334,7 +4334,7 @@
       "type": "library",
       "name": "safer-buffer",
       "version": "2.1.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|safer-buffer@2.1.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|safer-buffer@2.1.2",
       "licenses": [
         {
           "license": {
@@ -4368,7 +4368,7 @@
       "type": "library",
       "name": "semver",
       "version": "7.7.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|semver@7.7.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|semver@7.7.3",
       "licenses": [
         {
           "license": {
@@ -4406,7 +4406,7 @@
       "type": "library",
       "name": "send",
       "version": "1.2.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|send@1.2.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|send@1.2.1",
       "licenses": [
         {
           "license": {
@@ -4440,7 +4440,7 @@
           "type": "library",
           "name": "mime-db",
           "version": "1.54.0",
-          "bom-ref": "garmin-mcp-ts@4.5.10|send@1.2.1|mime-db@1.54.0",
+          "bom-ref": "garmin-mcp-ts@4.6.0|send@1.2.1|mime-db@1.54.0",
           "licenses": [
             {
               "license": {
@@ -4474,7 +4474,7 @@
           "type": "library",
           "name": "mime-types",
           "version": "3.0.2",
-          "bom-ref": "garmin-mcp-ts@4.5.10|send@1.2.1|mime-types@3.0.2",
+          "bom-ref": "garmin-mcp-ts@4.6.0|send@1.2.1|mime-types@3.0.2",
           "licenses": [
             {
               "license": {
@@ -4510,7 +4510,7 @@
       "type": "library",
       "name": "serve-static",
       "version": "2.2.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|serve-static@2.2.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|serve-static@2.2.1",
       "licenses": [
         {
           "license": {
@@ -4544,7 +4544,7 @@
       "type": "library",
       "name": "setprototypeof",
       "version": "1.2.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|setprototypeof@1.2.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|setprototypeof@1.2.0",
       "licenses": [
         {
           "license": {
@@ -4578,7 +4578,7 @@
       "type": "library",
       "name": "shebang-command",
       "version": "2.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|shebang-command@2.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|shebang-command@2.0.0",
       "licenses": [
         {
           "license": {
@@ -4612,7 +4612,7 @@
       "type": "library",
       "name": "shebang-regex",
       "version": "3.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|shebang-regex@3.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|shebang-regex@3.0.0",
       "licenses": [
         {
           "license": {
@@ -4646,7 +4646,7 @@
       "type": "library",
       "name": "side-channel-list",
       "version": "1.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|side-channel-list@1.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|side-channel-list@1.0.1",
       "licenses": [
         {
           "license": {
@@ -4680,7 +4680,7 @@
       "type": "library",
       "name": "side-channel-map",
       "version": "1.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|side-channel-map@1.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|side-channel-map@1.0.1",
       "licenses": [
         {
           "license": {
@@ -4714,7 +4714,7 @@
       "type": "library",
       "name": "side-channel-weakmap",
       "version": "1.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|side-channel-weakmap@1.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|side-channel-weakmap@1.0.2",
       "licenses": [
         {
           "license": {
@@ -4748,7 +4748,7 @@
       "type": "library",
       "name": "side-channel",
       "version": "1.1.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|side-channel@1.1.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|side-channel@1.1.1",
       "licenses": [
         {
           "license": {
@@ -4782,7 +4782,7 @@
       "type": "library",
       "name": "simple-concat",
       "version": "1.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|simple-concat@1.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|simple-concat@1.0.1",
       "scope": "optional",
       "licenses": [
         {
@@ -4817,7 +4817,7 @@
       "type": "library",
       "name": "simple-get",
       "version": "4.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|simple-get@4.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|simple-get@4.0.1",
       "scope": "optional",
       "licenses": [
         {
@@ -4852,7 +4852,7 @@
       "type": "library",
       "name": "statuses",
       "version": "2.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|statuses@2.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|statuses@2.0.2",
       "licenses": [
         {
           "license": {
@@ -4886,7 +4886,7 @@
       "type": "library",
       "name": "string_decoder",
       "version": "1.3.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|string_decoder@1.3.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|string_decoder@1.3.0",
       "scope": "optional",
       "licenses": [
         {
@@ -4921,7 +4921,7 @@
       "type": "library",
       "name": "tar-fs",
       "version": "2.1.4",
-      "bom-ref": "garmin-mcp-ts@4.5.10|tar-fs@2.1.4",
+      "bom-ref": "garmin-mcp-ts@4.6.0|tar-fs@2.1.4",
       "scope": "optional",
       "licenses": [
         {
@@ -4956,7 +4956,7 @@
       "type": "library",
       "name": "tar-stream",
       "version": "2.2.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|tar-stream@2.2.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|tar-stream@2.2.0",
       "scope": "optional",
       "licenses": [
         {
@@ -4991,7 +4991,7 @@
           "type": "library",
           "name": "readable-stream",
           "version": "3.6.2",
-          "bom-ref": "garmin-mcp-ts@4.5.10|tar-stream@2.2.0|readable-stream@3.6.2",
+          "bom-ref": "garmin-mcp-ts@4.6.0|tar-stream@2.2.0|readable-stream@3.6.2",
           "scope": "optional",
           "licenses": [
             {
@@ -5028,7 +5028,7 @@
       "type": "library",
       "name": "toidentifier",
       "version": "1.0.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|toidentifier@1.0.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|toidentifier@1.0.1",
       "licenses": [
         {
           "license": {
@@ -5062,7 +5062,7 @@
       "type": "library",
       "name": "tunnel-agent",
       "version": "0.6.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|tunnel-agent@0.6.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|tunnel-agent@0.6.0",
       "scope": "optional",
       "licenses": [
         {
@@ -5097,7 +5097,7 @@
       "type": "library",
       "name": "type-is",
       "version": "2.1.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|type-is@2.1.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|type-is@2.1.0",
       "licenses": [
         {
           "license": {
@@ -5131,7 +5131,7 @@
           "type": "library",
           "name": "content-type",
           "version": "2.0.0",
-          "bom-ref": "garmin-mcp-ts@4.5.10|type-is@2.1.0|content-type@2.0.0",
+          "bom-ref": "garmin-mcp-ts@4.6.0|type-is@2.1.0|content-type@2.0.0",
           "licenses": [
             {
               "license": {
@@ -5165,7 +5165,7 @@
           "type": "library",
           "name": "mime-db",
           "version": "1.54.0",
-          "bom-ref": "garmin-mcp-ts@4.5.10|type-is@2.1.0|mime-db@1.54.0",
+          "bom-ref": "garmin-mcp-ts@4.6.0|type-is@2.1.0|mime-db@1.54.0",
           "licenses": [
             {
               "license": {
@@ -5199,7 +5199,7 @@
           "type": "library",
           "name": "mime-types",
           "version": "3.0.2",
-          "bom-ref": "garmin-mcp-ts@4.5.10|type-is@2.1.0|mime-types@3.0.2",
+          "bom-ref": "garmin-mcp-ts@4.6.0|type-is@2.1.0|mime-types@3.0.2",
           "licenses": [
             {
               "license": {
@@ -5235,7 +5235,7 @@
       "type": "library",
       "name": "unpipe",
       "version": "1.0.0",
-      "bom-ref": "garmin-mcp-ts@4.5.10|unpipe@1.0.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|unpipe@1.0.0",
       "licenses": [
         {
           "license": {
@@ -5269,7 +5269,7 @@
       "type": "library",
       "name": "util-deprecate",
       "version": "1.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|util-deprecate@1.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|util-deprecate@1.0.2",
       "scope": "optional",
       "licenses": [
         {
@@ -5304,7 +5304,7 @@
       "type": "library",
       "name": "vary",
       "version": "1.1.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|vary@1.1.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|vary@1.1.2",
       "licenses": [
         {
           "license": {
@@ -5338,7 +5338,7 @@
       "type": "library",
       "name": "which",
       "version": "2.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|which@2.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|which@2.0.2",
       "licenses": [
         {
           "license": {
@@ -5372,7 +5372,7 @@
       "type": "library",
       "name": "wrappy",
       "version": "1.0.2",
-      "bom-ref": "garmin-mcp-ts@4.5.10|wrappy@1.0.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|wrappy@1.0.2",
       "licenses": [
         {
           "license": {
@@ -5406,7 +5406,7 @@
       "type": "library",
       "name": "zod-to-json-schema",
       "version": "3.25.1",
-      "bom-ref": "garmin-mcp-ts@4.5.10|zod-to-json-schema@3.25.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|zod-to-json-schema@3.25.1",
       "licenses": [
         {
           "license": {
@@ -5440,7 +5440,7 @@
       "type": "library",
       "name": "zod",
       "version": "4.4.3",
-      "bom-ref": "garmin-mcp-ts@4.5.10|zod@4.4.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|zod@4.4.3",
       "licenses": [
         {
           "license": {
@@ -5473,851 +5473,851 @@
   ],
   "dependencies": [
     {
-      "ref": "garmin-mcp-ts@4.5.10",
+      "ref": "garmin-mcp-ts@4.6.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|@modelcontextprotocol/sdk@1.30.0",
-        "garmin-mcp-ts@4.5.10|axios@1.20.0",
-        "garmin-mcp-ts@4.5.10|dotenv@18.0.0",
-        "garmin-mcp-ts@4.5.10|garmin-connect@1.6.2",
-        "garmin-mcp-ts@4.5.10|keytar@7.9.0"
+        "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.30.0",
+        "garmin-mcp-ts@4.6.0|axios@1.20.0",
+        "garmin-mcp-ts@4.6.0|dotenv@18.0.0",
+        "garmin-mcp-ts@4.6.0|garmin-connect@1.6.2",
+        "garmin-mcp-ts@4.6.0|keytar@7.9.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|@hono/node-server@2.0.11",
+      "ref": "garmin-mcp-ts@4.6.0|@hono/node-server@2.0.11",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|hono@4.13.7"
+        "garmin-mcp-ts@4.6.0|hono@4.13.7"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|@modelcontextprotocol/sdk@1.30.0",
+      "ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.30.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|@hono/node-server@2.0.11",
-        "garmin-mcp-ts@4.5.10|@modelcontextprotocol/sdk@1.30.0|pkce-challenge@5.0.1",
-        "garmin-mcp-ts@4.5.10|ajv-formats@3.0.1",
-        "garmin-mcp-ts@4.5.10|ajv@8.18.0",
-        "garmin-mcp-ts@4.5.10|content-type@1.0.5",
-        "garmin-mcp-ts@4.5.10|cors@2.8.5",
-        "garmin-mcp-ts@4.5.10|cross-spawn@7.0.6",
-        "garmin-mcp-ts@4.5.10|eventsource-parser@3.0.6",
-        "garmin-mcp-ts@4.5.10|eventsource@3.0.7",
-        "garmin-mcp-ts@4.5.10|express-rate-limit@8.3.0",
-        "garmin-mcp-ts@4.5.10|express@5.2.1",
-        "garmin-mcp-ts@4.5.10|hono@4.13.7",
-        "garmin-mcp-ts@4.5.10|jose@6.1.3",
-        "garmin-mcp-ts@4.5.10|json-schema-typed@8.0.2",
-        "garmin-mcp-ts@4.5.10|raw-body@3.0.2",
-        "garmin-mcp-ts@4.5.10|zod-to-json-schema@3.25.1",
-        "garmin-mcp-ts@4.5.10|zod@4.4.3"
+        "garmin-mcp-ts@4.6.0|@hono/node-server@2.0.11",
+        "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.30.0|pkce-challenge@5.0.1",
+        "garmin-mcp-ts@4.6.0|ajv-formats@3.0.1",
+        "garmin-mcp-ts@4.6.0|ajv@8.18.0",
+        "garmin-mcp-ts@4.6.0|content-type@1.0.5",
+        "garmin-mcp-ts@4.6.0|cors@2.8.5",
+        "garmin-mcp-ts@4.6.0|cross-spawn@7.0.6",
+        "garmin-mcp-ts@4.6.0|eventsource-parser@3.0.6",
+        "garmin-mcp-ts@4.6.0|eventsource@3.0.7",
+        "garmin-mcp-ts@4.6.0|express-rate-limit@8.3.0",
+        "garmin-mcp-ts@4.6.0|express@5.2.1",
+        "garmin-mcp-ts@4.6.0|hono@4.13.7",
+        "garmin-mcp-ts@4.6.0|jose@6.1.3",
+        "garmin-mcp-ts@4.6.0|json-schema-typed@8.0.2",
+        "garmin-mcp-ts@4.6.0|raw-body@3.0.2",
+        "garmin-mcp-ts@4.6.0|zod-to-json-schema@3.25.1",
+        "garmin-mcp-ts@4.6.0|zod@4.4.3"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|@modelcontextprotocol/sdk@1.30.0|pkce-challenge@5.0.1"
+      "ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.30.0|pkce-challenge@5.0.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|accepts@2.0.0",
+      "ref": "garmin-mcp-ts@4.6.0|accepts@2.0.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|accepts@2.0.0|mime-types@3.0.2",
-        "garmin-mcp-ts@4.5.10|negotiator@1.0.0"
+        "garmin-mcp-ts@4.6.0|accepts@2.0.0|mime-types@3.0.2",
+        "garmin-mcp-ts@4.6.0|negotiator@1.0.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|accepts@2.0.0|mime-db@1.54.0"
+      "ref": "garmin-mcp-ts@4.6.0|accepts@2.0.0|mime-db@1.54.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|accepts@2.0.0|mime-types@3.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|accepts@2.0.0|mime-types@3.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|accepts@2.0.0|mime-db@1.54.0"
+        "garmin-mcp-ts@4.6.0|accepts@2.0.0|mime-db@1.54.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|agent-base@6.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|agent-base@6.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|debug@4.4.3"
+        "garmin-mcp-ts@4.6.0|debug@4.4.3"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|ajv-formats@3.0.1",
+      "ref": "garmin-mcp-ts@4.6.0|ajv-formats@3.0.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|ajv@8.18.0"
+        "garmin-mcp-ts@4.6.0|ajv@8.18.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|ajv@8.18.0",
+      "ref": "garmin-mcp-ts@4.6.0|ajv@8.18.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|fast-deep-equal@3.1.3",
-        "garmin-mcp-ts@4.5.10|fast-uri@4.1.4",
-        "garmin-mcp-ts@4.5.10|json-schema-traverse@1.0.0",
-        "garmin-mcp-ts@4.5.10|require-from-string@2.0.2"
+        "garmin-mcp-ts@4.6.0|fast-deep-equal@3.1.3",
+        "garmin-mcp-ts@4.6.0|fast-uri@4.1.4",
+        "garmin-mcp-ts@4.6.0|json-schema-traverse@1.0.0",
+        "garmin-mcp-ts@4.6.0|require-from-string@2.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|app-root-path@3.1.0"
+      "ref": "garmin-mcp-ts@4.6.0|app-root-path@3.1.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|asynckit@0.4.0"
+      "ref": "garmin-mcp-ts@4.6.0|asynckit@0.4.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|axios@1.20.0",
+      "ref": "garmin-mcp-ts@4.6.0|axios@1.20.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|follow-redirects@1.16.0",
-        "garmin-mcp-ts@4.5.10|form-data@4.0.6",
-        "garmin-mcp-ts@4.5.10|https-proxy-agent@5.0.1",
-        "garmin-mcp-ts@4.5.10|proxy-from-env@2.1.0"
+        "garmin-mcp-ts@4.6.0|follow-redirects@1.16.0",
+        "garmin-mcp-ts@4.6.0|form-data@4.0.6",
+        "garmin-mcp-ts@4.6.0|https-proxy-agent@5.0.1",
+        "garmin-mcp-ts@4.6.0|proxy-from-env@2.1.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|base64-js@1.5.1"
+      "ref": "garmin-mcp-ts@4.6.0|base64-js@1.5.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|bl@4.1.0",
+      "ref": "garmin-mcp-ts@4.6.0|bl@4.1.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|bl@4.1.0|buffer@5.7.1",
-        "garmin-mcp-ts@4.5.10|bl@4.1.0|readable-stream@3.6.2",
-        "garmin-mcp-ts@4.5.10|inherits@2.0.4"
+        "garmin-mcp-ts@4.6.0|bl@4.1.0|buffer@5.7.1",
+        "garmin-mcp-ts@4.6.0|bl@4.1.0|readable-stream@3.6.2",
+        "garmin-mcp-ts@4.6.0|inherits@2.0.4"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|bl@4.1.0|buffer@5.7.1",
+      "ref": "garmin-mcp-ts@4.6.0|bl@4.1.0|buffer@5.7.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|base64-js@1.5.1",
-        "garmin-mcp-ts@4.5.10|ieee754@1.2.1"
+        "garmin-mcp-ts@4.6.0|base64-js@1.5.1",
+        "garmin-mcp-ts@4.6.0|ieee754@1.2.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|bl@4.1.0|readable-stream@3.6.2",
+      "ref": "garmin-mcp-ts@4.6.0|bl@4.1.0|readable-stream@3.6.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|inherits@2.0.4",
-        "garmin-mcp-ts@4.5.10|string_decoder@1.3.0",
-        "garmin-mcp-ts@4.5.10|util-deprecate@1.0.2"
+        "garmin-mcp-ts@4.6.0|inherits@2.0.4",
+        "garmin-mcp-ts@4.6.0|string_decoder@1.3.0",
+        "garmin-mcp-ts@4.6.0|util-deprecate@1.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|body-parser@2.3.0",
+      "ref": "garmin-mcp-ts@4.6.0|body-parser@2.3.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|body-parser@2.3.0|content-type@2.0.0",
-        "garmin-mcp-ts@4.5.10|bytes@3.1.2",
-        "garmin-mcp-ts@4.5.10|debug@4.4.3",
-        "garmin-mcp-ts@4.5.10|http-errors@2.0.1",
-        "garmin-mcp-ts@4.5.10|iconv-lite@0.7.2",
-        "garmin-mcp-ts@4.5.10|on-finished@2.4.1",
-        "garmin-mcp-ts@4.5.10|qs@6.16.0",
-        "garmin-mcp-ts@4.5.10|raw-body@3.0.2",
-        "garmin-mcp-ts@4.5.10|type-is@2.1.0"
+        "garmin-mcp-ts@4.6.0|body-parser@2.3.0|content-type@2.0.0",
+        "garmin-mcp-ts@4.6.0|bytes@3.1.2",
+        "garmin-mcp-ts@4.6.0|debug@4.4.3",
+        "garmin-mcp-ts@4.6.0|http-errors@2.0.1",
+        "garmin-mcp-ts@4.6.0|iconv-lite@0.7.2",
+        "garmin-mcp-ts@4.6.0|on-finished@2.4.1",
+        "garmin-mcp-ts@4.6.0|qs@6.16.0",
+        "garmin-mcp-ts@4.6.0|raw-body@3.0.2",
+        "garmin-mcp-ts@4.6.0|type-is@2.1.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|body-parser@2.3.0|content-type@2.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|body-parser@2.3.0|content-type@2.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|bytes@3.1.2"
+      "ref": "garmin-mcp-ts@4.6.0|bytes@3.1.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|call-bind-apply-helpers@1.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|call-bind-apply-helpers@1.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|es-errors@1.3.0",
-        "garmin-mcp-ts@4.5.10|function-bind@1.1.2"
+        "garmin-mcp-ts@4.6.0|es-errors@1.3.0",
+        "garmin-mcp-ts@4.6.0|function-bind@1.1.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|call-bound@1.0.4",
+      "ref": "garmin-mcp-ts@4.6.0|call-bound@1.0.4",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|call-bind-apply-helpers@1.0.2",
-        "garmin-mcp-ts@4.5.10|get-intrinsic@1.3.0"
+        "garmin-mcp-ts@4.6.0|call-bind-apply-helpers@1.0.2",
+        "garmin-mcp-ts@4.6.0|get-intrinsic@1.3.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|chownr@1.1.4"
+      "ref": "garmin-mcp-ts@4.6.0|chownr@1.1.4"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|combined-stream@1.0.8",
+      "ref": "garmin-mcp-ts@4.6.0|combined-stream@1.0.8",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|delayed-stream@1.0.0"
+        "garmin-mcp-ts@4.6.0|delayed-stream@1.0.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|content-disposition@1.0.1"
+      "ref": "garmin-mcp-ts@4.6.0|content-disposition@1.0.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|content-type@1.0.5"
+      "ref": "garmin-mcp-ts@4.6.0|content-type@1.0.5"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|cookie-signature@1.2.2"
+      "ref": "garmin-mcp-ts@4.6.0|cookie-signature@1.2.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|cookie@0.7.2"
+      "ref": "garmin-mcp-ts@4.6.0|cookie@0.7.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|cors@2.8.5",
+      "ref": "garmin-mcp-ts@4.6.0|cors@2.8.5",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|object-assign@4.1.1",
-        "garmin-mcp-ts@4.5.10|vary@1.1.2"
+        "garmin-mcp-ts@4.6.0|object-assign@4.1.1",
+        "garmin-mcp-ts@4.6.0|vary@1.1.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|cross-spawn@7.0.6",
+      "ref": "garmin-mcp-ts@4.6.0|cross-spawn@7.0.6",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|path-key@3.1.1",
-        "garmin-mcp-ts@4.5.10|shebang-command@2.0.0",
-        "garmin-mcp-ts@4.5.10|which@2.0.2"
+        "garmin-mcp-ts@4.6.0|path-key@3.1.1",
+        "garmin-mcp-ts@4.6.0|shebang-command@2.0.0",
+        "garmin-mcp-ts@4.6.0|which@2.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|crypto@1.0.1"
+      "ref": "garmin-mcp-ts@4.6.0|crypto@1.0.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|debug@4.4.3",
+      "ref": "garmin-mcp-ts@4.6.0|debug@4.4.3",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|ms@2.1.3"
+        "garmin-mcp-ts@4.6.0|ms@2.1.3"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|decompress-response@6.0.0",
+      "ref": "garmin-mcp-ts@4.6.0|decompress-response@6.0.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|mimic-response@3.1.0"
+        "garmin-mcp-ts@4.6.0|mimic-response@3.1.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|deep-extend@0.6.0"
+      "ref": "garmin-mcp-ts@4.6.0|deep-extend@0.6.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|delayed-stream@1.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|delayed-stream@1.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|depd@2.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|depd@2.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|detect-libc@2.1.2"
+      "ref": "garmin-mcp-ts@4.6.0|detect-libc@2.1.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|dotenv@18.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|dunder-proto@1.0.1",
+      "ref": "garmin-mcp-ts@4.6.0|dunder-proto@1.0.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|call-bind-apply-helpers@1.0.2",
-        "garmin-mcp-ts@4.5.10|es-errors@1.3.0",
-        "garmin-mcp-ts@4.5.10|gopd@1.2.0"
+        "garmin-mcp-ts@4.6.0|call-bind-apply-helpers@1.0.2",
+        "garmin-mcp-ts@4.6.0|es-errors@1.3.0",
+        "garmin-mcp-ts@4.6.0|gopd@1.2.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|ee-first@1.1.1"
+      "ref": "garmin-mcp-ts@4.6.0|ee-first@1.1.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|encodeurl@2.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|encodeurl@2.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|end-of-stream@1.4.5",
+      "ref": "garmin-mcp-ts@4.6.0|end-of-stream@1.4.5",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|once@1.4.0"
+        "garmin-mcp-ts@4.6.0|once@1.4.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|es-define-property@1.0.1"
+      "ref": "garmin-mcp-ts@4.6.0|es-define-property@1.0.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|es-errors@1.3.0"
+      "ref": "garmin-mcp-ts@4.6.0|es-errors@1.3.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|es-object-atoms@1.1.1",
+      "ref": "garmin-mcp-ts@4.6.0|es-object-atoms@1.1.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|es-errors@1.3.0"
+        "garmin-mcp-ts@4.6.0|es-errors@1.3.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|es-set-tostringtag@2.1.0",
+      "ref": "garmin-mcp-ts@4.6.0|es-set-tostringtag@2.1.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|es-errors@1.3.0",
-        "garmin-mcp-ts@4.5.10|get-intrinsic@1.3.0",
-        "garmin-mcp-ts@4.5.10|has-tostringtag@1.0.2",
-        "garmin-mcp-ts@4.5.10|hasown@2.0.2"
+        "garmin-mcp-ts@4.6.0|es-errors@1.3.0",
+        "garmin-mcp-ts@4.6.0|get-intrinsic@1.3.0",
+        "garmin-mcp-ts@4.6.0|has-tostringtag@1.0.2",
+        "garmin-mcp-ts@4.6.0|hasown@2.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|escape-html@1.0.3"
+      "ref": "garmin-mcp-ts@4.6.0|escape-html@1.0.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|etag@1.8.1"
+      "ref": "garmin-mcp-ts@4.6.0|etag@1.8.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|eventsource-parser@3.0.6"
+      "ref": "garmin-mcp-ts@4.6.0|eventsource-parser@3.0.6"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|eventsource@3.0.7",
+      "ref": "garmin-mcp-ts@4.6.0|eventsource@3.0.7",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|eventsource-parser@3.0.6"
+        "garmin-mcp-ts@4.6.0|eventsource-parser@3.0.6"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|expand-template@2.0.3"
+      "ref": "garmin-mcp-ts@4.6.0|expand-template@2.0.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|express-rate-limit@8.3.0",
+      "ref": "garmin-mcp-ts@4.6.0|express-rate-limit@8.3.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|express@5.2.1",
-        "garmin-mcp-ts@4.5.10|ip-address@10.5.0"
+        "garmin-mcp-ts@4.6.0|express@5.2.1",
+        "garmin-mcp-ts@4.6.0|ip-address@10.5.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|express@5.2.1",
+      "ref": "garmin-mcp-ts@4.6.0|express@5.2.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|accepts@2.0.0",
-        "garmin-mcp-ts@4.5.10|body-parser@2.3.0",
-        "garmin-mcp-ts@4.5.10|content-disposition@1.0.1",
-        "garmin-mcp-ts@4.5.10|content-type@1.0.5",
-        "garmin-mcp-ts@4.5.10|cookie-signature@1.2.2",
-        "garmin-mcp-ts@4.5.10|cookie@0.7.2",
-        "garmin-mcp-ts@4.5.10|debug@4.4.3",
-        "garmin-mcp-ts@4.5.10|depd@2.0.0",
-        "garmin-mcp-ts@4.5.10|encodeurl@2.0.0",
-        "garmin-mcp-ts@4.5.10|escape-html@1.0.3",
-        "garmin-mcp-ts@4.5.10|etag@1.8.1",
-        "garmin-mcp-ts@4.5.10|express@5.2.1|mime-types@3.0.2",
-        "garmin-mcp-ts@4.5.10|finalhandler@2.1.1",
-        "garmin-mcp-ts@4.5.10|fresh@2.0.0",
-        "garmin-mcp-ts@4.5.10|http-errors@2.0.1",
-        "garmin-mcp-ts@4.5.10|merge-descriptors@2.0.0",
-        "garmin-mcp-ts@4.5.10|on-finished@2.4.1",
-        "garmin-mcp-ts@4.5.10|once@1.4.0",
-        "garmin-mcp-ts@4.5.10|parseurl@1.3.3",
-        "garmin-mcp-ts@4.5.10|proxy-addr@2.0.7",
-        "garmin-mcp-ts@4.5.10|qs@6.16.0",
-        "garmin-mcp-ts@4.5.10|range-parser@1.2.1",
-        "garmin-mcp-ts@4.5.10|router@2.2.0",
-        "garmin-mcp-ts@4.5.10|send@1.2.1",
-        "garmin-mcp-ts@4.5.10|serve-static@2.2.1",
-        "garmin-mcp-ts@4.5.10|statuses@2.0.2",
-        "garmin-mcp-ts@4.5.10|type-is@2.1.0",
-        "garmin-mcp-ts@4.5.10|vary@1.1.2"
+        "garmin-mcp-ts@4.6.0|accepts@2.0.0",
+        "garmin-mcp-ts@4.6.0|body-parser@2.3.0",
+        "garmin-mcp-ts@4.6.0|content-disposition@1.0.1",
+        "garmin-mcp-ts@4.6.0|content-type@1.0.5",
+        "garmin-mcp-ts@4.6.0|cookie-signature@1.2.2",
+        "garmin-mcp-ts@4.6.0|cookie@0.7.2",
+        "garmin-mcp-ts@4.6.0|debug@4.4.3",
+        "garmin-mcp-ts@4.6.0|depd@2.0.0",
+        "garmin-mcp-ts@4.6.0|encodeurl@2.0.0",
+        "garmin-mcp-ts@4.6.0|escape-html@1.0.3",
+        "garmin-mcp-ts@4.6.0|etag@1.8.1",
+        "garmin-mcp-ts@4.6.0|express@5.2.1|mime-types@3.0.2",
+        "garmin-mcp-ts@4.6.0|finalhandler@2.1.1",
+        "garmin-mcp-ts@4.6.0|fresh@2.0.0",
+        "garmin-mcp-ts@4.6.0|http-errors@2.0.1",
+        "garmin-mcp-ts@4.6.0|merge-descriptors@2.0.0",
+        "garmin-mcp-ts@4.6.0|on-finished@2.4.1",
+        "garmin-mcp-ts@4.6.0|once@1.4.0",
+        "garmin-mcp-ts@4.6.0|parseurl@1.3.3",
+        "garmin-mcp-ts@4.6.0|proxy-addr@2.0.7",
+        "garmin-mcp-ts@4.6.0|qs@6.16.0",
+        "garmin-mcp-ts@4.6.0|range-parser@1.2.1",
+        "garmin-mcp-ts@4.6.0|router@2.2.0",
+        "garmin-mcp-ts@4.6.0|send@1.2.1",
+        "garmin-mcp-ts@4.6.0|serve-static@2.2.1",
+        "garmin-mcp-ts@4.6.0|statuses@2.0.2",
+        "garmin-mcp-ts@4.6.0|type-is@2.1.0",
+        "garmin-mcp-ts@4.6.0|vary@1.1.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|express@5.2.1|mime-db@1.54.0"
+      "ref": "garmin-mcp-ts@4.6.0|express@5.2.1|mime-db@1.54.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|express@5.2.1|mime-types@3.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|express@5.2.1|mime-types@3.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|express@5.2.1|mime-db@1.54.0"
+        "garmin-mcp-ts@4.6.0|express@5.2.1|mime-db@1.54.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|fast-deep-equal@3.1.3"
+      "ref": "garmin-mcp-ts@4.6.0|fast-deep-equal@3.1.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|fast-uri@4.1.4"
+      "ref": "garmin-mcp-ts@4.6.0|fast-uri@4.1.4"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|finalhandler@2.1.1",
+      "ref": "garmin-mcp-ts@4.6.0|finalhandler@2.1.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|debug@4.4.3",
-        "garmin-mcp-ts@4.5.10|encodeurl@2.0.0",
-        "garmin-mcp-ts@4.5.10|escape-html@1.0.3",
-        "garmin-mcp-ts@4.5.10|on-finished@2.4.1",
-        "garmin-mcp-ts@4.5.10|parseurl@1.3.3",
-        "garmin-mcp-ts@4.5.10|statuses@2.0.2"
+        "garmin-mcp-ts@4.6.0|debug@4.4.3",
+        "garmin-mcp-ts@4.6.0|encodeurl@2.0.0",
+        "garmin-mcp-ts@4.6.0|escape-html@1.0.3",
+        "garmin-mcp-ts@4.6.0|on-finished@2.4.1",
+        "garmin-mcp-ts@4.6.0|parseurl@1.3.3",
+        "garmin-mcp-ts@4.6.0|statuses@2.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|follow-redirects@1.16.0"
+      "ref": "garmin-mcp-ts@4.6.0|follow-redirects@1.16.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|form-data@4.0.6",
+      "ref": "garmin-mcp-ts@4.6.0|form-data@4.0.6",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|asynckit@0.4.0",
-        "garmin-mcp-ts@4.5.10|combined-stream@1.0.8",
-        "garmin-mcp-ts@4.5.10|es-set-tostringtag@2.1.0",
-        "garmin-mcp-ts@4.5.10|form-data@4.0.6|hasown@2.0.4",
-        "garmin-mcp-ts@4.5.10|mime-types@2.1.35"
+        "garmin-mcp-ts@4.6.0|asynckit@0.4.0",
+        "garmin-mcp-ts@4.6.0|combined-stream@1.0.8",
+        "garmin-mcp-ts@4.6.0|es-set-tostringtag@2.1.0",
+        "garmin-mcp-ts@4.6.0|form-data@4.0.6|hasown@2.0.4",
+        "garmin-mcp-ts@4.6.0|mime-types@2.1.35"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|form-data@4.0.6|hasown@2.0.4",
+      "ref": "garmin-mcp-ts@4.6.0|form-data@4.0.6|hasown@2.0.4",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|function-bind@1.1.2"
+        "garmin-mcp-ts@4.6.0|function-bind@1.1.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|forwarded@0.2.0"
+      "ref": "garmin-mcp-ts@4.6.0|forwarded@0.2.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|fresh@2.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|fresh@2.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|fs-constants@1.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|fs-constants@1.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|function-bind@1.1.2"
+      "ref": "garmin-mcp-ts@4.6.0|function-bind@1.1.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|garmin-connect@1.6.2",
+      "ref": "garmin-mcp-ts@4.6.0|garmin-connect@1.6.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|app-root-path@3.1.0",
-        "garmin-mcp-ts@4.5.10|axios@1.20.0",
-        "garmin-mcp-ts@4.5.10|crypto@1.0.1",
-        "garmin-mcp-ts@4.5.10|form-data@4.0.6",
-        "garmin-mcp-ts@4.5.10|lodash@4.18.1",
-        "garmin-mcp-ts@4.5.10|luxon@3.7.2",
-        "garmin-mcp-ts@4.5.10|oauth-1.0a@2.2.6",
-        "garmin-mcp-ts@4.5.10|qs@6.16.0"
+        "garmin-mcp-ts@4.6.0|app-root-path@3.1.0",
+        "garmin-mcp-ts@4.6.0|axios@1.20.0",
+        "garmin-mcp-ts@4.6.0|crypto@1.0.1",
+        "garmin-mcp-ts@4.6.0|form-data@4.0.6",
+        "garmin-mcp-ts@4.6.0|lodash@4.18.1",
+        "garmin-mcp-ts@4.6.0|luxon@3.7.2",
+        "garmin-mcp-ts@4.6.0|oauth-1.0a@2.2.6",
+        "garmin-mcp-ts@4.6.0|qs@6.16.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|get-intrinsic@1.3.0",
+      "ref": "garmin-mcp-ts@4.6.0|get-intrinsic@1.3.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|call-bind-apply-helpers@1.0.2",
-        "garmin-mcp-ts@4.5.10|es-define-property@1.0.1",
-        "garmin-mcp-ts@4.5.10|es-errors@1.3.0",
-        "garmin-mcp-ts@4.5.10|es-object-atoms@1.1.1",
-        "garmin-mcp-ts@4.5.10|function-bind@1.1.2",
-        "garmin-mcp-ts@4.5.10|get-proto@1.0.1",
-        "garmin-mcp-ts@4.5.10|gopd@1.2.0",
-        "garmin-mcp-ts@4.5.10|has-symbols@1.1.0",
-        "garmin-mcp-ts@4.5.10|hasown@2.0.2",
-        "garmin-mcp-ts@4.5.10|math-intrinsics@1.1.0"
+        "garmin-mcp-ts@4.6.0|call-bind-apply-helpers@1.0.2",
+        "garmin-mcp-ts@4.6.0|es-define-property@1.0.1",
+        "garmin-mcp-ts@4.6.0|es-errors@1.3.0",
+        "garmin-mcp-ts@4.6.0|es-object-atoms@1.1.1",
+        "garmin-mcp-ts@4.6.0|function-bind@1.1.2",
+        "garmin-mcp-ts@4.6.0|get-proto@1.0.1",
+        "garmin-mcp-ts@4.6.0|gopd@1.2.0",
+        "garmin-mcp-ts@4.6.0|has-symbols@1.1.0",
+        "garmin-mcp-ts@4.6.0|hasown@2.0.2",
+        "garmin-mcp-ts@4.6.0|math-intrinsics@1.1.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|get-proto@1.0.1",
+      "ref": "garmin-mcp-ts@4.6.0|get-proto@1.0.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|dunder-proto@1.0.1",
-        "garmin-mcp-ts@4.5.10|es-object-atoms@1.1.1"
+        "garmin-mcp-ts@4.6.0|dunder-proto@1.0.1",
+        "garmin-mcp-ts@4.6.0|es-object-atoms@1.1.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|github-from-package@0.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|github-from-package@0.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|gopd@1.2.0"
+      "ref": "garmin-mcp-ts@4.6.0|gopd@1.2.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|has-symbols@1.1.0"
+      "ref": "garmin-mcp-ts@4.6.0|has-symbols@1.1.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|has-tostringtag@1.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|has-tostringtag@1.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|has-symbols@1.1.0"
+        "garmin-mcp-ts@4.6.0|has-symbols@1.1.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|hasown@2.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|hasown@2.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|function-bind@1.1.2"
+        "garmin-mcp-ts@4.6.0|function-bind@1.1.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|hono@4.13.7"
+      "ref": "garmin-mcp-ts@4.6.0|hono@4.13.7"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|http-errors@2.0.1",
+      "ref": "garmin-mcp-ts@4.6.0|http-errors@2.0.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|depd@2.0.0",
-        "garmin-mcp-ts@4.5.10|inherits@2.0.4",
-        "garmin-mcp-ts@4.5.10|setprototypeof@1.2.0",
-        "garmin-mcp-ts@4.5.10|statuses@2.0.2",
-        "garmin-mcp-ts@4.5.10|toidentifier@1.0.1"
+        "garmin-mcp-ts@4.6.0|depd@2.0.0",
+        "garmin-mcp-ts@4.6.0|inherits@2.0.4",
+        "garmin-mcp-ts@4.6.0|setprototypeof@1.2.0",
+        "garmin-mcp-ts@4.6.0|statuses@2.0.2",
+        "garmin-mcp-ts@4.6.0|toidentifier@1.0.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|https-proxy-agent@5.0.1",
+      "ref": "garmin-mcp-ts@4.6.0|https-proxy-agent@5.0.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|agent-base@6.0.2",
-        "garmin-mcp-ts@4.5.10|debug@4.4.3"
+        "garmin-mcp-ts@4.6.0|agent-base@6.0.2",
+        "garmin-mcp-ts@4.6.0|debug@4.4.3"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|iconv-lite@0.7.2",
+      "ref": "garmin-mcp-ts@4.6.0|iconv-lite@0.7.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|safer-buffer@2.1.2"
+        "garmin-mcp-ts@4.6.0|safer-buffer@2.1.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|ieee754@1.2.1"
+      "ref": "garmin-mcp-ts@4.6.0|ieee754@1.2.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|inherits@2.0.4"
+      "ref": "garmin-mcp-ts@4.6.0|inherits@2.0.4"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|ini@1.3.8"
+      "ref": "garmin-mcp-ts@4.6.0|ini@1.3.8"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|ip-address@10.5.0"
+      "ref": "garmin-mcp-ts@4.6.0|ip-address@10.5.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|ipaddr.js@1.9.1"
+      "ref": "garmin-mcp-ts@4.6.0|ipaddr.js@1.9.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|is-promise@4.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|is-promise@4.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|isexe@2.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|isexe@2.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|jose@6.1.3"
+      "ref": "garmin-mcp-ts@4.6.0|jose@6.1.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|json-schema-traverse@1.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|json-schema-traverse@1.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|json-schema-typed@8.0.2"
+      "ref": "garmin-mcp-ts@4.6.0|json-schema-typed@8.0.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|keytar@7.9.0",
+      "ref": "garmin-mcp-ts@4.6.0|keytar@7.9.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|node-addon-api@4.3.0",
-        "garmin-mcp-ts@4.5.10|prebuild-install@7.1.3"
+        "garmin-mcp-ts@4.6.0|node-addon-api@4.3.0",
+        "garmin-mcp-ts@4.6.0|prebuild-install@7.1.3"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|lodash@4.18.1"
+      "ref": "garmin-mcp-ts@4.6.0|lodash@4.18.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|luxon@3.7.2"
+      "ref": "garmin-mcp-ts@4.6.0|luxon@3.7.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|math-intrinsics@1.1.0"
+      "ref": "garmin-mcp-ts@4.6.0|math-intrinsics@1.1.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|media-typer@1.1.0"
+      "ref": "garmin-mcp-ts@4.6.0|media-typer@1.1.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|merge-descriptors@2.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|merge-descriptors@2.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|mime-db@1.52.0"
+      "ref": "garmin-mcp-ts@4.6.0|mime-db@1.52.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|mime-types@2.1.35",
+      "ref": "garmin-mcp-ts@4.6.0|mime-types@2.1.35",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|mime-db@1.52.0"
+        "garmin-mcp-ts@4.6.0|mime-db@1.52.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|mimic-response@3.1.0"
+      "ref": "garmin-mcp-ts@4.6.0|mimic-response@3.1.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|minimist@1.2.8"
+      "ref": "garmin-mcp-ts@4.6.0|minimist@1.2.8"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|mkdirp-classic@0.5.3"
+      "ref": "garmin-mcp-ts@4.6.0|mkdirp-classic@0.5.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|ms@2.1.3"
+      "ref": "garmin-mcp-ts@4.6.0|ms@2.1.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|napi-build-utils@2.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|napi-build-utils@2.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|negotiator@1.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|negotiator@1.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|node-abi@3.85.0",
+      "ref": "garmin-mcp-ts@4.6.0|node-abi@3.85.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|semver@7.7.3"
+        "garmin-mcp-ts@4.6.0|semver@7.7.3"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|node-addon-api@4.3.0"
+      "ref": "garmin-mcp-ts@4.6.0|node-addon-api@4.3.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|oauth-1.0a@2.2.6"
+      "ref": "garmin-mcp-ts@4.6.0|oauth-1.0a@2.2.6"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|object-assign@4.1.1"
+      "ref": "garmin-mcp-ts@4.6.0|object-assign@4.1.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|object-inspect@1.13.4"
+      "ref": "garmin-mcp-ts@4.6.0|object-inspect@1.13.4"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|on-finished@2.4.1",
+      "ref": "garmin-mcp-ts@4.6.0|on-finished@2.4.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|ee-first@1.1.1"
+        "garmin-mcp-ts@4.6.0|ee-first@1.1.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|once@1.4.0",
+      "ref": "garmin-mcp-ts@4.6.0|once@1.4.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|wrappy@1.0.2"
+        "garmin-mcp-ts@4.6.0|wrappy@1.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|parseurl@1.3.3"
+      "ref": "garmin-mcp-ts@4.6.0|parseurl@1.3.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|path-key@3.1.1"
+      "ref": "garmin-mcp-ts@4.6.0|path-key@3.1.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|path-to-regexp@8.4.2"
+      "ref": "garmin-mcp-ts@4.6.0|path-to-regexp@8.4.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|prebuild-install@7.1.3",
+      "ref": "garmin-mcp-ts@4.6.0|prebuild-install@7.1.3",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|detect-libc@2.1.2",
-        "garmin-mcp-ts@4.5.10|expand-template@2.0.3",
-        "garmin-mcp-ts@4.5.10|github-from-package@0.0.0",
-        "garmin-mcp-ts@4.5.10|minimist@1.2.8",
-        "garmin-mcp-ts@4.5.10|mkdirp-classic@0.5.3",
-        "garmin-mcp-ts@4.5.10|napi-build-utils@2.0.0",
-        "garmin-mcp-ts@4.5.10|node-abi@3.85.0",
-        "garmin-mcp-ts@4.5.10|pump@3.0.3",
-        "garmin-mcp-ts@4.5.10|rc@1.2.8",
-        "garmin-mcp-ts@4.5.10|simple-get@4.0.1",
-        "garmin-mcp-ts@4.5.10|tar-fs@2.1.4",
-        "garmin-mcp-ts@4.5.10|tunnel-agent@0.6.0"
+        "garmin-mcp-ts@4.6.0|detect-libc@2.1.2",
+        "garmin-mcp-ts@4.6.0|expand-template@2.0.3",
+        "garmin-mcp-ts@4.6.0|github-from-package@0.0.0",
+        "garmin-mcp-ts@4.6.0|minimist@1.2.8",
+        "garmin-mcp-ts@4.6.0|mkdirp-classic@0.5.3",
+        "garmin-mcp-ts@4.6.0|napi-build-utils@2.0.0",
+        "garmin-mcp-ts@4.6.0|node-abi@3.85.0",
+        "garmin-mcp-ts@4.6.0|pump@3.0.3",
+        "garmin-mcp-ts@4.6.0|rc@1.2.8",
+        "garmin-mcp-ts@4.6.0|simple-get@4.0.1",
+        "garmin-mcp-ts@4.6.0|tar-fs@2.1.4",
+        "garmin-mcp-ts@4.6.0|tunnel-agent@0.6.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|proxy-addr@2.0.7",
+      "ref": "garmin-mcp-ts@4.6.0|proxy-addr@2.0.7",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|forwarded@0.2.0",
-        "garmin-mcp-ts@4.5.10|ipaddr.js@1.9.1"
+        "garmin-mcp-ts@4.6.0|forwarded@0.2.0",
+        "garmin-mcp-ts@4.6.0|ipaddr.js@1.9.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|proxy-from-env@2.1.0"
+      "ref": "garmin-mcp-ts@4.6.0|proxy-from-env@2.1.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|pump@3.0.3",
+      "ref": "garmin-mcp-ts@4.6.0|pump@3.0.3",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|end-of-stream@1.4.5",
-        "garmin-mcp-ts@4.5.10|once@1.4.0"
+        "garmin-mcp-ts@4.6.0|end-of-stream@1.4.5",
+        "garmin-mcp-ts@4.6.0|once@1.4.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|qs@6.16.0",
+      "ref": "garmin-mcp-ts@4.6.0|qs@6.16.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|es-define-property@1.0.1",
-        "garmin-mcp-ts@4.5.10|side-channel@1.1.1"
+        "garmin-mcp-ts@4.6.0|es-define-property@1.0.1",
+        "garmin-mcp-ts@4.6.0|side-channel@1.1.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|range-parser@1.2.1"
+      "ref": "garmin-mcp-ts@4.6.0|range-parser@1.2.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|raw-body@3.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|raw-body@3.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|bytes@3.1.2",
-        "garmin-mcp-ts@4.5.10|http-errors@2.0.1",
-        "garmin-mcp-ts@4.5.10|iconv-lite@0.7.2",
-        "garmin-mcp-ts@4.5.10|unpipe@1.0.0"
+        "garmin-mcp-ts@4.6.0|bytes@3.1.2",
+        "garmin-mcp-ts@4.6.0|http-errors@2.0.1",
+        "garmin-mcp-ts@4.6.0|iconv-lite@0.7.2",
+        "garmin-mcp-ts@4.6.0|unpipe@1.0.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|rc@1.2.8",
+      "ref": "garmin-mcp-ts@4.6.0|rc@1.2.8",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|deep-extend@0.6.0",
-        "garmin-mcp-ts@4.5.10|ini@1.3.8",
-        "garmin-mcp-ts@4.5.10|minimist@1.2.8",
-        "garmin-mcp-ts@4.5.10|rc@1.2.8|strip-json-comments@2.0.1"
+        "garmin-mcp-ts@4.6.0|deep-extend@0.6.0",
+        "garmin-mcp-ts@4.6.0|ini@1.3.8",
+        "garmin-mcp-ts@4.6.0|minimist@1.2.8",
+        "garmin-mcp-ts@4.6.0|rc@1.2.8|strip-json-comments@2.0.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|rc@1.2.8|strip-json-comments@2.0.1"
+      "ref": "garmin-mcp-ts@4.6.0|rc@1.2.8|strip-json-comments@2.0.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|require-from-string@2.0.2"
+      "ref": "garmin-mcp-ts@4.6.0|require-from-string@2.0.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|router@2.2.0",
+      "ref": "garmin-mcp-ts@4.6.0|router@2.2.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|debug@4.4.3",
-        "garmin-mcp-ts@4.5.10|depd@2.0.0",
-        "garmin-mcp-ts@4.5.10|is-promise@4.0.0",
-        "garmin-mcp-ts@4.5.10|parseurl@1.3.3",
-        "garmin-mcp-ts@4.5.10|path-to-regexp@8.4.2"
+        "garmin-mcp-ts@4.6.0|debug@4.4.3",
+        "garmin-mcp-ts@4.6.0|depd@2.0.0",
+        "garmin-mcp-ts@4.6.0|is-promise@4.0.0",
+        "garmin-mcp-ts@4.6.0|parseurl@1.3.3",
+        "garmin-mcp-ts@4.6.0|path-to-regexp@8.4.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|safe-buffer@5.2.1"
+      "ref": "garmin-mcp-ts@4.6.0|safe-buffer@5.2.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|safer-buffer@2.1.2"
+      "ref": "garmin-mcp-ts@4.6.0|safer-buffer@2.1.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|semver@7.7.3"
+      "ref": "garmin-mcp-ts@4.6.0|semver@7.7.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|send@1.2.1",
+      "ref": "garmin-mcp-ts@4.6.0|send@1.2.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|debug@4.4.3",
-        "garmin-mcp-ts@4.5.10|encodeurl@2.0.0",
-        "garmin-mcp-ts@4.5.10|escape-html@1.0.3",
-        "garmin-mcp-ts@4.5.10|etag@1.8.1",
-        "garmin-mcp-ts@4.5.10|fresh@2.0.0",
-        "garmin-mcp-ts@4.5.10|http-errors@2.0.1",
-        "garmin-mcp-ts@4.5.10|ms@2.1.3",
-        "garmin-mcp-ts@4.5.10|on-finished@2.4.1",
-        "garmin-mcp-ts@4.5.10|range-parser@1.2.1",
-        "garmin-mcp-ts@4.5.10|send@1.2.1|mime-types@3.0.2",
-        "garmin-mcp-ts@4.5.10|statuses@2.0.2"
+        "garmin-mcp-ts@4.6.0|debug@4.4.3",
+        "garmin-mcp-ts@4.6.0|encodeurl@2.0.0",
+        "garmin-mcp-ts@4.6.0|escape-html@1.0.3",
+        "garmin-mcp-ts@4.6.0|etag@1.8.1",
+        "garmin-mcp-ts@4.6.0|fresh@2.0.0",
+        "garmin-mcp-ts@4.6.0|http-errors@2.0.1",
+        "garmin-mcp-ts@4.6.0|ms@2.1.3",
+        "garmin-mcp-ts@4.6.0|on-finished@2.4.1",
+        "garmin-mcp-ts@4.6.0|range-parser@1.2.1",
+        "garmin-mcp-ts@4.6.0|send@1.2.1|mime-types@3.0.2",
+        "garmin-mcp-ts@4.6.0|statuses@2.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|send@1.2.1|mime-db@1.54.0"
+      "ref": "garmin-mcp-ts@4.6.0|send@1.2.1|mime-db@1.54.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|send@1.2.1|mime-types@3.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|send@1.2.1|mime-types@3.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|send@1.2.1|mime-db@1.54.0"
+        "garmin-mcp-ts@4.6.0|send@1.2.1|mime-db@1.54.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|serve-static@2.2.1",
+      "ref": "garmin-mcp-ts@4.6.0|serve-static@2.2.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|encodeurl@2.0.0",
-        "garmin-mcp-ts@4.5.10|escape-html@1.0.3",
-        "garmin-mcp-ts@4.5.10|parseurl@1.3.3",
-        "garmin-mcp-ts@4.5.10|send@1.2.1"
+        "garmin-mcp-ts@4.6.0|encodeurl@2.0.0",
+        "garmin-mcp-ts@4.6.0|escape-html@1.0.3",
+        "garmin-mcp-ts@4.6.0|parseurl@1.3.3",
+        "garmin-mcp-ts@4.6.0|send@1.2.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|setprototypeof@1.2.0"
+      "ref": "garmin-mcp-ts@4.6.0|setprototypeof@1.2.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|shebang-command@2.0.0",
+      "ref": "garmin-mcp-ts@4.6.0|shebang-command@2.0.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|shebang-regex@3.0.0"
+        "garmin-mcp-ts@4.6.0|shebang-regex@3.0.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|shebang-regex@3.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|shebang-regex@3.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|side-channel-list@1.0.1",
+      "ref": "garmin-mcp-ts@4.6.0|side-channel-list@1.0.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|es-errors@1.3.0",
-        "garmin-mcp-ts@4.5.10|object-inspect@1.13.4"
+        "garmin-mcp-ts@4.6.0|es-errors@1.3.0",
+        "garmin-mcp-ts@4.6.0|object-inspect@1.13.4"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|side-channel-map@1.0.1",
+      "ref": "garmin-mcp-ts@4.6.0|side-channel-map@1.0.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|call-bound@1.0.4",
-        "garmin-mcp-ts@4.5.10|es-errors@1.3.0",
-        "garmin-mcp-ts@4.5.10|get-intrinsic@1.3.0",
-        "garmin-mcp-ts@4.5.10|object-inspect@1.13.4"
+        "garmin-mcp-ts@4.6.0|call-bound@1.0.4",
+        "garmin-mcp-ts@4.6.0|es-errors@1.3.0",
+        "garmin-mcp-ts@4.6.0|get-intrinsic@1.3.0",
+        "garmin-mcp-ts@4.6.0|object-inspect@1.13.4"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|side-channel-weakmap@1.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|side-channel-weakmap@1.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|call-bound@1.0.4",
-        "garmin-mcp-ts@4.5.10|es-errors@1.3.0",
-        "garmin-mcp-ts@4.5.10|get-intrinsic@1.3.0",
-        "garmin-mcp-ts@4.5.10|object-inspect@1.13.4",
-        "garmin-mcp-ts@4.5.10|side-channel-map@1.0.1"
+        "garmin-mcp-ts@4.6.0|call-bound@1.0.4",
+        "garmin-mcp-ts@4.6.0|es-errors@1.3.0",
+        "garmin-mcp-ts@4.6.0|get-intrinsic@1.3.0",
+        "garmin-mcp-ts@4.6.0|object-inspect@1.13.4",
+        "garmin-mcp-ts@4.6.0|side-channel-map@1.0.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|side-channel@1.1.1",
+      "ref": "garmin-mcp-ts@4.6.0|side-channel@1.1.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|es-errors@1.3.0",
-        "garmin-mcp-ts@4.5.10|object-inspect@1.13.4",
-        "garmin-mcp-ts@4.5.10|side-channel-list@1.0.1",
-        "garmin-mcp-ts@4.5.10|side-channel-map@1.0.1",
-        "garmin-mcp-ts@4.5.10|side-channel-weakmap@1.0.2"
+        "garmin-mcp-ts@4.6.0|es-errors@1.3.0",
+        "garmin-mcp-ts@4.6.0|object-inspect@1.13.4",
+        "garmin-mcp-ts@4.6.0|side-channel-list@1.0.1",
+        "garmin-mcp-ts@4.6.0|side-channel-map@1.0.1",
+        "garmin-mcp-ts@4.6.0|side-channel-weakmap@1.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|simple-concat@1.0.1"
+      "ref": "garmin-mcp-ts@4.6.0|simple-concat@1.0.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|simple-get@4.0.1",
+      "ref": "garmin-mcp-ts@4.6.0|simple-get@4.0.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|decompress-response@6.0.0",
-        "garmin-mcp-ts@4.5.10|once@1.4.0",
-        "garmin-mcp-ts@4.5.10|simple-concat@1.0.1"
+        "garmin-mcp-ts@4.6.0|decompress-response@6.0.0",
+        "garmin-mcp-ts@4.6.0|once@1.4.0",
+        "garmin-mcp-ts@4.6.0|simple-concat@1.0.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|statuses@2.0.2"
+      "ref": "garmin-mcp-ts@4.6.0|statuses@2.0.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|string_decoder@1.3.0",
+      "ref": "garmin-mcp-ts@4.6.0|string_decoder@1.3.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|safe-buffer@5.2.1"
+        "garmin-mcp-ts@4.6.0|safe-buffer@5.2.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|tar-fs@2.1.4",
+      "ref": "garmin-mcp-ts@4.6.0|tar-fs@2.1.4",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|chownr@1.1.4",
-        "garmin-mcp-ts@4.5.10|mkdirp-classic@0.5.3",
-        "garmin-mcp-ts@4.5.10|pump@3.0.3",
-        "garmin-mcp-ts@4.5.10|tar-stream@2.2.0"
+        "garmin-mcp-ts@4.6.0|chownr@1.1.4",
+        "garmin-mcp-ts@4.6.0|mkdirp-classic@0.5.3",
+        "garmin-mcp-ts@4.6.0|pump@3.0.3",
+        "garmin-mcp-ts@4.6.0|tar-stream@2.2.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|tar-stream@2.2.0",
+      "ref": "garmin-mcp-ts@4.6.0|tar-stream@2.2.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|bl@4.1.0",
-        "garmin-mcp-ts@4.5.10|end-of-stream@1.4.5",
-        "garmin-mcp-ts@4.5.10|fs-constants@1.0.0",
-        "garmin-mcp-ts@4.5.10|inherits@2.0.4",
-        "garmin-mcp-ts@4.5.10|tar-stream@2.2.0|readable-stream@3.6.2"
+        "garmin-mcp-ts@4.6.0|bl@4.1.0",
+        "garmin-mcp-ts@4.6.0|end-of-stream@1.4.5",
+        "garmin-mcp-ts@4.6.0|fs-constants@1.0.0",
+        "garmin-mcp-ts@4.6.0|inherits@2.0.4",
+        "garmin-mcp-ts@4.6.0|tar-stream@2.2.0|readable-stream@3.6.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|tar-stream@2.2.0|readable-stream@3.6.2",
+      "ref": "garmin-mcp-ts@4.6.0|tar-stream@2.2.0|readable-stream@3.6.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|inherits@2.0.4",
-        "garmin-mcp-ts@4.5.10|string_decoder@1.3.0",
-        "garmin-mcp-ts@4.5.10|util-deprecate@1.0.2"
+        "garmin-mcp-ts@4.6.0|inherits@2.0.4",
+        "garmin-mcp-ts@4.6.0|string_decoder@1.3.0",
+        "garmin-mcp-ts@4.6.0|util-deprecate@1.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|toidentifier@1.0.1"
+      "ref": "garmin-mcp-ts@4.6.0|toidentifier@1.0.1"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|tunnel-agent@0.6.0",
+      "ref": "garmin-mcp-ts@4.6.0|tunnel-agent@0.6.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|safe-buffer@5.2.1"
+        "garmin-mcp-ts@4.6.0|safe-buffer@5.2.1"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|type-is@2.1.0",
+      "ref": "garmin-mcp-ts@4.6.0|type-is@2.1.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|media-typer@1.1.0",
-        "garmin-mcp-ts@4.5.10|type-is@2.1.0|content-type@2.0.0",
-        "garmin-mcp-ts@4.5.10|type-is@2.1.0|mime-types@3.0.2"
+        "garmin-mcp-ts@4.6.0|media-typer@1.1.0",
+        "garmin-mcp-ts@4.6.0|type-is@2.1.0|content-type@2.0.0",
+        "garmin-mcp-ts@4.6.0|type-is@2.1.0|mime-types@3.0.2"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|type-is@2.1.0|content-type@2.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|type-is@2.1.0|content-type@2.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|type-is@2.1.0|mime-db@1.54.0"
+      "ref": "garmin-mcp-ts@4.6.0|type-is@2.1.0|mime-db@1.54.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|type-is@2.1.0|mime-types@3.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|type-is@2.1.0|mime-types@3.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|type-is@2.1.0|mime-db@1.54.0"
+        "garmin-mcp-ts@4.6.0|type-is@2.1.0|mime-db@1.54.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|unpipe@1.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|unpipe@1.0.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|util-deprecate@1.0.2"
+      "ref": "garmin-mcp-ts@4.6.0|util-deprecate@1.0.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|vary@1.1.2"
+      "ref": "garmin-mcp-ts@4.6.0|vary@1.1.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|which@2.0.2",
+      "ref": "garmin-mcp-ts@4.6.0|which@2.0.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|isexe@2.0.0"
+        "garmin-mcp-ts@4.6.0|isexe@2.0.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|wrappy@1.0.2"
+      "ref": "garmin-mcp-ts@4.6.0|wrappy@1.0.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|zod-to-json-schema@3.25.1",
+      "ref": "garmin-mcp-ts@4.6.0|zod-to-json-schema@3.25.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.5.10|zod@4.4.3"
+        "garmin-mcp-ts@4.6.0|zod@4.4.3"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.5.10|zod@4.4.3"
+      "ref": "garmin-mcp-ts@4.6.0|zod@4.4.3"
     }
   ]
 }
