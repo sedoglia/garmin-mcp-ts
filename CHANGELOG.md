@@ -10,6 +10,38 @@ recente alla più vecchia. Il progetto adotta il
 > precedenti sono ricostruite dai messaggi di commit, dai tag di release e dalle
 > versioni storiche dei README.
 
+## [4.6.0] - 2026-09-21 — SBOM del bundle
+
+Nessuna modifica agli strumenti, che restano 110. Ogni release da qui in avanti
+pubblica l'inventario delle dipendenze che spedisce, e il bundle viene ricostruito
+con dotenv 18.
+
+### ✨ SBOM in formato CycloneDX
+- **[`sbom.cdx.json`](sbom.cdx.json)** elenca cosa finisce nel bundle `.mcpb`: le 139
+  dipendenze di produzione e opzionali risolte da `package-lock.json`, ciascuna con
+  licenza dichiarata, Package URL e hash del tarball (CycloneDX 1.6). È generato da
+  `@cyclonedx/cyclonedx-npm` in modalità riproducibile, quindi cambia solo quando cambia
+  una dipendenza.
+- Il workflow di release lo allega accanto a `.mcpb` e `.sha256` come
+  **`garmin-mcp-ts.sbom.cdx.json`**: descrive esattamente il bundle di quella release e
+  si può passare a `grype` o `trivy` senza installare nulla.
+- `npm run check:sbom` fa fallire la CI quando il file non corrisponde più al lockfile,
+  come già fa `check:manifest` per il manifest.
+- `package.json` acquisisce i campi `license`, `repository`, `homepage` e `bugs`: senza,
+  il componente radice dell'SBOM usciva senza licenza né riferimenti.
+- Entrambi i README hanno una sezione dedicata, con i comandi per verificare, rigenerare
+  e analizzare il file.
+
+### 📦 Aggiornamenti di versione
+- **dotenv** 17.4.2 → 18.0.0 (major): scompaiono il supporto a `.env.vault` e il
+  precaricamento con `node -r dotenv/config`; l'import `dotenv/config` resta, e il
+  messaggio «injected env» passa da stdout a stderr — un rischio in meno per un server
+  su stdio. Il server continua a chiamare `config({ processEnv, quiet })` come prima e
+  il comportamento non cambia.
+- **@types/node** 26.4.1 → 26.6.1 (solo sviluppo).
+
+`npm audit` su questa versione non segnala vulnerabilità.
+
 ## [4.5.10] - 2026-09-12 — Dipendenze aggiornate
 
 Nessuna modifica al codice del server, che continua a dichiarare 110 strumenti.
