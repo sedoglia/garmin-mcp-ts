@@ -98,6 +98,14 @@ jobs:
       - name: Validate manifest against the MCPB schema
         run: npm run validate:manifest
 
+      # Runs before the dev dependencies are pruned below, since the generator
+      # is one of them. The committed file is what gets attached, under a name
+      # that says which project it belongs to once downloaded on its own.
+      - name: Check SBOM is in sync
+        run: |
+          npm run check:sbom
+          cp sbom.cdx.json garmin-mcp-ts.sbom.cdx.json
+
       # A release tagged v4.3.1 carrying a 4.3.0 manifest is the first thing a
       # reviewer notices, so the tag and the manifest have to agree. Checked
       # before the tag is created, so a mismatch leaves nothing behind.
@@ -176,7 +184,7 @@ jobs:
             --draft \
             "${notes_arg[@]}" \
             --title "$TAG" \
-            garmin-mcp-ts.mcpb garmin-mcp-ts.mcpb.sha256
+            garmin-mcp-ts.mcpb garmin-mcp-ts.mcpb.sha256 garmin-mcp-ts.sbom.cdx.json
 
       # Editing the notes file and re-running is how a published release gets
       # its text fixed; the assets are not touched.
