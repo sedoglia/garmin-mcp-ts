@@ -52,7 +52,7 @@ coverage/
 # scripts/fetch-keytar-prebuilds.mjs
 vendor/
 
-# Releases (MCPB packages)
+# Local mirror of the published release assets, filled by npm run fetch:release
 releases/
 *.mcpb
 *.mcpb.sha256

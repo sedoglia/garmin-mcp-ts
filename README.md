@@ -628,6 +628,18 @@ La release nasce in bozza. La casella *publish* la pubblica: lanciando di nuovo 
 workflow sullo stesso tag con quella casella spuntata, la bozza esistente viene
 pubblicata senza toccarne gli allegati.
 
+Pubblicata la release, riporta in locale quello che gli utenti scaricano:
+
+```bash
+npm run fetch:release            # l'ultima release pubblicata
+npm run fetch:release -- v4.6.0  # un tag preciso
+```
+
+Gli allegati finiscono in `releases/` (ignorata da git), presi dalla release stessa e non
+da un pack locale, e il `.mcpb` viene verificato contro il suo `.sha256`. È il file da
+inviare alla directory MCP o da aprire in Claude Desktop per provare la build spedita;
+lo script vede solo le release pubblicate, una bozza non conta.
+
 Le note della release stanno in `.github/release-notes/<tag>.md`. Se il file esiste il
 workflow lo usa come testo della release, altrimenti ripiega sull'elenco automatico delle
 pull request. Per correggere il testo di una release già pubblicata basta modificare il
