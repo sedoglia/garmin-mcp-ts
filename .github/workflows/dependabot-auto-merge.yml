@@ -1,17 +1,24 @@
 name: Dependabot auto-merge
 
-# Merges Dependabot security patches without review, but only after the
-# project has been built from the pull request's own head commit.
+# Keeps sbom.cdx.json in step with every Dependabot lockfile bump, and merges
+# Dependabot security patches without review, but only after the project has
+# been built from the pull request's own head commit.
 on: pull_request
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+
+# A newer Dependabot push supersedes whatever this run was about to commit.
+concurrency:
+  group: dependabot-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   metadata:
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     outputs:
       is-security: ${{ steps.meta.outputs.dependency-group == 'security-patches' || steps.meta.outputs.ghsa-id != '' }}
     steps:
@@ -21,16 +28,112 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+  # Dependabot rewrites package-lock.json but not sbom.cdx.json, so every bump
+  # of a shipped dependency failed CI's SBOM check. The generator is
+  # cyclonedx-npm from the pull request's own lockfile - code that may have
+  # just changed - so it runs here with a read-only token and only hands the
+  # file on. The job that pushes never installs anything.
+  sbom:
+    needs: metadata
+    runs-on: ubuntu-latest
+    outputs:
+      stale: ${{ steps.check.outputs.stale }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      # check:sbom ignores the generator's npm version; regenerating only on a
+      # real difference keeps that noise out of the pull request.
+      - name: Regenerate SBOM if stale
+        id: check
+        run: |
+          if npm run check:sbom; then
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          else
+            npm run sbom
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.check.outputs.stale == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: sbom.cdx.json
+          retention-days: 1
+
+  sbom-commit:
+    needs: sbom
+    if: needs.sbom.outputs.stale == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    outputs:
+      sha: ${{ steps.push.outputs.sha }}
+    env:
+      BRANCH: ${{ github.event.pull_request.head.ref }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      # If Dependabot pushed again meanwhile, that push has its own run.
+      - name: Make sure the branch has not moved
+        run: test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: sbom
+          path: ${{ runner.temp }}/sbom
+
+      - name: Commit and push
+        id: push
+        run: |
+          node -e 'JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"))' "$RUNNER_TEMP/sbom/sbom.cdx.json"
+          mv "$RUNNER_TEMP/sbom/sbom.cdx.json" sbom.cdx.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: regenerate SBOM" -- sbom.cdx.json
+          git push origin "HEAD:refs/heads/$BRANCH"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      # A push made with GITHUB_TOKEN starts no workflows, so the new head
+      # would sit there with no CI at all. workflow_dispatch is the one event
+      # that token is allowed to fire.
+      - name: Run CI on the new head
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run ci.yml --ref "$BRANCH"
+
   # Version updates fall through this job and stay open for manual review.
   verify-and-merge:
-    needs: metadata
-    if: needs.metadata.outputs.is-security == 'true'
+    needs: [metadata, sbom, sbom-commit]
+    if: >-
+      !cancelled()
+      && needs.metadata.outputs.is-security == 'true'
+      && needs.sbom.result == 'success'
+      && (needs.sbom-commit.result == 'success' || needs.sbom-commit.result == 'skipped')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - uses: actions/setup-node@v7
         with:
@@ -53,8 +156,11 @@ jobs:
       # No approving review here: GITHUB_TOKEN is barred from approving pull
       # requests, so the step could only ever fail and leave the merge unrun.
       # main requires no review anyway - the build above is what gates this.
+      # --match-head-commit pins the merge to the head this run built, plus
+      # at most the SBOM commit above.
       - name: Merge
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr merge --squash --delete-branch "$PR_URL"
+          MERGE_SHA: ${{ needs.sbom-commit.outputs.sha || github.event.pull_request.head.sha }}
+        run: gh pr merge --squash --delete-branch --match-head-commit "$MERGE_SHA" "$PR_URL"
