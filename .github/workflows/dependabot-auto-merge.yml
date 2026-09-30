@@ -128,6 +128,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
 
     steps:
       - uses: actions/checkout@v7
@@ -164,3 +165,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MERGE_SHA: ${{ needs.sbom-commit.outputs.sha || github.event.pull_request.head.sha }}
         run: gh pr merge --squash --delete-branch --match-head-commit "$MERGE_SHA" "$PR_URL"
+
+      # Same GITHUB_TOKEN rule as in sbom-commit: the merge above pushes to
+      # main without starting CI there, so the squashed commit would land
+      # unchecked.
+      - name: Run CI on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run ci.yml --ref main
