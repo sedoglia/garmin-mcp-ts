@@ -9,7 +9,7 @@
         {
           "type": "application",
           "name": "npm",
-          "version": "11.6.4"
+          "version": "11.19.0"
         },
         {
           "type": "library",
@@ -1865,8 +1865,8 @@
     {
       "type": "library",
       "name": "express-rate-limit",
-      "version": "8.3.0",
-      "bom-ref": "garmin-mcp-ts@4.6.0|express-rate-limit@8.3.0",
+      "version": "8.7.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|express-rate-limit@8.7.0",
       "licenses": [
         {
           "license": {
@@ -1875,15 +1875,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/express-rate-limit@8.3.0",
+      "purl": "pkg:npm/express-rate-limit@8.7.0",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/express-rate-limit/-/express-rate-limit-8.3.0.tgz",
+          "url": "https://registry.npmjs.org/express-rate-limit/-/express-rate-limit-8.7.0.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "289cc16b063a7c1f4589919d13fd1a7ed7a967dd5895a188ad5f2f81b95133727c5fe747c7f6a2a30256c24c7a2c81b2baa1a200db234b0c2b6dbf2689f389e1"
+              "content": "84ec15ed63b15df8d1a403350d22566435f1dc68699700fc21fc2ec2fa200fc8b5427920a2cc3f1f8e6ce199c50141c30213e3958f612c1bc984a986332636ea"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -2859,8 +2859,8 @@
     {
       "type": "library",
       "name": "ip-address",
-      "version": "10.5.0",
-      "bom-ref": "garmin-mcp-ts@4.6.0|ip-address@10.5.0",
+      "version": "10.7.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ip-address@10.7.2",
       "licenses": [
         {
           "license": {
@@ -2869,15 +2869,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/ip-address@10.5.0",
+      "purl": "pkg:npm/ip-address@10.7.2",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/ip-address/-/ip-address-10.5.0.tgz",
+          "url": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.2.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "4794a754b26681862f7f6176660c120677a5cf91b8ab9031202dbbec60df51a35bad928d00d7010bb447a9861e3e5b337f8901a2556425ab86d198c71c5879e6"
+              "content": "ec7ff68054888adc5cd211b79ce2358254bc40ba3f10704514b93cbc45235d8ff1bb401d2fc8d9f54d48cced8f526d1dd83fe87d070089f6f483a38192df14ef"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -5500,7 +5500,7 @@
         "garmin-mcp-ts@4.6.0|cross-spawn@7.0.6",
         "garmin-mcp-ts@4.6.0|eventsource-parser@3.0.6",
         "garmin-mcp-ts@4.6.0|eventsource@3.0.7",
-        "garmin-mcp-ts@4.6.0|express-rate-limit@8.3.0",
+        "garmin-mcp-ts@4.6.0|express-rate-limit@8.7.0",
         "garmin-mcp-ts@4.6.0|express@5.2.1",
         "garmin-mcp-ts@4.6.0|hono@4.13.7",
         "garmin-mcp-ts@4.6.0|jose@6.1.3",
@@ -5751,10 +5751,11 @@
       "ref": "garmin-mcp-ts@4.6.0|expand-template@2.0.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|express-rate-limit@8.3.0",
+      "ref": "garmin-mcp-ts@4.6.0|express-rate-limit@8.7.0",
       "dependsOn": [
+        "garmin-mcp-ts@4.6.0|debug@4.4.3",
         "garmin-mcp-ts@4.6.0|express@5.2.1",
-        "garmin-mcp-ts@4.6.0|ip-address@10.5.0"
+        "garmin-mcp-ts@4.6.0|ip-address@10.7.2"
       ]
     },
     {
@@ -5939,7 +5940,7 @@
       "ref": "garmin-mcp-ts@4.6.0|ini@1.3.8"
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|ip-address@10.5.0"
+      "ref": "garmin-mcp-ts@4.6.0|ip-address@10.7.2"
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|ipaddr.js@1.9.1"
