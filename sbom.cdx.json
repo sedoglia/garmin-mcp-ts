@@ -183,8 +183,8 @@
       "type": "library",
       "name": "sdk",
       "group": "@modelcontextprotocol",
-      "version": "1.31.0",
-      "bom-ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.31.0",
+      "version": "1.32.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.32.1",
       "licenses": [
         {
           "license": {
@@ -193,15 +193,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40modelcontextprotocol/sdk@1.31.0",
+      "purl": "pkg:npm/%40modelcontextprotocol/sdk@1.32.1",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.31.0.tgz",
+          "url": "https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.32.1.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "52f4cc8273659c804eff6da86f645c5460e572f3ac950b3c4f9f7e15319d0342f6edadfd7dd185fc40c44cdb4354ae03646a70a2696c62945d03c5177152ffa7"
+              "content": "d83744f92243b732c4116cd8d598d8ed0f9570f85c5752a2b03df3238bb45d9ca4b6c8c7ba6d66c1b308f896ae954062d8e664f8a2408b6b8f5f3c627213e477"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -218,7 +218,7 @@
           "type": "library",
           "name": "pkce-challenge",
           "version": "5.0.1",
-          "bom-ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.31.0|pkce-challenge@5.0.1",
+          "bom-ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.32.1|pkce-challenge@5.0.1",
           "licenses": [
             {
               "license": {
@@ -1389,8 +1389,8 @@
     {
       "type": "library",
       "name": "dotenv",
-      "version": "18.0.5",
-      "bom-ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.5",
+      "version": "18.0.6",
+      "bom-ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.6",
       "licenses": [
         {
           "license": {
@@ -1399,15 +1399,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/dotenv@18.0.5",
+      "purl": "pkg:npm/dotenv@18.0.6",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/dotenv/-/dotenv-18.0.5.tgz",
+          "url": "https://registry.npmjs.org/dotenv/-/dotenv-18.0.6.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "681ac6bede8a863c5b1276ada8c58e32275fb70b2b0a20afaa1d72348181f50c85d09f9571690a0ccb2f60e126ed94bcda8895f814f5b133ad2250265254e9c1"
+              "content": "64c566a2157a0af009b63fbea5937282096e52dea16d1750031736f99eb7e512fafc01bfaee5efe651e7c9b505a3130f2ffcab4cbfedb05e29699bb697b440e9"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -5475,9 +5475,9 @@
     {
       "ref": "garmin-mcp-ts@4.6.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.31.0",
+        "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.32.1",
         "garmin-mcp-ts@4.6.0|axios@1.20.0",
-        "garmin-mcp-ts@4.6.0|dotenv@18.0.5",
+        "garmin-mcp-ts@4.6.0|dotenv@18.0.6",
         "garmin-mcp-ts@4.6.0|garmin-connect@1.6.2",
         "garmin-mcp-ts@4.6.0|keytar@7.9.0"
       ]
@@ -5489,10 +5489,10 @@
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.31.0",
+      "ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.32.1",
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|@hono/node-server@2.0.11",
-        "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.31.0|pkce-challenge@5.0.1",
+        "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.32.1|pkce-challenge@5.0.1",
         "garmin-mcp-ts@4.6.0|ajv-formats@3.0.1",
         "garmin-mcp-ts@4.6.0|ajv@8.18.0",
         "garmin-mcp-ts@4.6.0|content-type@1.0.5",
@@ -5511,7 +5511,7 @@
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.31.0|pkce-challenge@5.0.1"
+      "ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.32.1|pkce-challenge@5.0.1"
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|accepts@2.0.0",
@@ -5689,7 +5689,7 @@
       "ref": "garmin-mcp-ts@4.6.0|detect-libc@2.1.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.5"
+      "ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.6"
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|dunder-proto@1.0.1",
