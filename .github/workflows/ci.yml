@@ -5,8 +5,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  # Fired by the Dependabot workflow after it pushes a regenerated SBOM:
-  # pushes made with GITHUB_TOKEN do not trigger pull_request runs.
+  # Fired by sbom-sync.yml after a Dependabot auto-merge or an SBOM commit
+  # on main: pushes made with GITHUB_TOKEN do not trigger push runs.
   workflow_dispatch:
 
 permissions:
@@ -53,8 +53,11 @@ jobs:
 
       # sbom.cdx.json is generated from package-lock.json and committed, so a
       # dependency bump that forgets to regenerate it would publish a bill of
-      # materials describing the previous release.
+      # materials describing the previous release. Dependabot pull requests
+      # are the exception: Dependabot does not regenerate it, and
+      # sbom-sync.yml does that on main right after the merge.
       - name: Check SBOM is in sync
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
         run: npm run check:sbom
 
       # Reported, not enforced: a fresh advisory should not turn unrelated
