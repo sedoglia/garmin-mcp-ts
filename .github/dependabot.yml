@@ -20,8 +20,10 @@ updates:
         applies-to: security-updates
         patterns:
           - "*"
-      # Routine bumps are grouped only to cut noise; they are never
-      # auto-merged and still need a human.
+      # Minor and patch bumps are grouped so they arrive, and are
+      # auto-merged by the same workflow, as one PR. The group name is
+      # matched there literally too. Major bumps fall outside it and still
+      # need a human.
       version-updates:
         applies-to: version-updates
         patterns:

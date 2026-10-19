@@ -1,0 +1,136 @@
+name: SBOM sync
+
+# Keeps the committed sbom.cdx.json in step with package-lock.json on main.
+# Dependabot rewrites the lockfile but not the SBOM, and pushing the fix to
+# its pull request branch with GITHUB_TOKEN leaves runs waiting for approval
+# (see dependabot-auto-merge.yml), so the fix lands on main right after the
+# merge instead. Dependabot auto-merges dispatch this; a human merge that
+# touches the lockfile reaches it through the push trigger.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+      - package-lock.json
+
+permissions:
+  contents: read
+
+# Runs queue rather than cancel each other: each one regenerates from the
+# main it finds, so a run that is replaced while pending loses nothing.
+concurrency:
+  group: sbom-sync
+  cancel-in-progress: false
+
+jobs:
+  # The generator is cyclonedx-npm from main's own lockfile - code that may
+  # have just changed - so it runs with a read-only token and only hands the
+  # file on. The job that pushes never installs anything.
+  generate:
+    runs-on: ubuntu-latest
+    outputs:
+      stale: ${{ steps.check.outputs.stale }}
+      base: ${{ steps.base.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Record the commit being described
+        id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      # check:sbom ignores the generator's npm version; regenerating only on a
+      # real difference keeps that noise out of main's history.
+      - name: Regenerate SBOM if stale
+        id: check
+        run: |
+          if npm run check:sbom; then
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          else
+            npm run sbom
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.check.outputs.stale == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: sbom.cdx.json
+          retention-days: 1
+
+  commit:
+    needs: generate
+    if: needs.generate.outputs.stale == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      pushed: ${{ steps.push.outputs.pushed }}
+    env:
+      BASE: ${{ needs.generate.outputs.base }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      # main may have moved since generate ran. If none of the SBOM's inputs
+      # changed, the file still describes it. If they did, that change
+      # started its own run, queued behind this one, which will get it right.
+      - name: Make sure the SBOM's inputs have not moved
+        id: inputs
+        run: |
+          git fetch --depth=1 origin "$BASE"
+          if git diff --quiet "$BASE" HEAD -- package.json package-lock.json sbom.cdx.json; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::main changed the SBOM's inputs since $BASE; leaving it to the next run."
+            echo "current=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.inputs.outputs.current == 'true'
+        uses: actions/download-artifact@v8
+        with:
+          name: sbom
+          path: ${{ runner.temp }}/sbom
+
+      - name: Commit and push
+        id: push
+        if: steps.inputs.outputs.current == 'true'
+        run: |
+          node -e 'JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"))' "$RUNNER_TEMP/sbom/sbom.cdx.json"
+          mv "$RUNNER_TEMP/sbom/sbom.cdx.json" sbom.cdx.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: regenerate SBOM" -- sbom.cdx.json
+          git push origin HEAD:refs/heads/main
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+  # Pushes made with GITHUB_TOKEN start no workflows, so neither the SBOM
+  # commit above nor a Dependabot auto-merge gets CI on main by itself. A
+  # human push already ran CI, and needs it again only if this run committed.
+  ci:
+    needs: [generate, commit]
+    if: >-
+      !cancelled()
+      && needs.generate.result == 'success'
+      && (needs.commit.outputs.pushed == 'true'
+          || (github.event_name == 'workflow_dispatch' && needs.commit.result == 'skipped'))
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Run CI on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref main
