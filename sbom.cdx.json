@@ -703,8 +703,8 @@
     {
       "type": "library",
       "name": "body-parser",
-      "version": "2.3.0",
-      "bom-ref": "garmin-mcp-ts@4.6.0|body-parser@2.3.0",
+      "version": "2.4.0",
+      "bom-ref": "garmin-mcp-ts@4.6.0|body-parser@2.4.0",
       "licenses": [
         {
           "license": {
@@ -713,15 +713,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/body-parser@2.3.0",
+      "purl": "pkg:npm/body-parser@2.4.0",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/body-parser/-/body-parser-2.3.0.tgz",
+          "url": "https://registry.npmjs.org/body-parser/-/body-parser-2.4.0.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "d9c1a626ea5a36083e414c152c0b9c0ee5aea0c67a117f621c346cc19e65b0d6049b03da4649cc3c22d9cf4ef24f356affcde9e28ff0cdb0d96c1ad3bc619323"
+              "content": "21f93529c2ebc5a1add6871c41a81034534d3aa46dd4b16e7a11271c7cc1f19e9c460231454d5305a888b14882740fa0cb93cbed8d485f7d4334a9119b1b578d"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -737,8 +737,8 @@
         {
           "type": "library",
           "name": "content-type",
-          "version": "2.0.0",
-          "bom-ref": "garmin-mcp-ts@4.6.0|body-parser@2.3.0|content-type@2.0.0",
+          "version": "2.1.0",
+          "bom-ref": "garmin-mcp-ts@4.6.0|body-parser@2.4.0|content-type@2.1.0",
           "licenses": [
             {
               "license": {
@@ -747,15 +747,15 @@
               }
             }
           ],
-          "purl": "pkg:npm/content-type@2.0.0",
+          "purl": "pkg:npm/content-type@2.1.0",
           "externalReferences": [
             {
-              "url": "https://registry.npmjs.org/content-type/-/content-type-2.0.0.tgz",
+              "url": "https://registry.npmjs.org/content-type/-/content-type-2.1.0.tgz",
               "type": "distribution",
               "hashes": [
                 {
                   "alg": "SHA-512",
-                  "content": "8ff3bf77b19c642c8d97bfe1c1901beb4eabcea932bda0dcb4b99c91bc4bcc7bc50734c91ee1847687404dc3f7c884680eb2c790801326ebf36c5969fe48b671"
+                  "content": "9a3ed43d71348daa9a3acba435945411f122d8070bec2fefc26c1c1d5d0ef7b78ed44d69c4166eca3959af1e6c79368d060d54ebea37e70a5adf941f71cfbb6a"
                 }
               ],
               "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -2037,8 +2037,8 @@
     {
       "type": "library",
       "name": "fast-uri",
-      "version": "4.2.1",
-      "bom-ref": "garmin-mcp-ts@4.6.0|fast-uri@4.2.1",
+      "version": "4.2.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|fast-uri@4.2.3",
       "licenses": [
         {
           "license": {
@@ -2047,15 +2047,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/fast-uri@4.2.1",
+      "purl": "pkg:npm/fast-uri@4.2.3",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-4.2.1.tgz",
+          "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-4.2.3.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "4e61d081ec231ed32ad44e50280d2d384d32798190b36e4a642ff3889a6e6d1b56235e56f767babcf17275639e6415513921c1630fd0843f5de4e79f743e8b0e"
+              "content": "2353d7c0fe5e02194d95c7698edf42801e7da29d99bd97f1c3e064a861552143a03690954dc4eaa771e14d7edbaf18f9bec8a9fa7498e274ef7dff9e200efa86"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -2721,8 +2721,8 @@
     {
       "type": "library",
       "name": "iconv-lite",
-      "version": "0.7.2",
-      "bom-ref": "garmin-mcp-ts@4.6.0|iconv-lite@0.7.2",
+      "version": "0.7.3",
+      "bom-ref": "garmin-mcp-ts@4.6.0|iconv-lite@0.7.3",
       "licenses": [
         {
           "license": {
@@ -2731,15 +2731,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/iconv-lite@0.7.2",
+      "purl": "pkg:npm/iconv-lite@0.7.3",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.2.tgz",
+          "url": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.3.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "8a6f438c40d0e79b3d7cbe04633380bf4c8caa6301499a7a1b456f1724cc3ca5b1892047523f4d5bfaaa2e65d4c17aeb33b02fa9295309fbea45bd1c33cc98ab"
+              "content": "20a5e9bc8ce39c2f574c051b54170c7c64b410f6885ed5babfecebf91469fa1a942c4a68d28c196b1eb0c91c0f3896d66f38d8b29430bac4ec7d5af489f878b9"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -2859,8 +2859,8 @@
     {
       "type": "library",
       "name": "ip-address",
-      "version": "10.7.2",
-      "bom-ref": "garmin-mcp-ts@4.6.0|ip-address@10.7.2",
+      "version": "10.7.5",
+      "bom-ref": "garmin-mcp-ts@4.6.0|ip-address@10.7.5",
       "licenses": [
         {
           "license": {
@@ -2869,15 +2869,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/ip-address@10.7.2",
+      "purl": "pkg:npm/ip-address@10.7.5",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.2.tgz",
+          "url": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.5.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "ec7ff68054888adc5cd211b79ce2358254bc40ba3f10704514b93cbc45235d8ff1bb401d2fc8d9f54d48cced8f526d1dd83fe87d070089f6f483a38192df14ef"
+              "content": "b76bf4ae420b62ff565e648bed3a40694dc75e068560e3d4707dd01e0c10fbe82926e1f76eac8ccb816fb7f0c90932b0cc7dc27fe6c0a795bf9852f7f4a3cbcc"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -4058,8 +4058,8 @@
     {
       "type": "library",
       "name": "qs",
-      "version": "6.16.0",
-      "bom-ref": "garmin-mcp-ts@4.6.0|qs@6.16.0",
+      "version": "6.16.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|qs@6.16.1",
       "licenses": [
         {
           "license": {
@@ -4068,15 +4068,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/qs@6.16.0",
+      "purl": "pkg:npm/qs@6.16.1",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
+          "url": "https://registry.npmjs.org/qs/-/qs-6.16.1.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "87a7e1388691ac80f609b118d9faacfbbb7e517668f8c2c09d4e60448abce6e16d76250f09db00a4c947857a202953381ccd8355b22318d4d3607d8e7263f5bc"
+              "content": "e4fc7a27badf1c1006521350ddeb3863370e741070d120dc56d4e126697845d9cac38b4ab367a903490f67e2bc5fe5a21e4b53f7744755c43fdf29b96930a0b6"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -5545,7 +5545,7 @@
       "ref": "garmin-mcp-ts@4.6.0|ajv@8.18.0",
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|fast-deep-equal@3.1.3",
-        "garmin-mcp-ts@4.6.0|fast-uri@4.2.1",
+        "garmin-mcp-ts@4.6.0|fast-uri@4.2.3",
         "garmin-mcp-ts@4.6.0|json-schema-traverse@1.0.0",
         "garmin-mcp-ts@4.6.0|require-from-string@2.0.2"
       ]
@@ -5592,21 +5592,21 @@
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|body-parser@2.3.0",
+      "ref": "garmin-mcp-ts@4.6.0|body-parser@2.4.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.6.0|body-parser@2.3.0|content-type@2.0.0",
+        "garmin-mcp-ts@4.6.0|body-parser@2.4.0|content-type@2.1.0",
         "garmin-mcp-ts@4.6.0|bytes@3.1.2",
         "garmin-mcp-ts@4.6.0|debug@4.4.3",
         "garmin-mcp-ts@4.6.0|http-errors@2.0.1",
-        "garmin-mcp-ts@4.6.0|iconv-lite@0.7.2",
+        "garmin-mcp-ts@4.6.0|iconv-lite@0.7.3",
         "garmin-mcp-ts@4.6.0|on-finished@2.4.1",
-        "garmin-mcp-ts@4.6.0|qs@6.16.0",
+        "garmin-mcp-ts@4.6.0|qs@6.16.1",
         "garmin-mcp-ts@4.6.0|raw-body@3.0.2",
         "garmin-mcp-ts@4.6.0|type-is@2.1.0"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|body-parser@2.3.0|content-type@2.0.0"
+      "ref": "garmin-mcp-ts@4.6.0|body-parser@2.4.0|content-type@2.1.0"
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|bytes@3.1.2"
@@ -5755,14 +5755,14 @@
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|debug@4.4.3",
         "garmin-mcp-ts@4.6.0|express@5.2.1",
-        "garmin-mcp-ts@4.6.0|ip-address@10.7.2"
+        "garmin-mcp-ts@4.6.0|ip-address@10.7.5"
       ]
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|express@5.2.1",
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|accepts@2.0.0",
-        "garmin-mcp-ts@4.6.0|body-parser@2.3.0",
+        "garmin-mcp-ts@4.6.0|body-parser@2.4.0",
         "garmin-mcp-ts@4.6.0|content-disposition@1.0.1",
         "garmin-mcp-ts@4.6.0|content-type@1.0.5",
         "garmin-mcp-ts@4.6.0|cookie-signature@1.2.2",
@@ -5781,7 +5781,7 @@
         "garmin-mcp-ts@4.6.0|once@1.4.0",
         "garmin-mcp-ts@4.6.0|parseurl@1.3.3",
         "garmin-mcp-ts@4.6.0|proxy-addr@2.0.8",
-        "garmin-mcp-ts@4.6.0|qs@6.16.0",
+        "garmin-mcp-ts@4.6.0|qs@6.16.1",
         "garmin-mcp-ts@4.6.0|range-parser@1.2.1",
         "garmin-mcp-ts@4.6.0|router@2.2.0",
         "garmin-mcp-ts@4.6.0|send@1.2.1",
@@ -5804,7 +5804,7 @@
       "ref": "garmin-mcp-ts@4.6.0|fast-deep-equal@3.1.3"
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|fast-uri@4.2.1"
+      "ref": "garmin-mcp-ts@4.6.0|fast-uri@4.2.3"
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|finalhandler@2.1.1",
@@ -5858,7 +5858,7 @@
         "garmin-mcp-ts@4.6.0|lodash@4.18.1",
         "garmin-mcp-ts@4.6.0|luxon@3.7.2",
         "garmin-mcp-ts@4.6.0|oauth-1.0a@2.2.6",
-        "garmin-mcp-ts@4.6.0|qs@6.16.0"
+        "garmin-mcp-ts@4.6.0|qs@6.16.1"
       ]
     },
     {
@@ -5925,7 +5925,7 @@
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|iconv-lite@0.7.2",
+      "ref": "garmin-mcp-ts@4.6.0|iconv-lite@0.7.3",
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|safer-buffer@2.1.2"
       ]
@@ -5940,7 +5940,7 @@
       "ref": "garmin-mcp-ts@4.6.0|ini@1.3.8"
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|ip-address@10.7.2"
+      "ref": "garmin-mcp-ts@4.6.0|ip-address@10.7.5"
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|ipaddr.js@1.9.1"
@@ -6083,7 +6083,7 @@
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|qs@6.16.0",
+      "ref": "garmin-mcp-ts@4.6.0|qs@6.16.1",
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|es-define-property@1.0.1",
         "garmin-mcp-ts@4.6.0|side-channel@1.1.1"
@@ -6097,7 +6097,7 @@
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|bytes@3.1.2",
         "garmin-mcp-ts@4.6.0|http-errors@2.0.1",
-        "garmin-mcp-ts@4.6.0|iconv-lite@0.7.2",
+        "garmin-mcp-ts@4.6.0|iconv-lite@0.7.3",
         "garmin-mcp-ts@4.6.0|unpipe@1.0.0"
       ]
     },
