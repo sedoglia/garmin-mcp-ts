@@ -148,8 +148,8 @@
       "type": "library",
       "name": "node-server",
       "group": "@hono",
-      "version": "2.0.11",
-      "bom-ref": "garmin-mcp-ts@4.6.0|@hono/node-server@2.0.11",
+      "version": "2.1.5",
+      "bom-ref": "garmin-mcp-ts@4.6.0|@hono/node-server@2.1.5",
       "licenses": [
         {
           "license": {
@@ -158,15 +158,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40hono/node-server@2.0.11",
+      "purl": "pkg:npm/%40hono/node-server@2.1.5",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.0.11.tgz",
+          "url": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.5.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "6e30f6db528f2e8253594c2ca3527a7c62a24d711415e746fecd2f8ac6af638cda9053e4786511311365cbe161047b3b4fc0f3e2a1da648317f59a091d226d28"
+              "content": "3203ff234e8676fb22943b29324fea991ce993c2ce512b4fea31406d2462e345b4f43868c949fe323edec8a2023ea7982b26ce8d514b548010cefbb56df21aed"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -2105,8 +2105,8 @@
     {
       "type": "library",
       "name": "follow-redirects",
-      "version": "1.16.1",
-      "bom-ref": "garmin-mcp-ts@4.6.0|follow-redirects@1.16.1",
+      "version": "1.16.2",
+      "bom-ref": "garmin-mcp-ts@4.6.0|follow-redirects@1.16.2",
       "licenses": [
         {
           "license": {
@@ -2115,15 +2115,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/follow-redirects@1.16.1",
+      "purl": "pkg:npm/follow-redirects@1.16.2",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.1.tgz",
+          "url": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.2.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "14dbc51b3a0c2d6984e988fdb296ffce377bca23421e2016f7f4e0f425eb43cc2ebb7d87b6524ec163b5d4e25a7e5e457d8dc3c53750d2f8f8db353592fbf98e"
+              "content": "fe454fd94f33e7de886b483016bc3221ea3be2d6b9695992794d457c050c0267043f910fef3c9d99a83748b88deb835a44a79fde5c6cabb8bf83b96d2500c6a3"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -5483,7 +5483,7 @@
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|@hono/node-server@2.0.11",
+      "ref": "garmin-mcp-ts@4.6.0|@hono/node-server@2.1.5",
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|hono@4.13.13"
       ]
@@ -5491,7 +5491,7 @@
     {
       "ref": "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.32.2",
       "dependsOn": [
-        "garmin-mcp-ts@4.6.0|@hono/node-server@2.0.11",
+        "garmin-mcp-ts@4.6.0|@hono/node-server@2.1.5",
         "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.32.2|pkce-challenge@5.0.1",
         "garmin-mcp-ts@4.6.0|ajv-formats@3.0.1",
         "garmin-mcp-ts@4.6.0|ajv@8.18.0",
@@ -5559,7 +5559,7 @@
     {
       "ref": "garmin-mcp-ts@4.6.0|axios@1.21.0",
       "dependsOn": [
-        "garmin-mcp-ts@4.6.0|follow-redirects@1.16.1",
+        "garmin-mcp-ts@4.6.0|follow-redirects@1.16.2",
         "garmin-mcp-ts@4.6.0|form-data@4.0.6",
         "garmin-mcp-ts@4.6.0|https-proxy-agent@5.0.1",
         "garmin-mcp-ts@4.6.0|proxy-from-env@2.1.0"
@@ -5818,7 +5818,7 @@
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|follow-redirects@1.16.1"
+      "ref": "garmin-mcp-ts@4.6.0|follow-redirects@1.16.2"
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|form-data@4.0.6",
