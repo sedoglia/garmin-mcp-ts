@@ -53,7 +53,10 @@
     "follow-redirects": ">=1.16.2",
     "form-data": ">=4.0.6",
     "body-parser": ">=2.4.0",
-    "tmp": ">=0.2.6"
+    "tmp": ">=0.2.6",
+    "@anthropic-ai/mcpb": {
+      "zod": "^4.6.7"
+    }
   },
   "optionalDependencies": {
     "keytar": "^7.9.0"
