@@ -31,21 +31,30 @@ const sbomPath = path.join(root, 'sbom.cdx.json');
 const cli = path.join(root, 'node_modules', '@cyclonedx', 'cyclonedx-npm', 'bin', 'cyclonedx-npm-cli.js');
 const check = process.argv.includes('--check');
 
+// The generator's progress log goes to stdout and stays quiet on success, but
+// when it fails that log is the only record of why, so it is replayed then.
 function generate(outputFile) {
-  execFileSync(
-    process.execPath,
-    [
-      cli,
-      '--package-lock-only',
-      '--omit', 'dev',
-      '--output-reproducible',
-      '--validate',
-      '--spec-version', '1.6',
-      '--output-format', 'JSON',
-      '--output-file', outputFile,
-    ],
-    { cwd: root, stdio: ['ignore', 'ignore', 'inherit'] },
-  );
+  try {
+    execFileSync(
+      process.execPath,
+      [
+        cli,
+        '-vv',
+        '--package-lock-only',
+        '--omit', 'dev',
+        '--output-reproducible',
+        '--validate',
+        '--spec-version', '1.6',
+        '--output-format', 'JSON',
+        '--output-file', outputFile,
+      ],
+      { cwd: root, stdio: ['ignore', 'pipe', 'inherit'], maxBuffer: 64 * 1024 * 1024 },
+    );
+  } catch (err) {
+    if (err.stdout?.length) process.stderr.write(err.stdout);
+    console.error(`SBOM generator exited with status ${err.status}`);
+    process.exit(1);
+  }
 }
 
 // Everything but the generator's own record of itself.
