@@ -9,6 +9,44 @@ follows [semantic versioning](https://semver.org/).
 > Earlier entries are reconstructed from commit messages, release tags and historical
 > versions of the READMEs.
 
+## [4.6.1] - 2026-11-18 — Updated dependencies
+
+No change to the server code, which still declares 110 tools. The bundle is
+rebuilt with the dependencies updated by the security advisories published
+since 4.6.0.
+
+### 🔒 Security patches (transitive dependencies of the MCP SDK and axios)
+- **proxy-addr** 2.0.7 → 2.0.8 (critical): IP spoofing through an IPv4-mapped
+  IPv6 address matching a trusted subnet.
+- **zod** 4.4.3 → 4.6.7 (high): memory exhaustion while validating oversized
+  constrained collections (GHSA-mrhx-c7xc-m3w5).
+- **body-parser** 2.3.0 → 2.4.0 (high): DoS through trailing bytes after a
+  compressed body. The override moves up to `>=2.4.0`.
+- **follow-redirects** 1.16.0 → 1.16.2 (high): three ways credential headers
+  survived a cross-origin redirect. The override moves up to `>=1.16.2`.
+- **hono** 4.13.7 → 4.13.18: `serveStatic` double decoding, `csrf()` ignoring
+  `text/ping` requests, `validator('form')` bypassable with multipart, `mount()`
+  and RegExpRouter skipping middleware, HTML injection in the `css` helper.
+- **@hono/node-server** 2.0.11 → 2.1.8: `serveStatic` double decoding,
+  backslashes parsed as path separators, a crash on `ECONNRESET` during a
+  WebSocket upgrade.
+- **fast-uri** 4.1.4 → 4.2.3: eight advisories on host confusion, scheme spoofing
+  and injection, path equivalence and `mailto` headers. The override moves up to
+  `>=4.2.3`.
+- **ip-address** 10.5.0 → 10.7.5: SSRF and trust-boundary bypasses (NAT64 range,
+  `fe80::/10` link-local, mixed-family subnets) and two inputs that stall the
+  process.
+
+### 📦 Version updates
+- **@modelcontextprotocol/sdk** 1.30.0 → 1.32.2, **axios** 1.20.0 → 1.21.1,
+  **dotenv** 18.0.0 → 18.0.10, plus express-rate-limit, iconv-lite and qs as they
+  come along. No API used by the server changed.
+- Dev only: **@cyclonedx/cyclonedx-npm** 6 → 7 (its JSON validator is now an
+  explicit dev dependency), @types/node and tsx; zod 4 is forced under
+  `@anthropic-ai/mcpb`, whose latest release still pins zod 3.
+
+`npm audit` on this version reports no vulnerabilities.
+
 ## [4.6.0] - 2026-09-21 — Bundle SBOM
 
 No change to the tools, which remain 110. Every release from here on publishes the
