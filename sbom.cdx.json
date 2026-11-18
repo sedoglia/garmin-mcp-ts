@@ -15,7 +15,7 @@
           "type": "library",
           "name": "cyclonedx-library",
           "group": "@cyclonedx",
-          "version": "10.3.0",
+          "version": "10.5.1",
           "author": "Jan Kowalleck",
           "description": "Core functionality of CycloneDX for JavaScript (Node.js or WebBrowser).",
           "licenses": [
@@ -53,7 +53,7 @@
           "type": "application",
           "name": "cyclonedx-npm",
           "group": "@cyclonedx",
-          "version": "6.0.1",
+          "version": "7.0.0",
           "author": "Jan Kowalleck",
           "description": "Create CycloneDX Software Bill of Materials (SBOM) from NPM projects.",
           "licenses": [
@@ -527,8 +527,8 @@
     {
       "type": "library",
       "name": "axios",
-      "version": "1.21.0",
-      "bom-ref": "garmin-mcp-ts@4.6.0|axios@1.21.0",
+      "version": "1.21.1",
+      "bom-ref": "garmin-mcp-ts@4.6.0|axios@1.21.1",
       "licenses": [
         {
           "license": {
@@ -537,15 +537,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/axios@1.21.0",
+      "purl": "pkg:npm/axios@1.21.1",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/axios/-/axios-1.21.0.tgz",
+          "url": "https://registry.npmjs.org/axios/-/axios-1.21.1.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "602cd7301e7743d3d906c87bc8def0b5aa62b7859ea707074b67cff10846b01c52cf962d818a1b57b186956940262f91c5f53bec6413422d8348b5266b8d8460"
+              "content": "e9e23943f638bbf526f5d0e5b11a2ae69636af19d44eff8be0fa4b8ad9db93f8b88dbdccc4b6790ac379221dc8cac6de4582b8a51f8feea7ccb0e425f5fc3015"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -1389,8 +1389,8 @@
     {
       "type": "library",
       "name": "dotenv",
-      "version": "18.0.9",
-      "bom-ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.9",
+      "version": "18.0.10",
+      "bom-ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.10",
       "licenses": [
         {
           "license": {
@@ -1399,15 +1399,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/dotenv@18.0.9",
+      "purl": "pkg:npm/dotenv@18.0.10",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/dotenv/-/dotenv-18.0.9.tgz",
+          "url": "https://registry.npmjs.org/dotenv/-/dotenv-18.0.10.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "ddf54e5b8701d36474eba3d44b09fc3b84c9cb3f4d724425ec5f356e521b6aaf632819b6b5298e2a4cbb647217cc6be454f5c24a7ea3929ce204f65d185b3c4f"
+              "content": "f3d140035c5c8732b69b155676be45ff4ae57708ae797b3acc933ceab3bae84cde911d6205d89746d8721be9b91af9096851f70b62c44b36a64e48277662d3d8"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -2619,8 +2619,8 @@
     {
       "type": "library",
       "name": "hono",
-      "version": "4.13.13",
-      "bom-ref": "garmin-mcp-ts@4.6.0|hono@4.13.13",
+      "version": "4.13.18",
+      "bom-ref": "garmin-mcp-ts@4.6.0|hono@4.13.18",
       "licenses": [
         {
           "license": {
@@ -2629,15 +2629,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/hono@4.13.13",
+      "purl": "pkg:npm/hono@4.13.18",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
+          "url": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "090e3a53466400699b4ffe14c5dcf3189a5a70fd8878a818e1ae7fb4e23d00005ba4e31f2bbdfdc1f0d79afd6eb0293edd190a8f5850cb8fdf8e18b06b6c65ac"
+              "content": "1fdabf1355e2cda5acb49c545bcf357662f1123fadfd3ac61a7cb120d926e3eb0ad2a530b0cb45768d81588f55b377084b5f4c53a6fa8828a3a14a047f87f70c"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -5439,8 +5439,8 @@
     {
       "type": "library",
       "name": "zod",
-      "version": "4.4.3",
-      "bom-ref": "garmin-mcp-ts@4.6.0|zod@4.4.3",
+      "version": "4.6.7",
+      "bom-ref": "garmin-mcp-ts@4.6.0|zod@4.6.7",
       "licenses": [
         {
           "license": {
@@ -5449,15 +5449,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/zod@4.4.3",
+      "purl": "pkg:npm/zod@4.6.7",
       "externalReferences": [
         {
-          "url": "https://registry.npmjs.org/zod/-/zod-4.4.3.tgz",
+          "url": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
           "type": "distribution",
           "hashes": [
             {
               "alg": "SHA-512",
-              "content": "cad10d163209165d94c1882575eda37215b61f09b818914b0e249759d4eb25004837d15cca9ee7e0387124489634024c575fc1a967d6fe4920ef55037072724d"
+              "content": "83c5b60f6914e9af2e9ed734e777d7d6e5412b333bcaa0315bfdf3c24f37fba472176f9228eb95f9cd30043854c335753da19aa66647fab99c5333dffb7086c2"
             }
           ],
           "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
@@ -5476,8 +5476,8 @@
       "ref": "garmin-mcp-ts@4.6.0",
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|@modelcontextprotocol/sdk@1.32.2",
-        "garmin-mcp-ts@4.6.0|axios@1.21.0",
-        "garmin-mcp-ts@4.6.0|dotenv@18.0.9",
+        "garmin-mcp-ts@4.6.0|axios@1.21.1",
+        "garmin-mcp-ts@4.6.0|dotenv@18.0.10",
         "garmin-mcp-ts@4.6.0|garmin-connect@1.6.2",
         "garmin-mcp-ts@4.6.0|keytar@7.9.0"
       ]
@@ -5485,7 +5485,7 @@
     {
       "ref": "garmin-mcp-ts@4.6.0|@hono/node-server@2.1.8",
       "dependsOn": [
-        "garmin-mcp-ts@4.6.0|hono@4.13.13"
+        "garmin-mcp-ts@4.6.0|hono@4.13.18"
       ]
     },
     {
@@ -5502,12 +5502,12 @@
         "garmin-mcp-ts@4.6.0|eventsource@3.0.7",
         "garmin-mcp-ts@4.6.0|express-rate-limit@8.7.0",
         "garmin-mcp-ts@4.6.0|express@5.2.1",
-        "garmin-mcp-ts@4.6.0|hono@4.13.13",
+        "garmin-mcp-ts@4.6.0|hono@4.13.18",
         "garmin-mcp-ts@4.6.0|jose@6.1.3",
         "garmin-mcp-ts@4.6.0|json-schema-typed@8.0.2",
         "garmin-mcp-ts@4.6.0|raw-body@3.0.2",
         "garmin-mcp-ts@4.6.0|zod-to-json-schema@3.25.1",
-        "garmin-mcp-ts@4.6.0|zod@4.4.3"
+        "garmin-mcp-ts@4.6.0|zod@4.6.7"
       ]
     },
     {
@@ -5557,7 +5557,7 @@
       "ref": "garmin-mcp-ts@4.6.0|asynckit@0.4.0"
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|axios@1.21.0",
+      "ref": "garmin-mcp-ts@4.6.0|axios@1.21.1",
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|follow-redirects@1.16.2",
         "garmin-mcp-ts@4.6.0|form-data@4.0.6",
@@ -5689,7 +5689,7 @@
       "ref": "garmin-mcp-ts@4.6.0|detect-libc@2.1.2"
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.9"
+      "ref": "garmin-mcp-ts@4.6.0|dotenv@18.0.10"
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|dunder-proto@1.0.1",
@@ -5852,7 +5852,7 @@
       "ref": "garmin-mcp-ts@4.6.0|garmin-connect@1.6.2",
       "dependsOn": [
         "garmin-mcp-ts@4.6.0|app-root-path@3.1.0",
-        "garmin-mcp-ts@4.6.0|axios@1.21.0",
+        "garmin-mcp-ts@4.6.0|axios@1.21.1",
         "garmin-mcp-ts@4.6.0|crypto@1.0.1",
         "garmin-mcp-ts@4.6.0|form-data@4.0.6",
         "garmin-mcp-ts@4.6.0|lodash@4.18.1",
@@ -5905,7 +5905,7 @@
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|hono@4.13.13"
+      "ref": "garmin-mcp-ts@4.6.0|hono@4.13.18"
     },
     {
       "ref": "garmin-mcp-ts@4.6.0|http-errors@2.0.1",
@@ -6314,11 +6314,11 @@
     {
       "ref": "garmin-mcp-ts@4.6.0|zod-to-json-schema@3.25.1",
       "dependsOn": [
-        "garmin-mcp-ts@4.6.0|zod@4.4.3"
+        "garmin-mcp-ts@4.6.0|zod@4.6.7"
       ]
     },
     {
-      "ref": "garmin-mcp-ts@4.6.0|zod@4.4.3"
+      "ref": "garmin-mcp-ts@4.6.0|zod@4.6.7"
     }
   ]
 }
