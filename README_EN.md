@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.6.0-green.svg)](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)
+[![Version](https://img.shields.io/badge/Version-4.6.1-green.svg)](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)
 
 [![PayPal](https://img.shields.io/badge/Support%20This%20Project-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/sedoglia)
 
@@ -18,7 +18,7 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Garmin Connect, enabling natural language queries about your fitness activities, health metrics, sleep data, and more.
 
-> 📦 **Latest release: [v4.6.0](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)**
+> 📦 **Latest release: [v4.6.1](https://github.com/sedoglia/garmin-mcp-ts/releases/latest)**
 > — the `.mcpb` bundle ready to install, with the release notes, the `.sha256` file to
 > verify it and the [SBOM](#-sbom-software-bill-of-materials) in CycloneDX format.
 >
@@ -631,7 +631,7 @@ Once the release is out, bring what users download back to the local machine:
 
 ```bash
 npm run fetch:release            # the latest published release
-npm run fetch:release -- v4.6.0  # a specific tag
+npm run fetch:release -- v4.6.1  # a specific tag
 ```
 
 The assets land in `releases/` (ignored by git), taken from the release itself rather

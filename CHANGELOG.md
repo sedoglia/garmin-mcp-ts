@@ -10,6 +10,45 @@ recente alla più vecchia. Il progetto adotta il
 > precedenti sono ricostruite dai messaggi di commit, dai tag di release e dalle
 > versioni storiche dei README.
 
+## [4.6.1] - 2026-11-18 — Dipendenze aggiornate
+
+Nessuna modifica al codice del server, che continua a dichiarare 110 strumenti.
+Il bundle viene ricostruito con le dipendenze aggiornate dagli avvisi di
+sicurezza pubblicati dopo la 4.6.0.
+
+### 🔒 Patch di sicurezza (dipendenze transitive dell'SDK MCP e di axios)
+- **proxy-addr** 2.0.7 → 2.0.8 (critica): IP spoofing tramite un indirizzo IPv6
+  mappato su IPv4 che ricade in una subnet fidata.
+- **zod** 4.4.3 → 4.6.7 (alta): esaurimento della memoria validando collezioni
+  vincolate di dimensioni eccessive (GHSA-mrhx-c7xc-m3w5).
+- **body-parser** 2.3.0 → 2.4.0 (alta): DoS tramite byte in coda a un corpo
+  compresso. L'override sale a `>=2.4.0`.
+- **follow-redirects** 1.16.0 → 1.16.2 (alta): tre modi in cui gli header con
+  credenziali sopravvivevano a un redirect verso un'altra origine. L'override sale
+  a `>=1.16.2`.
+- **hono** 4.13.7 → 4.13.18: doppia decodifica in `serveStatic`, `csrf()` che
+  ignorava le richieste `text/ping`, `validator('form')` aggirabile con multipart,
+  `mount()` e RegExpRouter che saltavano middleware, HTML injection nell'helper `css`.
+- **@hono/node-server** 2.0.11 → 2.1.8: doppia decodifica in `serveStatic`,
+  backslash interpretato come separatore di percorso, crash su `ECONNRESET` durante
+  l'upgrade WebSocket.
+- **fast-uri** 4.1.4 → 4.2.3: otto avvisi su confusione dell'host, spoofing e
+  iniezione dello schema, equivalenza dei percorsi e header `mailto`. L'override
+  sale a `>=4.2.3`.
+- **ip-address** 10.5.0 → 10.7.5: aggiramenti di SSRF e confini di fiducia (range
+  NAT64, link-local `fe80::/10`, subnet di famiglie diverse) e due input che
+  bloccano il processo.
+
+### 📦 Aggiornamenti di versione
+- **@modelcontextprotocol/sdk** 1.30.0 → 1.32.2, **axios** 1.20.0 → 1.21.1,
+  **dotenv** 18.0.0 → 18.0.10, più express-rate-limit, iconv-lite e qs a seguire.
+  Nessuna API usata dal server è cambiata.
+- Solo sviluppo: **@cyclonedx/cyclonedx-npm** 6 → 7 (il suo validatore JSON ora è
+  una dipendenza di sviluppo esplicita), @types/node e tsx; zod 4 è forzato sotto
+  `@anthropic-ai/mcpb`, la cui ultima release fissa ancora zod 3.
+
+`npm audit` su questa versione non segnala vulnerabilità.
+
 ## [4.6.0] - 2026-09-21 — SBOM del bundle
 
 Nessuna modifica agli strumenti, che restano 110. Ogni release da qui in avanti
